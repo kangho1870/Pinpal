@@ -1,0 +1,22 @@
+.mainBox {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.categoryBox {
+    display: flex;
+}
+.categoryBtn {
+    height: 30px;
+    width: 30px;
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+.logoBtn {
+    height: 30px;
+    width: 30px;
+    font-size: 20px;
+}

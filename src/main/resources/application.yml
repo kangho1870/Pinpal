@@ -1,0 +1,16 @@
+server:
+  port: 8000
+
+spring:
+  datasource:
+    url: jdbc:mariadb://web-study-0223.cvci44g2akd9.ap-northeast-2.rds.amazonaws.com:3306/allcover_project?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    username: admin
+    password: 85061621Tld!
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+#         ddlAuto: create-drop
+#         ddlAuto: update
+#         ddlAuto: validate
