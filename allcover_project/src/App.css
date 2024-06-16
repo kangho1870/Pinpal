@@ -3,6 +3,7 @@
 * {
   font-family: "Noto Sans KR", sans-serif;
   box-sizing: border-box;
+  padding: 0;
 }
 
 h1, h2, h3, h4, p, span {
@@ -15,6 +16,10 @@ p {
 
 span {
   font-size: 12px;
+}
+
+ul, li {
+  list-style: none;
 }
 
 :root {

@@ -20,7 +20,7 @@ function Main() {
                         <div>
                             <img src={require("../../imges/login-img/logo.png")} className={styles.logo}></img>
                         </div>
-                        <div>
+                        <div className={styles.btnArea}>
                             <button className={styles.kakaoBtn}>
                                 <div className={styles.btnBox}>
                                     <img src={require("../../imges/login-img/kakao.png")} className={styles.kakaoImg}></img>
@@ -37,7 +37,7 @@ function Main() {
                             </button>
                         </div>
                     </div>
-                    <div style={{height: "1px", marginTop: "15px", borderTop: "1px solid #dbdbdb", width: "270px"}}></div>
+                    <div style={{height: "1px", marginTop: "15px", borderTop: "1px solid #dbdbdb", width: "65%"}}></div>
                     
                 </section>
                 
