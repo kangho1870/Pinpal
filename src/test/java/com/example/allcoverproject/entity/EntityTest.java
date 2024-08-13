@@ -1,7 +1,7 @@
 package com.example.allcoverproject.entity;
 
 import com.example.allcoverproject.repository.MemberRepository;
-import com.example.allcoverproject.repository.ScoreboardRepository;
+import com.example.allcoverproject.repository.scoreboard.ScoreboardRepository;
 import com.example.allcoverproject.type.GameType;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -12,8 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

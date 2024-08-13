@@ -1,5 +1,6 @@
 package com.example.allcoverproject.entity;
 
+import com.example.allcoverproject.dto.MemberRespDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,13 @@ public class Member {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member")
     List<Scoreboard> scoreboards = new ArrayList<>();
 
+    public MemberRespDto toMemberDto() {
+        return MemberRespDto.builder()
+                .memberId(id)
+                .memberName(name)
+                .build();
+    }
 }

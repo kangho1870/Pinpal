@@ -25,9 +25,13 @@ public class Scoreboard {
     @JoinColumn(name = "game_id", unique = false)
     private Game game;
 
+    @Column(nullable = true)
     private int game_1;
+    @Column(nullable = true)
     private int game_2;
+    @Column(nullable = true)
     private int game_3;
+    @Column(nullable = true)
     private int game_4;
 
     public void setMember(Member member) {

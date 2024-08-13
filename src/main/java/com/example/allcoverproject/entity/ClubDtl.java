@@ -11,7 +11,7 @@ import lombok.Setter;
 public class ClubDtl {
 
     @Id
-    @Column(name = "club_id")
+    @Column(name = "no")
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
