@@ -13,5 +13,5 @@ public class MemberRespDto {
 
     private Long memberId;
     private String memberName;
-    private int memberAvg;
+    private Integer memberAvg;
 }

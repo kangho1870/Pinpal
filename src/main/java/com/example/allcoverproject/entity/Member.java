@@ -21,6 +21,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     List<Scoreboard> scoreboards = new ArrayList<>();
 
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    private ClubDtl clubDtl;
+
     public MemberRespDto toMemberDto() {
         return MemberRespDto.builder()
                 .memberId(id)

@@ -22,6 +22,6 @@ public class ClubDtl {
     @JoinColumn(name = "club_id")
     private ClubMst clubMst;
 
-    private int avg;
+    private Integer avg;
     private String role;
 }

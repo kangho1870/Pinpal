@@ -1,7 +1,9 @@
 package com.example.allcoverproject.repository.scoreboard;
 
 import com.example.allcoverproject.entity.Member;
+import com.example.allcoverproject.entity.QGame;
 import com.example.allcoverproject.entity.QScoreboard;
+import com.example.allcoverproject.entity.Scoreboard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,14 +31,14 @@ public class ScoreboardCustomRepositoryImpl implements ScoreboardCustomRepositor
                 .fetch();
     }
 
-    public Member findMemberByIdByGameId(Long memberId, Long gameId) {
+    @Override
+    public List<Scoreboard> findAllMembers(Long gameId) {
         QScoreboard scoreboard = QScoreboard.scoreboard;
 
         return queryFactory
-                .select(scoreboard.member)
-                .from(scoreboard)
-                .where(scoreboard.game.id.eq(gameId)
-                        .and(scoreboard.member.id.eq(memberId)))
-                .fetchOne();
+                .selectFrom(scoreboard)
+                .where(scoreboard.game.id.eq(gameId))
+                .fetch();
     }
+
 }
