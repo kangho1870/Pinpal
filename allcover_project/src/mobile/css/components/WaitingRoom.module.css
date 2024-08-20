@@ -1,0 +1,225 @@
+.mainBox {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: calc(var(--vh, 1vh) * 100);
+}
+
+.contentsBox {
+    display: flex;
+    width: 100%;
+    padding: 5px;
+    height: calc(var(--vh, 1vh) * 100);
+}
+
+.leftSide, .rightSide {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    text-align: center;
+    flex-direction: column;
+}
+
+.leftSide {
+    border-right: 1px solid #686363;
+    justify-content: flex-start;
+    overflow-y: scroll;
+}
+
+.rightSide {
+    justify-content: flex-start;
+}
+
+.userBox {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.noBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    font-size: 23px;
+    height: 35px;
+}
+
+.nameCardBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    padding: 7px;
+    background-color: #fafafa;
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 100%;
+    height: 35px;
+}
+
+.checkIcon {
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+
+.description {
+    font-size: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settingBoxTitle {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    background-color: #fafafa;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+}
+
+.userSettingBox {
+    background-color: #fafafa;
+    border: 1px solid black;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 3px;
+    margin-bottom: 5px;
+}
+
+
+
+.settingBox {
+    display: flex;
+    margin-bottom: 4px;
+}
+
+.sideJoinBox {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.sideJoinBtn {
+    background-color: rgb(173, 202, 246);
+    border-radius: 7px;
+    border: none;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+    text-align: center;
+    align-items: center;
+    width: 100%;
+    color: white;
+}
+
+.checkBox {
+    display: flex;
+    border-radius: 7px;
+    background-color: rgb(173, 202, 246);
+    width: 100%;
+    min-height: 30px;
+    font-size: 14px;
+    color: white;
+    margin-right: 7px;
+    align-items: center;
+    justify-content: center;
+}
+
+.btnBox {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%
+}
+
+.settingBtn {
+    background-color: rgb(173, 202, 246);
+    border-radius: 10px;
+    border: none;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    font-size: 18px;
+    text-align: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: 60px;
+    color: white;
+}
+
+.settingBtn:nth-child(1) {
+    margin-right: 4px;
+}
+
+.settingBtn2 {
+    background-color: rgb(173, 202, 246);
+    border-radius: 10px;
+    border: none;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    font-size: 18px;
+    text-align: center;
+    align-items: center;
+    width: 100%;
+    min-height: 40px;
+    color: white;
+}
+
+.waitingUser {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 3px;
+}
+
+.waitingUserInfoBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 100%;
+    margin-left: 15px;
+    background-color: rgb(247, 246, 241);
+    padding: 3px;
+}
+
+.waitingUserDesBox {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.waitingSpan {
+    font-size: 10px;
+}
+
+.userInfo {
+    margin-left: 10px;
+}
+
+.gameSettingBox {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px;
+}
+
+.gameSettingBox :nth-child(2) {
+    margin-left: 3px;
+}

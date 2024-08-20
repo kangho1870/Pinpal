@@ -1,0 +1,172 @@
+.container {
+    padding: 0px 10px 10px 10px;
+    overflow-y: scroll;
+    height: calc(var(--vh, 1vh) * 100);
+}
+
+.top {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+.clubTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 13px;
+}
+
+.clubNav {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.clubNavBtns {
+    width: 100%;
+    height: 50px;
+    border: none;
+    background-color: white;
+    border-bottom: 1px solid black;
+}
+
+.btnSpan {
+    font-size: 16px;
+}
+
+.bottom {
+    position: sticky;
+    bottom: 0px;
+    background-color: #fafafa;
+}
+
+.topCategory {
+    font-size: 20px;
+}
+
+.contextArea {
+    display: flex;
+    flex-direction: column;
+}
+
+.commonDiv {
+    margin-top: 10px;
+}
+
+.clubBannerArea {
+    display: flex;
+    width: 100%;
+    height: 150px;
+    background-color: #dbdbdb;
+    border-radius: 10px;
+}
+
+.clubSchedule {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+}
+
+.scheduleBox {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px 1px #cac9c9;
+    width: 100%;
+    padding: 5px;
+}
+
+.scheduleTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.scheduleJoinBtn {
+    margin-left: 20px;
+    width: 70px;
+    height: 40px;
+    border: none;
+    background-color: rgb(34, 216, 73);
+    border-radius: 10px;
+    color: white;
+}
+
+.scheduleContnet {
+    display: flex;
+}
+
+.scheduleImg {
+    width: 170px;
+    height: 100px;
+}
+
+.scheduleDescriptionArea {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.scheduleDescriptionBox {
+    display: flex;
+    align-items: center;
+}
+
+.descriptionSubTitle {
+    margin-right: 5px;
+}
+
+.descriptionSubContent {
+    font-weight: 500;
+    color: black;
+    margin: 0;
+}
+
+.clubRecentGame {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.recentGameBox {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px 1px #cac9c9;
+    width: 100%;
+    padding: 5px;
+}
+
+.recentGameCeremony {
+    display: flex;
+    padding: 2px 5px 2px 5px;
+}
+
+.recentGameDescriptionBox {
+    display: flex;
+    align-items: center;
+}
+
+.recentGameSubTitle {
+    margin-right: 5px;
+}
+
+.recentGameSubContent {
+    font-weight: 500;
+    color: black;
+    margin: 0;
+    margin-right: 10px;
+}
+
+.recentGameTeamCeremony {
+    display: flex;
+    flex-direction: column;
+    padding: 2px 5px 2px 5px;
+}

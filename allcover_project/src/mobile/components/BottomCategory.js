@@ -11,7 +11,7 @@ function BottomCategory() {
                 </div>
                 <div className={styles.categoryBox}>
                     <i class="fa-solid fa-bowling-ball" style={{color: "#a3a3a3"}}></i>
-                    <span>볼링클럽</span>
+                    <span>검색</span>
                 </div>
                 <div className={styles.categoryBox}>
                     <i class="fa-solid fa-users" style={{color: "#a3a3a3"}}></i>

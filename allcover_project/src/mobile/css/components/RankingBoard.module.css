@@ -1,0 +1,170 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: calc(var(--vh, 1vh) * 100);
+    /* overflow-y: scroll; */
+    padding: 5px;
+}
+
+.scoreCardBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.scoreCardList {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.scoreCard1 {
+    display: flex;
+    border: 1px solid #f0d7ac;
+    border-radius: 8px;
+    background-color: #fff6e6;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px;
+}
+
+.scoreCard2 {
+    display: flex;
+    border: 1px solid #aaf388;
+    border-radius: 8px;
+    background-color: #e4f8db;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px;
+}
+
+.scoreCard3 {
+    display: flex;
+    border: 1px solid #8ce6f6;
+    border-radius: 8px;
+    background-color: #d7f5fa;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px;
+}
+
+.scoreCard4 {
+    display: flex;
+    border: 1px solid #f898f8;
+    border-radius: 8px;
+    background-color: #fee3fe;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px;
+}
+
+.scoreCardTitle {
+    margin-right: 10px;
+    font-size: 20px;
+    padding: 3px;
+}
+
+.nameBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* text-align: center; */
+    margin-right: 5px;
+    width: 100%;
+}
+
+.scoreBox {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    padding: 3px;
+    text-align: center;
+    margin-right: 5px;
+    height: 100%;
+    background-color: #dfdfdf;
+}
+
+.scoreInfo {
+    display: flex;
+    justify-content: space-between;
+}
+
+.score {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    font-size: 13px;
+}
+
+.score :nth-child(1) {
+    margin-right: 15px;
+}
+
+.score > p {
+    margin-left: 15px;
+}
+
+span {
+    font-size: 9px;
+}
+
+.score > span {
+    font-size: 7px;
+}
+
+
+.subTitle {
+    display: flex;
+    align-items: center;
+}
+
+h2 {
+    font-size: 15px;
+}
+
+.modalArea {
+    position: fixed;
+    right: 7%;
+    bottom: 10%;
+}
+
+.modalBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgb(109, 141, 230);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    background-color: rgb(174, 193, 247);
+    font-size: 20px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal > span {
+    margin-top: 3px;
+}
+
+.redText {
+    color: red;
+}
+
+.scoreWith {
+    width: 28px;
+    font-size: 20px;
+    margin-right: 8px;
+}
