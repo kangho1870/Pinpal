@@ -27,18 +27,30 @@ public class Scoreboard {
     @JoinColumn(name = "game_id", unique = false)
     private Game game;
 
+    @Column
+    private Integer member_avg;
+
+    @Column
+    private Integer grade;
+
     @Column(nullable = true)
     private Integer game_1;
+
     @Column(nullable = true)
     private Integer game_2;
+
     @Column(nullable = true)
     private Integer game_3;
+
     @Column(nullable = true)
     private Integer game_4;
+
     @ColumnDefault("false")
     private Boolean side_grade1;
+
     @ColumnDefault("false")
     private Boolean side_avg;
+
     @ColumnDefault("false")
     private Boolean confirmedJoin;
 
@@ -51,11 +63,17 @@ public class Scoreboard {
         return ScoreboardRespDto.builder()
                 .memberName(member.getName())
                 .memberId(member.getId())
+                .gameId(game.getId())
                 .gameName(game.getName())
                 .game1(game_1)
                 .game2(game_2)
                 .game3(game_3)
                 .game4(game_4)
+                .memberAvg(member_avg)
+                .grade(grade)
+                .sideGrade1(side_grade1)
+                .sideAvg(side_avg)
+                .confirmedJoin(confirmedJoin)
                 .build();
     }
 }

@@ -22,19 +22,13 @@ public class ScoreboardServiceImpl implements ScoreboardService{
     private final ScoreboardRepository scoreboardRepository;
     private final MemberRepository memberRepository;
     private final GameRepository gameRepository;
-    private final ClubDtlRepository clubDtlRepository;
 
     @Override
-    public List<MemberRespDto> getMembers(Long gameId, Long clubId) throws Exception {
-        List<MemberRespDto> members = new ArrayList<MemberRespDto>();
+    public List<ScoreboardRespDto> getMembers(Long gameId, Long clubId) throws Exception {
+        List<ScoreboardRespDto> members = new ArrayList<ScoreboardRespDto>();
 
         scoreboardRepository.findAllMembers(gameId).forEach(member -> {
-            members.add(member.getMember().toMemberDto());
-        });
-
-        members.forEach(member -> {
-            ClubDtl findClubDtl = clubDtlRepository.getClubDtlByClubIdAndMemberId(clubId, member.getMemberId());
-            member.setMemberAvg(findClubDtl.getAvg());
+            members.add(member.toScoreboardRespDto());
         });
 
         return members;
@@ -50,23 +44,17 @@ public class ScoreboardServiceImpl implements ScoreboardService{
         if(!existingScoreboard.isPresent()) {
             Scoreboard scoreboard = new Scoreboard();
             scoreboard.setId(3L); // 추후 autoIncrement
+            scoreboard.setMember_avg(member.getClubDtl().getAvg());
             scoreboard.setGame(game);
             scoreboard.setMember(member);
+            scoreboard.setGrade(2);
+            scoreboard.setSide_avg(false);
+            scoreboard.setSide_grade1(false);
+            scoreboard.setConfirmedJoin(false);
 
             scoreboardRepository.save(scoreboard);
             result = true;
         }
-
-        return result;
-    }
-
-    @Override
-    public Map<String, Object> getSideStatus(Long gameId, Long memberId) throws Exception {
-        Map<String, Object> result = new HashMap<String, Object>();
-        scoreboardRepository.findByGameIdAndMemberId(gameId, memberId).ifPresent(scoreboard -> {
-            result.put("sideGrade1", scoreboard.getSide_grade1());
-            result.put("sideAvg", scoreboard.getSide_avg());
-        });
 
         return result;
     }
@@ -84,13 +72,6 @@ public class ScoreboardServiceImpl implements ScoreboardService{
                 scoreboardRepository.save(scoreboard);
             }
         });
-    }
-
-    @Override
-    public boolean getConfirmedJoinStatus(Long gameId, Long memberId) throws Exception {
-        return scoreboardRepository.findByGameIdAndMemberId(gameId, memberId)
-                .map(scoreboard -> scoreboard.getConfirmedJoin())
-                .orElse(false);
     }
 
     @Override

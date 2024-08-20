@@ -2,6 +2,7 @@ package com.example.allcoverproject.controller;
 
 import com.example.allcoverproject.dto.CMRespDto;
 import com.example.allcoverproject.dto.MemberRespDto;
+import com.example.allcoverproject.dto.ScoreboardRespDto;
 import com.example.allcoverproject.service.ScoreboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,37 +23,16 @@ public class ScoreboardController {
 
     @GetMapping
     public ResponseEntity<?> getMembers(@RequestParam Long gameId, @RequestParam Long clubId, @RequestParam Long memberId) {
-        Map<Object, Object> data = new HashMap<>();
-        List<MemberRespDto> member = new ArrayList<MemberRespDto>();
+        List<ScoreboardRespDto> member = new ArrayList<ScoreboardRespDto>();
 
         try {
             member = scoreboardService.getMembers(gameId, clubId);
-            data.put("member", member);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", data));
+            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", member));
         }
 
-        Map<String, Object> sideStatus = new HashMap<>();
-
-        try {
-            sideStatus = scoreboardService.getSideStatus(gameId, memberId);
-            data.put("sideStatus", sideStatus);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        Map<String, Object> confirmedStatus = new HashMap<>();
-        boolean confirmed;
-        try {
-            confirmed = scoreboardService.getConfirmedJoinStatus(gameId, memberId);
-            confirmedStatus.put("confirmedJoin", confirmed);
-            data.put("confirmedStatus", confirmedStatus);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", data));
+        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", member));
     }
 
     @PostMapping("/join")

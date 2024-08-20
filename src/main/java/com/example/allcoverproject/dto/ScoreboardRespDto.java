@@ -14,11 +14,13 @@ public class ScoreboardRespDto {
     private Long gameId;
     private String memberName;
     private String gameName;
-    private int memberAvg;
-    private int game1;
-    private int game2;
-    private int game3;
-    private int game4;
-    private boolean sideGrade1;
-    private boolean sideAvg;
+    private Integer memberAvg;
+    private Integer grade;
+    private Integer game1;
+    private Integer game2;
+    private Integer game3;
+    private Integer game4;
+    private Boolean sideGrade1;
+    private Boolean sideAvg;
+    private Boolean confirmedJoin;
 }

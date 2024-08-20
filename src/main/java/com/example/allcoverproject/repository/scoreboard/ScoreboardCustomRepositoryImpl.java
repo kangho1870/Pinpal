@@ -21,23 +21,13 @@ public class ScoreboardCustomRepositoryImpl implements ScoreboardCustomRepositor
     }
 
     @Override
-    public List<Long> findMemberIdsByGameId(Long gameId) {
-        QScoreboard scoreboard = QScoreboard.scoreboard;
-
-        return queryFactory
-                .select(scoreboard.member.id)
-                .from(scoreboard)
-                .where(scoreboard.game.id.eq(gameId))
-                .fetch();
-    }
-
-    @Override
     public List<Scoreboard> findAllMembers(Long gameId) {
         QScoreboard scoreboard = QScoreboard.scoreboard;
 
         return queryFactory
                 .selectFrom(scoreboard)
                 .where(scoreboard.game.id.eq(gameId))
+                .orderBy(scoreboard.member_avg.desc())
                 .fetch();
     }
 
