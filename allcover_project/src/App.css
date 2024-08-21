@@ -36,7 +36,7 @@ ul, li {
 html, body, #root {
   display: flex;
   width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
+  /* height: calc(var(--vh, 1vh) * 100); */
 }
 
 .App {

@@ -2,30 +2,10 @@ import { useEffect, useState } from "react";
 import RankingBoard from "../components/RankingBoard";
 import WaitingRoom from "../components/WaitingRoom";
 import styles from "../css/routes/Scoreboard.module.css";
-import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import GradeSettingModal from "../components/modal/GradeSettingModal";
 
 function Scoreboard() {
-    const [searchParams] = useSearchParams();
-    const gameId = searchParams.get('gameId');
-    const clubId = searchParams.get('clubId');
-    const memberId = searchParams.get('memberId');
-    const [members, setMembers] = useState([]);
     const [page, setPage] = useState(0);
-
-    useEffect(() => {
-        axios.get(`/scoreboard?gameId=${gameId}&clubId=${clubId}&memberId=${memberId}`)
-            .then(response => {
-                console.log(response.data.data)
-                setMembers(response.data.data)
-            })
-            .catch(error => {
-                console.log("error!!", error)
-            })
-            console.log(page)
-    }, [gameId, clubId, memberId])
-    console.log(members)
-
     return (
         <>
             <div className={styles.container}>
@@ -51,7 +31,7 @@ function Scoreboard() {
                     </div>
                     <div className={styles.contentsBox}>
                         {page == 0 && 
-                            <WaitingRoom members={members} memberId={memberId}></WaitingRoom>
+                            <WaitingRoom></WaitingRoom>
                         }
                         {page == 1 &&
                             <RankingBoard></RankingBoard>
@@ -63,6 +43,9 @@ function Scoreboard() {
                 <div>
 
                 </div>
+            </div>
+            <div className={styles.modalArea}>
+                <GradeSettingModal></GradeSettingModal>
             </div>
         </>
     )
