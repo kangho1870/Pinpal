@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    /* height: calc(var(--vh, 1vh) * 100); */
+    height: calc(var(--vh, 1vh) * 100);
 }
 
 .contentsBox {
@@ -224,4 +224,15 @@
 
 .gameSettingBox :nth-child(2) {
     margin-left: 3px;
+}
+
+.modalArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 1000;
+    width: 97%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
 }

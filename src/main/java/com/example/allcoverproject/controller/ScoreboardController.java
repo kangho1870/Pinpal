@@ -48,6 +48,12 @@ public class ScoreboardController {
         return ResponseEntity.ok().body(new CMRespDto<>(1, "success", status));
     }
 
+    @PostMapping("/setGrade")
+    public ResponseEntity<?> setGrade() {
+
+        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", null));
+    }
+
     @PostMapping("/joinSide/{sideType}")
     public ResponseEntity<?> joinSide(@RequestParam Long gameId, @RequestParam Long memberId, @PathVariable String sideType) {
         boolean status = false;

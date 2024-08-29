@@ -2,10 +2,34 @@ import { useEffect, useState } from "react";
 import RankingBoard from "../components/RankingBoard";
 import WaitingRoom from "../components/WaitingRoom";
 import styles from "../css/routes/Scoreboard.module.css";
-import GradeSettingModal from "../components/modal/GradeSettingModal";
+import { useSearchParams } from "react-router-dom";
+import axios from "axios";
 
 function Scoreboard() {
+    const [searchParams] = useSearchParams();
+    const gameId = searchParams.get('gameId');
+    const clubId = searchParams.get('clubId');
+    const memberId = searchParams.get('memberId');
+    const [members, setMembers] = useState([]);
+
     const [page, setPage] = useState(0);
+
+    const loadMembers = () => {
+        axios.get(`/scoreboard?gameId=${gameId}&clubId=${clubId}&memberId=${memberId}`)
+            .then(response => {
+                const data = response.data.data;
+                console.log(data)
+                setMembers(data);
+            })
+            .catch(error => {
+                console.log("error!!", error);
+            });
+    };
+
+    useEffect(() => {
+        loadMembers();
+    }, [gameId, clubId, memberId])
+
     return (
         <>
             <div className={styles.container}>
@@ -31,7 +55,13 @@ function Scoreboard() {
                     </div>
                     <div className={styles.contentsBox}>
                         {page == 0 && 
-                            <WaitingRoom></WaitingRoom>
+                            <WaitingRoom 
+                                members={members} 
+                                gameId={gameId} 
+                                clubId={clubId} 
+                                memberId={memberId} 
+                                reloadMembers={loadMembers}
+                            />
                         }
                         {page == 1 &&
                             <RankingBoard></RankingBoard>
@@ -43,9 +73,6 @@ function Scoreboard() {
                 <div>
 
                 </div>
-            </div>
-            <div className={styles.modalArea}>
-                <GradeSettingModal></GradeSettingModal>
             </div>
         </>
     )

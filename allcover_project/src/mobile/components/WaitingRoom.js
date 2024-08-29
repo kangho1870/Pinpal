@@ -4,44 +4,32 @@ import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 import GradeSettingModal from "./modal/GradeSettingModal";
 
-function WaitingRoom() {
-    const [searchParams] = useSearchParams();
-    const gameId = searchParams.get('gameId');
-    const clubId = searchParams.get('clubId');
-    const memberId = searchParams.get('memberId');
-    const [members, setMembers] = useState([]);
+function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
+    const [currentUser, setCurrentUser] = useState(null);
     const [sideGrade1, setSideGrade1] = useState(false);
     const [sideAvg, setSideAvg] = useState(false);
     const [confirmedJoin, setConfirmedJoin] = useState(false);
     const sideJoinBtns = ["grade1", "avg"];
 
-    const findMembers = () => {
-        axios.get(`/scoreboard?gameId=${gameId}&clubId=${clubId}&memberId=${memberId}`)
-            .then(response => {
-                const data = response.data.data;
-                console.log(data)
-                setMembers(data);
-                const currentUser = data.find(member => member.memberId == memberId);
-                if (currentUser) {
-                    setSideGrade1(currentUser.sideGrade1);
-                    setSideAvg(currentUser.sideAvg);
-                    setConfirmedJoin(currentUser.confirmedJoin);
-                }
-            })
-            .catch(error => {
-                console.log("error!!", error);
-            });
+    const findCurrentUser = () => {
+        const user = members.find(member => member.memberId == memberId);
+        setCurrentUser(user);
+
+        if(user) {
+            setSideGrade1(user.sideGrade1);
+            setSideAvg(user.sideAvg);
+            setConfirmedJoin(user.confirmedJoin);
+        }
     };
 
     useEffect(() => {
-        findMembers();
-    }, [gameId, clubId, memberId]);
+        findCurrentUser();
+    }, [members, memberId]);
 
     const sideJoinBtnsClick = (i) => {
         axios.post(`/scoreboard/joinSide/${sideJoinBtns[i]}?gameId=${gameId}&memberId=${memberId}`)
             .then(response => {
-                console.log(response.data);
-                findMembers();
+                reloadMembers();
             })
             .catch(error => {
                 console.log(error);
@@ -150,6 +138,9 @@ function WaitingRoom() {
                             ))}
                     </div>
                 </div>
+            </div>
+            <div className={styles.modalArea}>
+                <GradeSettingModal members={members}></GradeSettingModal>
             </div>
         </div>
     )
