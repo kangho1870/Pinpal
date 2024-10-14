@@ -1,0 +1,73 @@
+.teamScoreboardContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.teamScoreboardBox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 5px;
+}
+
+.teamTableBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px
+}
+
+.teamRankBox {
+    display: flex;
+    align-items: center;
+}
+
+.teamRankTitle {
+    display: flex;
+    width: 100%;
+}
+
+.teamScoreTable {
+    width: 100%;
+    margin-bottom: 5px;
+    margin-left: 3px;
+    color: white;
+    font-weight: 600;
+}
+
+.teamScoreHeaderTr {
+    height: 30px;
+    border: none;
+    color: #6e6e6e;
+}
+
+.teamScoreBodyTr {
+    height: 30px;
+    border: none;
+}
+
+.teamScoreTh, .teamScoreTd {
+    width: 40px;
+    border: none;
+}
+
+.teamScoreTh {
+    background-color: #e3e3e3;
+}
+
+.teamScoreBodyTr {
+    background-color: #444444;
+    border-bottom: 1px solid #a8a8a8;
+}
+
+.teamScoreBodyTr:nth-last-child(1) {
+    border: none;
+}
+
+.gameScoreBackground {
+    background-color: #a8a8a88f;
+}

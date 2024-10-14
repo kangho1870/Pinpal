@@ -1,27 +1,42 @@
-.main {
+.rankingBoardMain {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: calc(var(--vh, 1vh) * 100);
-    /* overflow-y: scroll; */
+    height: 100%;
     padding: 5px;
+    background-color: #fafafa;
 }
 
 .scoreCardBox {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    margin-top: 10px;
 }
 
 .scoreCardList {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
     width: 100%;
 }
 
+.scoreCard0 {
+    display: flex;
+    flex: 1;
+    border: 1px solid black;
+    border-radius: 8px;
+    background-color: #fafafa;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px;
+}
+
 .scoreCard1 {
     display: flex;
+    flex: 1;
     border: 1px solid #f0d7ac;
     border-radius: 8px;
     background-color: #fff6e6;
@@ -33,6 +48,7 @@
 
 .scoreCard2 {
     display: flex;
+    flex: 1;
     border: 1px solid #aaf388;
     border-radius: 8px;
     background-color: #e4f8db;
@@ -44,6 +60,7 @@
 
 .scoreCard3 {
     display: flex;
+    flex: 1;
     border: 1px solid #8ce6f6;
     border-radius: 8px;
     background-color: #d7f5fa;
@@ -55,6 +72,7 @@
 
 .scoreCard4 {
     display: flex;
+    flex: 1;
     border: 1px solid #f898f8;
     border-radius: 8px;
     background-color: #fee3fe;
@@ -64,19 +82,71 @@
     padding: 5px;
 }
 
+.scoreCard5 {
+    display: flex;
+    flex: 1;
+    border: 1px solid #ffc78f;
+    border-radius: 8px;
+    background-color: #fee3fe;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px;
+}
+
+.scoreCard6 {
+    display: flex;
+    flex: 1;
+    border: 1px solid #98ffdb;
+    border-radius: 8px;
+    background-color: #fee3fe;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px;
+}
+
 .scoreCardTitle {
-    margin-right: 10px;
+    display: flex;
     font-size: 20px;
     padding: 3px;
 }
 
-.nameBox {
+.memberCardBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.memberCard {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    /* text-align: center; */
-    margin-right: 5px;
+    justify-content: space-between;
+    margin-left: 3px;
     width: 100%;
+}
+
+.infoTitle {
+    display: flex;
+}
+
+.info {
+    display: flex;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.scoreSpan {
+    display: flex;
+    font-size: 8px;
+}
+
+.scoreSpan2 {
+    display: flex;
+    justify-content: end;
+    margin-left: 8px;
+    font-size: 14px;
 }
 
 .scoreBox {
@@ -86,8 +156,20 @@
     padding: 3px;
     text-align: center;
     margin-right: 5px;
+    min-width: 70px;
     height: 100%;
-    background-color: #dfdfdf;
+    background-color: #fafafa;
+    border: 1px solid black;
+}
+
+.scoreTop {
+    display: flex;
+    justify-content: space-between;
+}
+
+.scoreTitle {
+    display: flex;
+    flex-direction: column;
 }
 
 .scoreInfo {
@@ -95,41 +177,8 @@
     justify-content: space-between;
 }
 
-.score {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    font-size: 13px;
-}
-
-.score :nth-child(1) {
-    margin-right: 15px;
-}
-
-.score > p {
-    margin-left: 15px;
-}
-
-span {
-    font-size: 9px;
-}
-
-.score > span {
-    font-size: 7px;
-}
-
-
-.subTitle {
-    display: flex;
-    align-items: center;
-}
-
-h2 {
-    font-size: 15px;
-}
-
-.modalArea {
-    position: fixed;
+.modalContainer {
+    position: absolute;
     right: 7%;
     bottom: 10%;
 }
@@ -164,7 +213,14 @@ h2 {
 }
 
 .scoreWith {
-    width: 28px;
-    font-size: 20px;
-    margin-right: 8px;
+    display: flex;
+    justify-content: center;
+    width: 10%;
+    margin-left: 3px;
+    font-size: 15px;
+}
+
+.title {
+    font-size: 9px;
+    font-weight: 600;
 }

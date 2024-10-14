@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     width: 90%;
-    height: 90%;
+    height: 80%;
     border-radius: 20px;
     border: 4px solid #dbdbdb;
     background-color: #fafafa;
@@ -33,6 +33,20 @@
     flex-direction: column;
     width: 25%;
     margin-top: 25%;
+}
+
+.shuffleBox {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 10%;
+    font-size: 25px;
+    border: 1px solid black;
+    background-color: #fafafa;
+    border-radius: 5px;
+    width: 100%;
+    height: 35px;
 }
 
 .gradeList {
@@ -93,13 +107,16 @@
     flex-direction: column;
     width: 95%;
     border-radius: 5px;
-    background-color: #fafafa;
 }
 
 .gradeMember {
     display: flex;
     justify-content: space-between;
     font-size: 20px;
+    background-color: #fafafa;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    border: 1px solid black;
 }
 
 .select {
@@ -132,6 +149,7 @@
     background-color: #fafafa;
     border-radius: 5px;
     margin-bottom: 5px;
+    border: 1px solid black;
 }
 
 .btnBox {
@@ -150,4 +168,75 @@
     margin-left: 10px;
     background-color: rgb(173, 202, 246);
     color: white;
+}
+
+.teamSetModal {
+    display: flex;
+    position: absolute;
+    width: 60%;
+    background-color: #dbdbdb;
+    border: 3px solid #fafafa;
+    border-radius: 5px;
+    padding: 3px;
+}
+
+.teamModalContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: #fafafa;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.modalHeader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5px;
+}
+
+.modalTitle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 7px;
+}
+
+.inputBox {
+    display: flex;
+    justify-content: space-between;
+}
+
+.countInput {
+    display: flex;
+    width: 100%;
+    height: 35px;
+    border: none;
+    background-color: #ededed;
+    border-radius: 5px;
+    font-size: 11px;
+    padding-left: 8px;
+}
+
+.modalBtnBox {
+    display: flex;
+    justify-content: center;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 30px;
+    margin-top: 5px;
+    margin-left: 5px;
+    border: none;
+    background-color: rgb(173, 202, 246);
+    color: white;
+    border-radius: 8px;
+}
+
+.btn:nth-child(1) {
+    background-color: #eaeaea;
+    color: black;
 }

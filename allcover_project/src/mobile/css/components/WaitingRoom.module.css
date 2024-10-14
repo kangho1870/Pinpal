@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    height: calc(var(--vh, 1vh) * 100);
+    height: 100%;
 }
 
 .contentsBox {
@@ -10,13 +10,13 @@
     width: 100%;
     height: 100%;
     padding: 5px;
-    min-height: 600px;
-    /* height: calc(var(--vh, 1vh) * 100); */
+    background-color: #fafafa;
 }
 
 .leftSide, .rightSide {
     flex: 1;
     display: flex;
+    height: 100%;
     justify-content: center;
     padding: 5px;
     text-align: center;
@@ -43,9 +43,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 10px;
-    font-size: 23px;
-    height: 35px;
+    margin-right: 5px;
+    font-size: 18px;
 }
 
 .nameCardBox {
@@ -99,7 +98,10 @@
     margin-bottom: 5px;
 }
 
-
+.userSettingBox:nth-last-child(1) {
+    max-height: 300px;
+    overflow-y: scroll;
+}
 
 .settingBox {
     display: flex;
@@ -113,26 +115,32 @@
 }
 
 .sideJoinBtn {
-    background-color: rgb(173, 202, 246);
+    background-color: #004EA2;
     border-radius: 7px;
     border: none;
     position: relative;
     display: flex;
     justify-content: center;
-    font-size: 14px;
+    font-size: 12px;
     text-align: center;
     align-items: center;
     width: 100%;
     color: white;
 }
 
+.sideJoinedBtn {
+    background-color: #fafafa;
+    border: 1px solid #004EA2;
+    color: #004EA2;
+}
+
 .checkBox {
     display: flex;
     border-radius: 7px;
-    background-color: rgb(173, 202, 246);
+    background-color: #004EA2;
     width: 100%;
     min-height: 30px;
-    font-size: 14px;
+    font-size: 12px;
     color: white;
     margin-right: 7px;
     align-items: center;
@@ -147,13 +155,13 @@
 }
 
 .settingBtn {
-    background-color: rgb(173, 202, 246);
+    background-color: #004EA2;
     border-radius: 10px;
     border: none;
     position: relative;
     display: flex;
     justify-content: center;
-    font-size: 18px;
+    font-size: 15px;
     text-align: center;
     align-items: center;
     width: 100%;
@@ -167,13 +175,13 @@
 }
 
 .settingBtn2 {
-    background-color: rgb(173, 202, 246);
+    background-color: #004EA2;
     border-radius: 10px;
     border: none;
     position: relative;
     display: flex;
     justify-content: center;
-    font-size: 18px;
+    font-size: 13px;
     text-align: center;
     align-items: center;
     width: 100%;
@@ -232,7 +240,5 @@
     align-items: center;
     position: absolute;
     z-index: 1000;
-    width: 97%;
-    height: 100%;
     background-color: rgba(0, 0, 0, 0.4);
 }

@@ -1,0 +1,109 @@
+.modalContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.closeBox {
+    display: flex;
+    justify-content: end;
+    width: 75%;
+    font-size: 25px;
+    color: #fafafa;
+    margin-bottom: 3px;
+}
+
+.modalArea {
+    display: flex;
+    width: 80%;
+    height: 80%;
+    flex-direction: column;
+    background-color: #fafafa;
+    border: 4px solid #dbdbdb;
+    border-radius: 10px;
+    padding: 4px;
+}
+
+.userArea {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background-color: #dbdbdb;
+    border-radius: 7px;
+    padding: 5px;
+}
+
+.navBox {
+    display: flex;
+
+}
+
+.navBtns {
+    width: 80px;
+    height: 30px;
+    background-color: #d4d4d4;
+    border: none;
+}
+
+.navBtns:nth-child(1) {
+    border-top-left-radius: 5px;
+}
+
+.navBtns:nth-last-child(1) {
+    border-top-right-radius: 5px;
+}
+
+.selectBtn {
+    background-color: #c9c9c9;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.usersBox {
+    display: flex;
+    flex-direction: column;
+    background-color: #c9c9c9;
+    width: 100%;
+    height: 100%;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+.userBox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.userInfoBox {
+    display: flex;
+    border: 1px solid black;
+    background-color: #fafafa;
+    border-radius: 10px;
+    width: 100%;
+    align-items: center;
+    padding: 5px;
+}
+
+.userInfoTitle {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.userInfo {
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+.userNo {
+    font-size: 30px;
+    margin-right: 10px;
+}

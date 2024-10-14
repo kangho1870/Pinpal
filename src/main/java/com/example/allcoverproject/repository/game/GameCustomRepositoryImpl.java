@@ -1,4 +1,4 @@
-package com.example.allcoverproject.repository;
+package com.example.allcoverproject.repository.game;
 
 
 import com.example.allcoverproject.entity.Game;
@@ -8,11 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class GameRepository {
+public class GameCustomRepositoryImpl implements GameCustomRepository {
+
+
+    private final JPAQueryFactory queryFactory;
 
     @Autowired
-    private JPAQueryFactory queryFactory;
+    public GameCustomRepositoryImpl(JPAQueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
 
+    @Override
     public Game findGameById(Long id) {
         QGame game = QGame.game;
         return queryFactory
@@ -20,4 +26,5 @@ public class GameRepository {
                 .where(game.id.eq(id))
                 .fetchOne();
     }
+
 }

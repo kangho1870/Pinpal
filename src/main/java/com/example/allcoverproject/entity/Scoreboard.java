@@ -54,6 +54,11 @@ public class Scoreboard {
     @ColumnDefault("false")
     private Boolean confirmedJoin;
 
+    @Column
+    private Integer team_number;
+
+    private int all_cover;
+
     public void setMember(Member member) {
         this.member = member;
         member.getScoreboards().add(this);
@@ -74,6 +79,9 @@ public class Scoreboard {
                 .sideGrade1(side_grade1)
                 .sideAvg(side_avg)
                 .confirmedJoin(confirmedJoin)
+                .teamNumber(team_number)
+                .ScoreCounting(game.getScoreCounting())
+                .gender(member.getGender())
                 .build();
     }
 }

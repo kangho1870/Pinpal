@@ -1,6 +1,6 @@
 package com.example.allcoverproject.entity;
 
-import com.example.allcoverproject.repository.MemberRepository;
+import com.example.allcoverproject.repository.member.MemberRepository;
 import com.example.allcoverproject.repository.scoreboard.ScoreboardRepository;
 import com.example.allcoverproject.type.GameType;
 import jakarta.persistence.EntityManager;

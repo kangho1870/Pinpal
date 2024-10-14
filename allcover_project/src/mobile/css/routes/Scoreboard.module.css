@@ -1,6 +1,9 @@
 .container {
     display: flex;
     flex-direction: column;
+    /* height: calc(var(--vh, 1vh) * 100); */
+    height: 100vh;
+    overflow-y: scroll;
 }
 
 .topBox {
@@ -20,9 +23,19 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
     padding: 3px;
-    border: 4px solid #dbdbdb;
+    border: 4px solid black;
     border-radius: 10px;
+
+}
+
+.navBox {
+    display: flex;
+    background-color: #dbdbdb;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
 }
 
 .navBtn {
@@ -30,16 +43,44 @@
     width: 80px;
     height: 25px;
     text-align: center;
-    background-color: #dbdbdb;
+    background-color: #004EA2;
+    color: white;
+    font-weight: 400;
+}
+
+.navBtn:nth-child(1) {
     border-top-left-radius: 5px;
+}
+
+.navBtn:nth-last-child(1) {
     border-top-right-radius: 5px;
+}
+
+.selectedBtn {
+    background-color: rgb(197, 89, 89);
+    /* border: 3px solid rgb(197, 89, 89); */
+    font-weight: 600;
+    height: 27px;
 }
 
 .contentsBox {
     display: flex;
-    background-color: #dbdbdb;
-    border-top-right-radius: 5px;
+    background-color: #fafafa;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
     overflow-y: scroll;
     width: 100%;
     height: 100%;
+    border: 2px solid black;
+}
+
+.modalArea {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.4);
 }

@@ -23,4 +23,7 @@ public class ScoreboardRespDto {
     private Boolean sideGrade1;
     private Boolean sideAvg;
     private Boolean confirmedJoin;
+    private Integer teamNumber;
+    private Boolean ScoreCounting;
+    private int gender;
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../../css/components/modal/GradeSettingModal.module.css";
 
-function GradeSettingModal({ members }) {
+function GradeSettingModal({ members, gameId, gradeSetModalToggle, reloadMembers }) {
     const [selectGrade, setSelectGrade] = useState(1);
     const [gradeBtns, setGradeBtns] = useState([1, 2, 3, 4, 5, 6]);
     const [updatedMembers, setUpdatedMembers] = useState([]);
@@ -33,9 +33,11 @@ function GradeSettingModal({ members }) {
     }
 
     const saveChanges = () => {
-        axios.post("/api/updateGrades", { updatedMembers })
+        axios.post(`/scoreboard/setGrade?gameId=${gameId}`, { updatedMembers })
             .then(response => {
                 console.log("변경 사항이 저장되었습니다.");
+                reloadMembers();
+                gradeSetModalToggle();
             })
             .catch(error => {
                 console.error("오류 발생!", error);
@@ -108,7 +110,7 @@ function GradeSettingModal({ members }) {
                         </div>
                     </div>
                     <div className={styles.btnBox}>
-                        <button className={styles.settingBtn}>취소</button>
+                        <button className={styles.settingBtn} onClick={gradeSetModalToggle}>취소</button>
                         <button className={styles.settingBtn} onClick={saveChanges}>
                             저장
                         </button>

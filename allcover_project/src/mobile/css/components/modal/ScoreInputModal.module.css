@@ -1,0 +1,100 @@
+.modalContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.closeBox {
+    display: flex;
+    justify-content: end;
+    font-size: 30px;
+    color: white;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.modalArea {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: #fafafa;
+    padding: 10px;
+}
+
+.scoreInputTitle {
+    display: flex;
+    width: 100%;
+    margin-left: 5px;
+}
+
+.inputArea {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.inputBox {
+    display: flex;
+    flex-direction: column;
+    background-color: #dbdbdb;
+    border-radius: 7px;
+    margin: 5px;
+}
+
+.gameTitle {
+    display: flex;
+    padding-left: 7px;
+    padding-top: 7px;
+}
+
+.scoreInput {
+    display: flex;
+    border: none;
+    background-color: #dbdbdb;
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    outline: none;
+    padding-bottom: 13px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.btnBox {
+    display: flex;
+    justify-content: center;
+
+}
+
+.btns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 38px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(173, 202, 246);
+    color: white;
+}
+
+.btns:nth-child(1) {
+    margin-right: 10px;
+    background-color: #fafafa;
+    border: 1px solid black;
+    color: black;
+}
+
+.redText {
+    color: red;
+}

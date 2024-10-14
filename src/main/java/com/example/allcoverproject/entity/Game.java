@@ -23,4 +23,6 @@ public class Game {
     private ClubMst clubMst;
 
     private String confirmedCode;
+
+    private Boolean scoreCounting;
 }

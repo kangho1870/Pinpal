@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import styles from "../css/components/WaitingRoom.module.css";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
-import GradeSettingModal from "./modal/GradeSettingModal";
 
-function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
+function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers, gradeSetModalToggle, teamSetModalToggle, confirmSetModalToggle, sideJoinSetModalToggle }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [sideGrade1, setSideGrade1] = useState(false);
     const [sideAvg, setSideAvg] = useState(false);
     const [confirmedJoin, setConfirmedJoin] = useState(false);
+
     const sideJoinBtns = ["grade1", "avg"];
 
     const findCurrentUser = () => {
@@ -36,6 +35,17 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
             });
     };
 
+    const scoreCountingStop = () => {
+        axios.post(`/scoreboard/stopScoreCounting?gameId=${gameId}`)
+            .then(response => {
+                console.log("ok")
+                reloadMembers();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
     return (
         <div className={styles.mainBox}>
             <div className={styles.contentsBox}>
@@ -49,8 +59,8 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
                                 </div>
                                 <div className={styles.nameCardBox}>
                                     <div className={styles.checkIcon}>
-                                        <i class="fa-regular fa-circle-check fa-xl"></i>
-                                        <h3 style={{ marginLeft: "10px" }}>{member.grade == 0 ? null : member.grade + "군"}</h3>
+                                        <i class="fa-regular fa-circle-check fa-xl" style={{color:"#63E6BE"}}></i>
+                                        <h3 style={{ marginLeft: "2px" }}>{member.grade == 0 ? null : member.grade + "군"}</h3>
                                     </div>
                                     <div className={styles.description}>
                                         <h2>{member.memberName}</h2>
@@ -74,7 +84,7 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
                                         <div className={styles.checkBox}>
                                             <h4>{v == "grade1" ? "1군 사이드" : "에버 사이드"}</h4>
                                         </div>
-                                        <button className={styles.sideJoinBtn}
+                                        <button className={`${styles.sideJoinBtn} ${v === "grade1" && sideGrade1 ? styles.sideJoinedBtn : ""} ${v === "avg" && sideAvg ? styles.sideJoinedBtn : ""}`}
                                             onClick={() => sideJoinBtnsClick(i)}>
                                             <h4>
                                                 {
@@ -89,7 +99,7 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
                             ))}
                             <div className={styles.settingBox}>
                                 <div className={styles.btnBox}>
-                                    <button className={styles.settingBtn}>
+                                    <button className={styles.settingBtn} onClick={confirmSetModalToggle}>
                                         <div><i class="fa-solid fa-user-check"></i></div>
                                     </button>
                                     <button className={styles.settingBtn}>
@@ -98,7 +108,7 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
                                 </div>
                             </div>
                             <div>
-                                <button className={styles.settingBtn2}>
+                                <button className={styles.settingBtn2} onClick={sideJoinSetModalToggle}>
                                     <div><h4>사이드 참가자</h4></div>
                                 </button>
                             </div>
@@ -109,9 +119,10 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
                     </div>
                     <div className={styles.userSettingBox}>
                         <div className={styles.gameSettingBox}>
-                            <button className={styles.settingBtn2}><div><h4>군 설정</h4></div></button>
-                            <button className={styles.settingBtn2}><div><h4>팀 설정</h4></div></button>
+                            <button className={styles.settingBtn2} onClick={gradeSetModalToggle}><div><h4>군 설정</h4></div></button>
+                            <button className={styles.settingBtn2} onClick={teamSetModalToggle}><div><h4>팀 설정</h4></div></button>
                         </div>
+                        <button className={styles.settingBtn2} onClick={scoreCountingStop}><div><h4>점수집계 종료</h4></div></button>
                     </div>
                     <div className={styles.settingBoxTitle}>
                         <h4>대기 볼러</h4>
@@ -138,9 +149,6 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers }) {
                             ))}
                     </div>
                 </div>
-            </div>
-            <div className={styles.modalArea}>
-                <GradeSettingModal members={members}></GradeSettingModal>
             </div>
         </div>
     )

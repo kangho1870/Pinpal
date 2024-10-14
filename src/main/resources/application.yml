@@ -7,6 +7,23 @@ spring:
     username: admin
     password: 85061621Tld!
     driver-class-name: org.mariadb.jdbc.Driver
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23lixx6twLpkqrUuSi
+            client-secret: 230e2dabd6e2f5a543f901b704e4c5c65df7654d
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+            authorization-grant-type: authorization_code
+            scope: read:user
+        # 인증서버 설정
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: id
 
   jpa:
     hibernate:
@@ -14,3 +31,5 @@ spring:
 #         ddlAuto: create-drop
          ddlAuto: update
 #         ddlAuto: validate
+jwt:
+  secret: mySecretKeyddawasdawdwadascczcxcsdw123455687

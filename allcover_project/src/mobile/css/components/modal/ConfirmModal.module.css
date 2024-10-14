@@ -1,0 +1,94 @@
+.modalContainer {
+    display: flex;
+    width: 70%;
+    background-color: #fafafa;
+    border: 4px solid #dbdbdb;
+    border-radius: 8px;
+    padding: 3px;
+}
+
+.modalBox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background-color: #dbdbdb;
+    border-radius: 8px;
+}
+
+.mainBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80%;
+    margin-bottom: 10px;
+}
+
+.title {
+    font-size: 24px;
+}
+
+.subTitle {
+    font-size: 10px;
+}
+
+.codeBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.codeInput {
+    width: 140px;
+    height: 25px;
+    border: none;
+    border-radius: 5px;
+    margin-top: 5px;
+    font-size: 15px;
+}
+
+.btnBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    margin-bottom: 5px;
+}
+
+.btn {
+    width: 100px;
+    height: 30px;
+    border: none;
+    border-radius: 10px;
+}
+
+.btn:nth-child(2) {
+    margin-left: 10px;
+    background-color: rgb(173, 202, 246);
+    color: white;
+}
+
+.resultModal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 200px;
+    height: 85px;
+    background-color: #dbdbdb;
+    border: 3px solid #8f8d8d;
+    border-radius: 10px;
+}
+
+.resultBtn {
+    width: 80%;
+    height: 30px;
+    background-color: rgb(173, 202, 246);
+    border: none;
+    border-radius: 7px;
+    margin-top: 8px;
+}
