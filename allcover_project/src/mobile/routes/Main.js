@@ -1,6 +1,13 @@
+import { useState } from "react";
 import styles from "../css/routes/Main.module.css";
 
 function Main() {
+
+    const [snsBtn, setSnsBtn] = useState(["kakao", "guest"])
+
+    const authBtnClickHandler = (sns) => {
+        window.location.href = `http://192.168.35.151:8000/ap1/v1/auth/sns-sign-in/${sns}`
+    };
 
     return (
         <>
@@ -22,12 +29,12 @@ function Main() {
                         </div>
                         <div className={styles.btnArea}>
                             <button className={styles.kakaoBtn}>
-                                <div className={styles.btnBox}>
+                                <div className={styles.btnBox} onClick={() => authBtnClickHandler("kakao")}>
                                     <img src={require("../../imges/login-img/kakao.png")} className={styles.kakaoImg}></img>
                                     <p>카카오로 계속하기</p>
                                 </div>
                             </button>
-                            <button className={styles.guestBtn}>
+                            <button className={styles.guestBtn} onClick={() => authBtnClickHandler("guest")}>
                                 <div className={styles.btnBox}>
                                     <div className={styles.geustIcon}>
                                         <i class="fa-solid fa-bowling-ball"></i>

@@ -12,12 +12,15 @@ import SideRankingModal from "../components/modal/SideRankingModal";
 import ScoreInputModal from "../components/modal/ScoreInputModal";
 import GameResult from "../components/GameResult";
 import TeamScoreboard from "../components/TeamScoreboard";
+import useStore from "../../stores/useSignInStore";
 
 function Scoreboard() {
+    const { signInUser } = useStore();
+
     const [searchParams] = useSearchParams();
     const gameId = searchParams.get('gameId');
     const clubId = searchParams.get('clubId');
-    const memberId = searchParams.get('memberId');
+    const memberId = signInUser.id;
     const [members, setMembers] = useState([]);
     const [gradeModal, setGradeModal] = useState(false);
     const [teamModal, setTeamModal] = useState(false);
