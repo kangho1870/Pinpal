@@ -21,6 +21,7 @@ public class ClubDtlResp {
     private String memberProfile;
     private String memberRole;
     private Integer memberAvg;
+    private String clubName;
 
     private ClubDtlResp(ClubDtl clubDtl) {
         this.memberId = clubDtl.getMember().getId();
@@ -28,6 +29,7 @@ public class ClubDtlResp {
         this.memberProfile = clubDtl.getMember().getProfile();
         this.memberRole = clubDtl.getRole();
         this.memberAvg = clubDtl.getAvg();
+        this.clubName = clubDtl.getClubMst().getName();
     }
 
     public static List<ClubDtlResp> getClubDtlList(List<ClubDtl> clubDtlList) {

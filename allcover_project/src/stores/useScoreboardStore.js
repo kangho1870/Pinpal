@@ -13,7 +13,7 @@ const useScoreboard = create(
       scoreInputModal: false,
       page: 0,
       navTitle: ['대기실', '점수표', '팀전', '시상'],
-      team1stMember: [],
+      team1stMember: {},
 
       setMembers: (data) => set({ members: data }),
       toggleGradeModal: () => set((state) => ({ gradeModal: !state.gradeModal })),

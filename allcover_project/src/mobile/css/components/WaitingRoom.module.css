@@ -99,7 +99,8 @@
 }
 
 .userSettingBox:nth-last-child(1) {
-    max-height: 300px;
+    min-height: 300px;
+    max-height: 400px;
     overflow-y: scroll;
 }
 
@@ -218,6 +219,17 @@
 
 .waitingSpan {
     font-size: 10px;
+}
+
+.memberProfile {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.memberBox {
+    display: flex;
+    justify-content: space-between;
 }
 
 .userInfo {

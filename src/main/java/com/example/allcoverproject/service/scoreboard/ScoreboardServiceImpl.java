@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -47,7 +48,6 @@ public class ScoreboardServiceImpl implements ScoreboardService{
         Member member = memberRepository.findMemberById(memberId);
         if(member == null) return CodeMessageRespDto.noExistMemberId();
         Game game = gameRepository.findGameById(gameId);
-        System.out.println("game123123 = " + game);
         if(game == null) return CodeMessageRespDto.noFundGame();
 
         Optional<Scoreboard> existingScoreboard = scoreboardRepository.findByGameIdAndMemberId(gameId, memberId);
@@ -75,9 +75,11 @@ public class ScoreboardServiceImpl implements ScoreboardService{
         try {
             if(sideType.equals("grade1")) {
                 byGameIdAndMemberId.get().setSide_grade1(!byGameIdAndMemberId.get().getSide_grade1());
+                byGameIdAndMemberId.get().setUpdateDate(LocalDateTime.now());
                 scoreboardRepository.save(byGameIdAndMemberId.get());
-            }else if(sideType.equals("grade2")) {
+            }else if(sideType.equals("avg")) {
                 byGameIdAndMemberId.get().setSide_avg(!byGameIdAndMemberId.get().getSide_avg());
+                byGameIdAndMemberId.get().setUpdateDate(LocalDateTime.now());
                 scoreboardRepository.save(byGameIdAndMemberId.get());
             }
         } catch (Exception e) {
@@ -96,6 +98,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
             if(confirmCode.equals(confirmedCode)) {
                 scoreboardRepository.findByGameIdAndMemberId(gameId, memberId).ifPresent(scoreboard -> {
                     scoreboard.setConfirmedJoin(true);
+                    scoreboard.setUpdateDate(LocalDateTime.now());
                     scoreboardRepository.save(scoreboard);
                 });
             }else {
@@ -127,6 +130,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
 
                 Scoreboard scoreboard = optionalScoreboard.get();
                 scoreboard.setGrade(grade);
+                scoreboard.setUpdateDate(LocalDateTime.now());
                 scoreboardsToUpdate.add(scoreboard);
             }
         } catch (Exception e) {
@@ -162,6 +166,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
 
                 Scoreboard scoreboard = optionalScoreboard.get();
                 scoreboard.setTeam_number(teamNumber);
+                scoreboard.setUpdateDate(LocalDateTime.now());
                 scoreboardsToUpdate.add(scoreboard);
             }
         } catch (Exception e) {
@@ -191,6 +196,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
             scoreboard.setGame_2(scores.getGame2Score());
             scoreboard.setGame_3(scores.getGame3Score());
             scoreboard.setGame_4(scores.getGame4Score());
+            scoreboard.setUpdateDate(LocalDateTime.now());
             scoreboardRepository.save(scoreboard);
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,6 +213,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
 
         try {
             game.setScoreCounting(false);
+            game.setUpdateDate(LocalDateTime.now());
         } catch (Exception e) {
             e.printStackTrace();
             return CodeMessageRespDto.databaseError();
@@ -231,6 +238,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
             if(allMembers.isEmpty()) return CodeMessageRespDto.noExistMemberData();
             for (Scoreboard scoreboard : allMembers) {
                 scoreboard.setStatus("DELETED");
+                scoreboard.setUpdateDate(LocalDateTime.now());
             }
             scoreboardRepository.saveAll(allMembers);
 

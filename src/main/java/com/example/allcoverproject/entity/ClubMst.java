@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "club_mst")
 @Getter
@@ -15,5 +17,8 @@ public class ClubMst {
     private Long id;
     private String name;
     private String description;
+
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
 
 }

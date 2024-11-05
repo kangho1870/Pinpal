@@ -33,7 +33,7 @@ function Scoreboard() {
     const [searchParams] = useSearchParams();
     const navigator = useNavigate();
     const gameId = searchParams.get('gameId');
-    const clubId = signInUser.clubId || null;
+    const clubId = signInUser.clubId;
 
     const loadMembers = () => {
         axios.get()
@@ -121,7 +121,7 @@ function Scoreboard() {
                         {page === 1 && (
                             <RankingBoard
                                 members={members}
-                                reloadMembers={loadMembers}
+                                getScoreboard={getScoreboard}
                                 sideRankingModalToggle={toggleSideRankingModal}
                                 scoreInputModalToggle={toggleScoreInputModal}
                             />

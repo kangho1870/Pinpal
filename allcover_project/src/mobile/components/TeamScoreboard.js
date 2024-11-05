@@ -52,9 +52,15 @@ export default function TeamScoreboard() {
         if (sortedTeams.length > 0) {
             // 1등 팀의 모든 멤버의 memberId 가져오기
             const topTeamMemberIds = sortedTeams[0]?.members.map(member => member.memberId);
+            const topTeamMemberMembers = sortedTeams[0]?.members.map(member => member);
+
+            const teamMember = {
+                ids: topTeamMemberIds,
+                members: topTeamMemberMembers
+            }
     
-            if (topTeamMemberIds) {
-                setTeam1stMember(topTeamMemberIds);
+            if (teamMember) {
+                setTeam1stMember(teamMember);
             }
         }
     }, [members])

@@ -89,8 +89,8 @@ function App() {
         return;
     }
 
-    const { memberId, id, clubId } = responseBody;
-    login({ memberId, id, clubId });
+    const { memberId, id, clubId, clubRole } = responseBody;
+    login({ memberId, id, clubId, clubRole });
   };
 
   useEffect(() => {

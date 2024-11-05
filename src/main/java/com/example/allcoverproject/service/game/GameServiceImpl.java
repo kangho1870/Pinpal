@@ -27,18 +27,10 @@ public class GameServiceImpl implements GameService {
     @Override
     public ResponseEntity<? super GetGameListRespDto> getGames(Long clubId) {
         List<Game> games = new ArrayList<>();
-        List<Tuple> tuples = new ArrayList<>();
-        List<Long> count = new ArrayList<>();
-        QGame qGame = QGame.game;
-        QScoreboard qScoreboard = QScoreboard.scoreboard;
+
         try {
 
-            tuples = gameRepository.findAllByClubId(clubId);
-            for (Tuple tuple : tuples) {
-                Game game = tuple.get(qGame);
-                count.add(tuple.get(qScoreboard.count()));
-                games.add(game);
-            }
+            games = gameRepository.findAllByClubMst_Id(clubId);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,7 +41,6 @@ public class GameServiceImpl implements GameService {
         try {
             
             games.forEach(game -> {
-                System.out.println("game = " + game.getId());
                 scoreboards.add(scoreboardRepository.findAllMembers(game.getId()));
             });
 
@@ -57,8 +48,7 @@ public class GameServiceImpl implements GameService {
             e.printStackTrace();
             return CodeMessageRespDto.databaseError();
         }
-        System.out.println("scoreboards.get(1) = " + scoreboards.get(1));
-        return GetGameListRespDto.success(games, count, scoreboards);
+        return GetGameListRespDto.success(games, scoreboards);
     }
 
     @Override

@@ -6,6 +6,7 @@ import useSignInStore from "../../stores/useSignInStore";
 import { scoreboardGameStop } from "../../apis";
 import { useCookies } from "react-cookie";
 import { ACCESS_TOKEN } from "../../constants";
+import noProfileUrl from "../../imges/user-img/no-profile-url.png";
 
 export default function GameResult() {
     const { signInUser } = useSignInStore();
@@ -16,6 +17,8 @@ export default function GameResult() {
     const [searchParams] = useSearchParams();
     const gameId = searchParams.get("gameId");
     const clubId = signInUser.clubId;
+    const roles = signInUser.clubRole.split(", ").map(role => role.trim());
+    
 
     const findCurrentUser = () => {
         const counting = members[0].scoreCounting;
@@ -48,7 +51,6 @@ export default function GameResult() {
                                 ((b.game2 || 0) - b.memberAvg) + 
                                 ((b.game3 || 0) - b.memberAvg) + 
                                 ((b.game4 || 0) - b.memberAvg);
-
                 return totalB - totalA;
             });
 
@@ -75,7 +77,7 @@ export default function GameResult() {
                 return totalB - totalA;
             });
 
-        return avgTopScoreMember[0]?.memberName || null; // undefined 방지
+        return avgTopScoreMember[0] || null; // undefined 방지
     }
 
     const getAvgTopScoreMemberId = () => {
@@ -106,9 +108,9 @@ export default function GameResult() {
             .filter(member => {
                 if (member.gender === gender) {
                     if (gender === 0) {
-                        return (member.game1 >= 230) || (member.game2 >= 230) || (member.game3 >= 230) || (member.game4 >= 230);
+                        return (member.game1 >= 230) || (member.game2 >= 230) || (member.game3 >= 230) || (member.game4 >= 230) ? member : null;
                     } else if (gender === 1) {
-                        return (member.game1 >= 200) || (member.game2 >= 200) || (member.game3 >= 200) || (member.game4 >= 200);
+                        return (member.game1 >= 200) || (member.game2 >= 200) || (member.game3 >= 200) || (member.game4 >= 200) ? member : null;
                     }
                 }
                 return false;
@@ -124,35 +126,58 @@ export default function GameResult() {
     };
 
     const avgTopScoreMember = getAvgTopScoreMember();
-
-    // 각 그룹별 1등 멤버 선택
-    const getGradeFirstMember = (grade) => {
-        const gradeMembers = getGrade1stMember(grade);
-        if(gradeMembers.length > 0) {
-            return gradeMembers[0]?.memberName; // 1등 멤버 선택
-        }
-    };
-
-    const grade1st = getGradeFirstMember(1);
-    const grade2st = getGradeFirstMember(2);
-    const grade3st = getGradeFirstMember(3);
-    const grade4st = getGradeFirstMember(4);
-
+    
     // 제외할 멤버 목록 업데이트
     const excludedNames = [
         sortedMembers[0]?.memberName,
-        grade1st,
-        grade2st,
-        grade3st,
-        grade4st
-    ].filter(Boolean); // undefined 제거
+    ]; // undefined 제거
+
 
     const getGradeFirstMemberId = (grade) => {
         const gradeMembers = getGrade1stMember(grade);
         if(gradeMembers.length > 0) {
-            return gradeMembers[0]?.memberId; // 1등 멤버 선택
+            return;
         }
     };
+
+    const getTopMembersByGrade = (members) => {
+        const grades = [1, 2, 3, 4, 5, 6]; // 각 군의 등급
+        const finalGrades = [];
+    
+        // 각 군별로 멤버를 필터링하고 점수 계산
+        grades.forEach((grade) => {
+            const gradeMembers = members.filter(member => member.grade === grade);
+    
+            // 멤버가 존재하는지 확인
+            if (gradeMembers.length === 0) {
+                finalGrades.push(null); // 해당 군에 멤버가 없으면 null 추가
+                return;
+            }
+    
+            // 각 멤버의 점수를 계산
+            gradeMembers.forEach(member => {
+                member.totalScore = (member.game1 || 0 - member.memberAvg) + (member.game2 || 0 - member.memberAvg) + 
+                                    (member.game3 || 0 - member.memberAvg) + (member.game4 || 0 - member.memberAvg);
+            });
+    
+            // 점수에 따라 내림차순 정렬
+            gradeMembers.sort((a, b) => a.totalScore - b.totalScore);
+    
+            gradeMembers.forEach(member => {
+                if(!excludedNames.includes(member.memberName)) {
+                    finalGrades.push(member);
+                    excludedNames.push(member.memberName)
+                }
+            })
+            
+        });
+    
+        return finalGrades;
+    };
+    
+    // 사용 예시
+    
+    const topMembers = getTopMembersByGrade(members);
 
     const grade1stId = getGradeFirstMemberId(1);
     const grade2stId = getGradeFirstMemberId(2);
@@ -162,7 +187,7 @@ export default function GameResult() {
     // 남자 하이스코어 멤버 선택 (grade1~4st 제외)
     const maleMembers = getHighScoreMember(0).filter(member => !excludedNames.includes(member.memberName));
     const highScoreOfMan = maleMembers.length > 0 
-        ? maleMembers[0]?.memberName || '-' 
+        ? maleMembers[0] || '-' 
         : '-';
     const highScoreOfManId = maleMembers.length > 0 
     ? maleMembers[0]?.memberId || null 
@@ -171,7 +196,7 @@ export default function GameResult() {
     // 여자 하이스코어 멤버 선택 (grade1~4st 제외)
     const femaleMembers = getHighScoreMember(1).filter(member => !excludedNames.includes(member.memberName));
     const highScoreOfGirl = femaleMembers.length > 0 
-        ? femaleMembers[0]?.memberName || '-' 
+        ? femaleMembers[0] || '-' 
         : '-';
     const highScoreOfGirlId = femaleMembers.length > 0 
     ? femaleMembers[0]?.memberId || null 
@@ -215,63 +240,90 @@ export default function GameResult() {
 
     return (
         <div className={styles.container}>
-            {scoreCounting === false && sortedMembers.length > 0 ? (
+            {scoreCounting === false && sortedMembers?.length > 0 ? (
                 <div className={styles.mainArea}>
                     <div className={styles.gameResultBox}>
                         <div className={styles.total1stBox}>
-                            <img className={styles.total1stImg} src={require("../../imges/gameResult-img/1st-PNG.png")} alt="총핀 1위" />
+                            <img className={styles.total1stImg} src={require("../../imges/gameResult-img/1st-PNG.png")} alt="총핀 1위"/>
                             <div className={styles.memberBox}>
                                 <p>총핀 1위 :</p>
-                                <h3>{sortedMembers[0]?.memberName || '-'}</h3>
+                                <div className={styles.memberProfileBox}>
+                                    <img className={styles.memberProfile} src={sortedMembers[0]?.memberProfile || noProfileUrl}></img>
+                                    <h3>{sortedMembers[0]?.memberName || '-'}</h3>
+                                </div>
                             </div>
                         </div>
+                        <div className={styles.total1stBox}>
+                            <img className={styles.total1stImg} src={require("../../imges/gameResult-img/1st-PNG.png")} alt="에버 1위"/>
+                            <div className={styles.memberBox}>
+                                <p>에버 1위 :</p>
+                                <div className={styles.memberProfileBox}>
+                                    <img className={styles.memberProfile} src={avgTopScoreMember?.memberProfile || noProfileUrl}></img>
+                                    <h3>{avgTopScoreMember?.memberName || '-'}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        {/* 각 군 1위에 대한 섹션 */}
                         <div className={styles.grade1stBox}>
                             <div className={styles.grade1stArea}>
-                                <img className={styles.grade1stImg} src={require("../../imges/gameResult-img/grade1st-PNG.png")} alt="군 1위" />
+                                <img className={styles.grade1stImg} src={require("../../imges/gameResult-img/grade1st-PNG.png")} alt="군 1위"/>
                                 <div className={styles.memberBox}>
-                                    <div className={styles.member}>
-                                        <p className={styles.grade1stTitle}>1군</p>
-                                        <h3 className={styles.grade1stInfo}>{grade1st || '-'}</h3>
-                                    </div>
-                                    <div className={styles.member}>
-                                        <p className={styles.grade1stTitle}>2군</p>
-                                        <h3 className={styles.grade1stInfo}>{grade2st || '-'}</h3>
-                                    </div>
-                                    <div className={styles.member}>
-                                        <p className={styles.grade1stTitle}>3군</p>
-                                        <h3 className={styles.grade1stInfo}>{grade3st || '-'}</h3>
-                                    </div>
-                                    <div className={styles.member}>
-                                        <p className={styles.grade1stTitle}>4군</p>
-                                        <h3 className={styles.grade1stInfo}>{grade4st || '-'}</h3>
-                                    </div>
-                                    <div className={styles.member}>
-                                        <p className={styles.grade1stTitle}>5군</p>
-                                        <h3 className={styles.grade1stInfo}>강호</h3>
-                                    </div>
+                                    {topMembers.map((grade, index) => (
+                                        <div className={styles.member} key={index}>
+                                            <p className={styles.grade1stTitle}>{index + 1}군</p>
+                                            <div className={styles.memberProfileBox}>
+                                                <img className={styles.memberProfile} src={grade?.memberProfile || noProfileUrl} />
+                                                <h3 className={styles.grade1stInfo}>{grade?.memberName || '-'}</h3>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
                         <div className={styles.highScoreArea}>
                             <div className={styles.highScoreBox}>
-                                <img className={styles.highScoreImg} src={require("../../imges/gameResult-img/highScore-png.png")} alt="하이스코어" />
+                                <img className={styles.highScoreImg} src={require("../../imges/gameResult-img/highScore-png.png")} alt="하이스코어"/>
                                 <div>
                                     <div className={styles.memberBox}>
                                         <p className={styles.grade1stTitle}>남자 하이스코어 :</p>
-                                        <h3 className={styles.grade1stInfo}>{highScoreOfMan}</h3>
+                                        <div className={styles.memberProfileBox}>
+                                            <img className={styles.memberProfile} src={highScoreOfMan?.memberProfile || noProfileUrl}></img>
+                                            <h3 className={styles.grade1stInfo}>{highScoreOfMan?.memberName || '-'}</h3>
+                                        </div>
                                     </div>
                                     <div className={styles.memberBox}>
                                         <p className={styles.grade1stTitle}>여자 하이스코어 :</p>
-                                        <h3 className={styles.grade1stInfo}>{highScoreOfGirl}</h3>
+                                        <div className={styles.memberProfileBox}>
+                                            <img className={styles.memberProfile} src={highScoreOfGirl?.memberProfile || noProfileUrl}></img>
+                                            <h3 className={styles.grade1stInfo}>{highScoreOfGirl?.memberName || '-'}</h3>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div className={styles.grade1stBox}>
+                            <div className={styles.grade1stArea}>
+                                <img className={styles.grade1stImg} src={require("../../imges/gameResult-img/grade1st-PNG.png")} alt="팀 1등"/>
+                                <p>팀 1등</p>
+                                <div className={styles.memberBox}>
+                                    {team1stMember?.members?.map((member, index) => (
+                                        <div className={styles.member} key={index}>
+                                            <div className={styles.memberProfileBox}>
+                                                <img className={styles.memberProfile} src={member?.memberProfile || noProfileUrl}></img>
+                                                <h3 className={styles.grade1stInfo}>{member?.memberName || '-'}</h3>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        {roles?.includes("STAFF") && 
+                            <button className={styles.gameStopBtn} onClick={stopGameRequest}>게임 종료</button>
+                        }
                     </div>
-                    <button className={styles.gameStopBtn} onClick={stopGameRequest}>게임 종료</button>
                 </div>
             ) : (
-                <Loading></Loading>
+                <Loading />
             )}
         </div>
     );

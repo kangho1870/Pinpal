@@ -37,9 +37,9 @@
 .scoreCard1 {
     display: flex;
     flex: 1;
-    border: 1px solid #f0d7ac;
+    border: 1px solid #8cb0ce;
     border-radius: 8px;
-    background-color: #fff6e6;
+    background-color: #fafafa;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -51,7 +51,7 @@
     flex: 1;
     border: 1px solid #aaf388;
     border-radius: 8px;
-    background-color: #e4f8db;
+    background-color: #fafafa;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -63,7 +63,7 @@
     flex: 1;
     border: 1px solid #8ce6f6;
     border-radius: 8px;
-    background-color: #d7f5fa;
+    background-color: #fafafa;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -75,7 +75,7 @@
     flex: 1;
     border: 1px solid #f898f8;
     border-radius: 8px;
-    background-color: #fee3fe;
+    background-color: #fafafa;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -87,7 +87,7 @@
     flex: 1;
     border: 1px solid #ffc78f;
     border-radius: 8px;
-    background-color: #fee3fe;
+    background-color: #fafafa;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -99,7 +99,7 @@
     flex: 1;
     border: 1px solid #98ffdb;
     border-radius: 8px;
-    background-color: #fee3fe;
+    background-color: #fafafa;
     justify-content: space-between;
     align-items: center;
     width: 100%;

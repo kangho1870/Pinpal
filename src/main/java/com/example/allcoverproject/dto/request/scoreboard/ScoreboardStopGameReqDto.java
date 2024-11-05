@@ -3,6 +3,7 @@ package com.example.allcoverproject.dto.request.scoreboard;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class ScoreboardStopGameReqDto {
@@ -16,5 +17,5 @@ public class ScoreboardStopGameReqDto {
     private Long grade4st;
     private Long highScoreOfMan;
     private Long highScoreOfGirl;
-    private List<Long> team1stIds;
+    private Map<String, List<Object>> team1stIds;
 }

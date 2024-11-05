@@ -69,7 +69,9 @@ public class Ceremony {
         this.grade3_1stId = scoreboardStopGameReqDto.getGrade3st();
         this.grade4_1stId = scoreboardStopGameReqDto.getGrade4st();
         this.avg1stId = scoreboardStopGameReqDto.getAvgTopScoreMember();
-        this.team1stIds = scoreboardStopGameReqDto.getTeam1stIds();
+        scoreboardStopGameReqDto.getTeam1stIds().get("ids").forEach(id -> {
+            team1stIds.add((Long) id);
+        });
         this.highScoreOfMan = scoreboardStopGameReqDto.getHighScoreOfMan();
         this.highScoreOfGirl = scoreboardStopGameReqDto.getHighScoreOfGirl();
     }

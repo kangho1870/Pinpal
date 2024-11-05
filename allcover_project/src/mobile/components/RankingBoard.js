@@ -1,8 +1,14 @@
 import { useState } from "react";
+import 'animate.css';
 import styles from "../css/components/RankingBoard.module.css";
+import useScoreboard from "../../stores/useScoreboardStore";
+import useSignInStore from "../../stores/useSignInStore";
 
-function RankingBoard({ members, sideRankingModalToggle, scoreInputModalToggle }) {
-    const [scoreInputModal, setScoreInputModal] = useState(false);
+function RankingBoard({ sideRankingModalToggle, scoreInputModalToggle }) {
+
+    const { members } = useScoreboard();
+    const { signInUser } = useSignInStore();
+    const memberId = signInUser.id;
 
     const getCardClass = (grade) => {
         switch (grade) {
@@ -56,7 +62,7 @@ function RankingBoard({ members, sideRankingModalToggle, scoreInputModalToggle }
                             <div className={styles.scoreCardTitle}>
                                 <h3>{index + 1}</h3>
                             </div>
-                            <div className={`${styles.scoreCardTitle} ${getCardClass(member.grade)}`}>
+                            <div className={`${styles.scoreCardTitle} ${getCardClass(member.grade)} ${memberId === member.memberId ? "animate__animated animate__pulse animate__infinite" : ""}`}>
                                 <div className={styles.memberCardBox}>
                                     <div className={styles.memberCard}>
                                         <span className={styles.infoTitle}>군</span>
@@ -116,7 +122,7 @@ function RankingBoard({ members, sideRankingModalToggle, scoreInputModalToggle }
                                 </div>
                             </div>
                             <div className={styles.scoreWith}>
-                                <h4>{index === 0 ? "-" : `-${scoreDifference}`}</h4>
+                                <h4>{index === 0 || scoreDifference === 0 ? "-" : `-${scoreDifference}`}</h4>
                             </div>
                         </div>
                     );

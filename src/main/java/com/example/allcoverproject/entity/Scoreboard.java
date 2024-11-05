@@ -64,6 +64,8 @@ public class Scoreboard {
     @Column
     private Integer team_number;
 
+    private String member_profile;
+
     private int all_cover;
 
     private String status;
@@ -86,6 +88,7 @@ public class Scoreboard {
         this.setSide_avg(false);
         this.setSide_grade1(false);
         this.setConfirmedJoin(false);
+        this.member_profile = member.getProfile();
         this.status = "ACTIVE";
         this.setCreateDate(LocalDateTime.now());
         this.setUpdateDate(LocalDateTime.now());

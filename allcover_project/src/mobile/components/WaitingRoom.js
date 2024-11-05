@@ -24,13 +24,14 @@ function WaitingRoom({ getScoreboard }) {
     const [confirmedJoin, setConfirmedJoin] = useState(false);
     const memberId = signInUser.id;
     const gameId = searchParams.get("gameId");
+    const roles = signInUser.clubRole.split(", ").map(role => role.trim());
     
 
     const sideJoinBtns = ["grade1", "avg"];
 
     const findCurrentUser = () => {
         const user = members.find(member => member.memberId == memberId);
-
+        console.log(members)
         if(user) {
             setSideGrade1(user.sideGrade1);
             setSideAvg(user.sideAvg);
@@ -133,16 +134,20 @@ function WaitingRoom({ getScoreboard }) {
                             </div>
                         </div>
                     </div>
-                    <div className={styles.settingBoxTitle}>
-                        <h4>게임 설정</h4>
-                    </div>
-                    <div className={styles.userSettingBox}>
-                        <div className={styles.gameSettingBox}>
-                            <button className={styles.settingBtn2} onClick={toggleGradeModal}><div><h4>군 설정</h4></div></button>
-                            <button className={styles.settingBtn2} onClick={toggleTeamModal}><div><h4>팀 설정</h4></div></button>
-                        </div>
-                        <button className={styles.settingBtn2} onClick={scoreCountingStop}><div><h4>점수집계 종료</h4></div></button>
-                    </div>
+                    {roles.includes("STAFF") &&
+                        <>
+                            <div className={styles.settingBoxTitle}>
+                                <h4>게임 설정</h4>
+                            </div>
+                            <div className={styles.userSettingBox}>
+                                <div className={styles.gameSettingBox}>
+                                    <button className={styles.settingBtn2} onClick={toggleGradeModal}><div><h4>군 설정</h4></div></button>
+                                    <button className={styles.settingBtn2} onClick={toggleTeamModal}><div><h4>팀 설정</h4></div></button>
+                                </div>
+                                <button className={styles.settingBtn2} onClick={scoreCountingStop}><div><h4>점수집계 종료</h4></div></button>
+                            </div>
+                        </>
+                    }
                     <div className={styles.settingBoxTitle}>
                         <h4>대기 볼러</h4>
                     </div>
@@ -157,7 +162,10 @@ function WaitingRoom({ getScoreboard }) {
                                     <div className={styles.waitingUserInfoBox}>
                                         <div className={styles.waitingUserDesBox}>
                                             <span className={styles.waitingSpan}>name</span>
-                                            <h4 className={styles.userInfo}>{member.memberName}</h4>
+                                            <div className={styles.memberBox}>
+                                                <img className={styles.memberProfile} src={member.memberProfile}></img>
+                                                <h4 className={styles.userInfo}>{member.memberName}</h4>
+                                            </div>
                                         </div>
                                         <div className={styles.waitingUserDesBox}>
                                             <span className={styles.waitingSpan}>avg</span>

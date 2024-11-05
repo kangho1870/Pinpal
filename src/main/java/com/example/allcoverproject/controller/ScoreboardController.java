@@ -46,6 +46,7 @@ public class ScoreboardController {
 
     @PostMapping("/joinSide")
     public ResponseEntity<CodeMessageRespDto> joinSide(@RequestParam Long gameId, @RequestParam Long memberId, @RequestParam String sideType) {
+        System.out.println("sideType = " + sideType);
         ResponseEntity<CodeMessageRespDto> response = scoreboardService.joinSideGame(gameId, memberId, sideType);
         return response;
     }

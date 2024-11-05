@@ -23,6 +23,7 @@ public class ScoreboardResp {
     private Boolean confirmedJoin;
     private Integer teamNumber;
     private Boolean scoreCounting;
+    private String memberProfile;
     private int gender;
 
     private ScoreboardResp(Scoreboard scoreboard) {
@@ -42,6 +43,7 @@ public class ScoreboardResp {
         this.teamNumber = scoreboard.getTeam_number();
         this.scoreCounting = scoreboard.getGame().getScoreCounting();
         this.gender = scoreboard.getMember().getGender();
+        this.memberProfile = scoreboard.getMember().getProfile();
     }
 
     public static List<ScoreboardResp> getList(List<Scoreboard> scoreboards) {

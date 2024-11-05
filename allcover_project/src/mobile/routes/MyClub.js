@@ -7,22 +7,106 @@ import { useNavigate } from "react-router-dom";
 import { onClickBackBtn } from "../../hooks";
 import { addGameRequest, getCeremonysListRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
 import Loading from "../components/loading/Loading";
+import useClubStore from "../../stores/useClubStore";
 
 function MyClub() {
 
+    const { members, setMembers, setCeremonys, setGames } = useClubStore();
     const { signInUser, setSignInUser } = useSignInStore();
     const [loading, setLoading] = useState(false);
     const [addGameModal, setAddGameModal] = useState(false);
     const navigator = useNavigate();
     const [cookies] = useCookies();
     const token = cookies[ACCESS_TOKEN];
-    const [page, setPage] = useState(1);
-    const clubId = signInUser.clubId || 0;
+    const [page, setPage] = useState(0);
+    const clubId = signInUser.clubId;
+    const roles = signInUser.clubRole.split(", ").map(role => role.trim()) || null;
+    const [clubName, setClubName] = useState("");
+
+    const getMembersResponse = (responseBody) => {
+
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = responseBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        const { members } = responseBody
+        setMembers(members)
+        setLoading(false);
+    }
+
+    const getMembersRequest = () => {
+        setLoading(true);
+        getMemberListRequest(clubId, token).then(getMembersResponse)
+    }
 
 
     const addGameModalBtnClickHandler = () => {
         setAddGameModal(!addGameModal);
     }
+
+    const getCeremonysListResponse = (responseBody) => {
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = responseBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        const { ceremonys } = responseBody
+
+        setCeremonys(ceremonys);
+    }
+
+    const getCeremonysList = () => {
+        getCeremonysListRequest(clubId, token).then(getCeremonysListResponse);
+    }
+
+    const getGamesResponse = (responseBody) => {
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = responseBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        const { games } = responseBody
+        setGames(games)
+        setLoading(false);
+    }
+
+    const getGamesRequest = () => {
+        setLoading(true);
+        getGameListRequest(clubId, token).then(getGamesResponse);
+    }
+
+    const getClubName = () => {
+        if (members && members.length > 0) {  // members가 존재하고 길이가 0보다 클 때만 실행
+            setClubName(members[0].clubName);
+        }
+    };
+
+    useEffect(() => {
+        if(cookies[ACCESS_TOKEN] == null) {
+            alert("로그인이 필요한 서비스입니다.");
+            navigator(ROOT_PATH);
+        }
+        getMembersRequest();
+        getCeremonysList();
+        getGamesRequest();
+        getClubName();
+    },[])
 
     return (
         <>
@@ -30,7 +114,7 @@ function MyClub() {
                 <div className={styles.top}>
                     <div className={styles.clubTitle}>
                         <div className={styles.topCategory} onClick={() => onClickBackBtn(navigator)}><i class="fa-solid fa-chevron-left"></i></div>
-                        <span className={styles.topCategory}>test</span>
+                        <span className={styles.topCategory}>{clubName}</span>
                         <div className={styles.topCategory}><i class="fa-solid fa-right-from-bracket"></i></div>
                     </div>
                     <div className={styles.clubNav}>
@@ -42,10 +126,10 @@ function MyClub() {
                 </div>
                 <div className={styles.contextArea}>
                 {signInUser && signInUser.clubId !== null && page == 0 &&
-                    <ClubHome setLoading={setLoading}></ClubHome>
+                    <ClubHome setLoading={setLoading} getGamesRequest={getGamesRequest}></ClubHome>
                 }
                 {signInUser && signInUser.clubId !== null && page == 1 &&
-                    <ClubCeremony></ClubCeremony>
+                    <ClubCeremony setLoading={setLoading}></ClubCeremony>
                 }
                 {!signInUser && signInUser.clubId == null &&
                     <div className={styles.noClubContainer}>
@@ -55,15 +139,17 @@ function MyClub() {
                     
                 </div>
             </div>
-            <div className={styles.modalContainer}>
-                <div className={styles.modalBox}>
-                    <div className={styles.modal} onClick={addGameModalBtnClickHandler}>
-                        <i className="fa-solid fa-plus"></i>
-                        <span className={styles.title}>게임 생성</span>
+            {page === 0 && roles.includes("STAFF") &&
+                <div className={styles.modalContainer}>
+                    <div className={styles.modalBox}>
+                        <div className={styles.modal} onClick={addGameModalBtnClickHandler}>
+                            <i className="fa-solid fa-plus"></i>
+                            <span className={styles.title}>게임 생성</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {addGameModal &&
+            }
+            {addGameModal && roles.includes("STAFF") &&
                 <div className={styles.addGameModal}>
                     <AddGameModal clubId={clubId} token={token} addGameModalBtnClickHandler={addGameModalBtnClickHandler}></AddGameModal>
                 </div>
@@ -77,15 +163,13 @@ function MyClub() {
 
 export default MyClub;
 
-function ClubHome({ setLoading }) {
+function ClubHome({ setLoading, getGamesRequest }) {
 
+    const { members, ceremonys, games } = useClubStore();
     const { signInUser, setSignInUser } = useSignInStore();
     const navigator = useNavigate();
     const [cookies] = useCookies();
     const token = cookies[ACCESS_TOKEN];
-    const [games, setGames] = useState([]);
-    const [members, setMembers] = useState([]);
-
 
     const clubId = signInUser.clubId || 0;
     const memberId = signInUser.id || null;
@@ -119,52 +203,6 @@ function ClubHome({ setLoading }) {
         return formattedDate.replace(/\./g, '/').replace(') ', ')').replace('/(', ' (');
     };
 
-
-
-    const getGamesResponse = (responseBody) => {
-        const message = 
-        !responseBody ? '서버에 문제가 있습니다.' :
-        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
-        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
-
-        const isSuccessed = responseBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
-        }
-        const { games } = responseBody
-        setGames(games)
-        console.log(games)
-        setLoading(false);
-    }
-
-    const getGamesRequest = () => {
-        setLoading(true);
-        getGameListRequest(clubId, token).then(getGamesResponse);
-    }
-
-    const getMembersResponse = (responseBody) => {
-
-        const message = 
-        !responseBody ? '서버에 문제가 있습니다.' :
-        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
-        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
-
-        const isSuccessed = responseBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
-        }
-        const { members } = responseBody
-        setMembers(members)
-        setLoading(false);
-    }
-
-    const getMembersRequest = () => {
-        setLoading(true);
-        getMemberListRequest(clubId, token).then(getMembersResponse)
-    }
-
     const scoreboardJoinResponse = (responseBody) => {
 
         const message = 
@@ -195,9 +233,7 @@ function ClubHome({ setLoading }) {
             alert("로그인이 필요한 서비스입니다.");
             navigator(ROOT_PATH);
         }
-        getMembersRequest();
-        getGamesRequest();
-    },[])
+    },[clubId])
 
     return (
         <>
@@ -225,80 +261,101 @@ function ClubHome({ setLoading }) {
                 <h3>클럽 일정</h3>
             </div>
             <div className={`${styles.clubSchedule} ${styles.commonDiv}`}>
-                {games.map((game, index) => (
-                    <div className={styles.scheduleBox}>
-                        <div className={styles.scheduleTitle}>
-                            <p>{game.gameName}</p>
-                            <div className={styles.scheduleTitle}>
-                                <h5>{formatShortDate(game.gameDate)}</h5>
-                                {game.members.filter((member) => member.memberId === memberId).length > 0 ? (
-                                    <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
-                                ) : (
-                                    <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
-                                )}
-                            </div>
-                        </div>
-                        <div className={styles.scheduleContnet}>
-                            <div className={styles.imgBox}>
-                                <img className={styles.scheduleImg} src={require("../../imges/club/bowlingGame.png")}></img>
-                            </div>
-                            <div className={styles.scheduleDescriptionArea}>
-                                <div className={styles.scheduleDescriptionBox}>
-                                    <span className={styles.descriptionSubTitle}>일시:</span>
-                                    <h5 className={styles.descriptionSubContent}>{formatDateTime(game.gameDate, game.gameTime)}</h5>
+                {games.length > 0 ? (
+                    games.map((game, index) => (
+                        <>
+                            <div className={styles.scheduleBox}>
+                                <div className={styles.scheduleTitle}>
+                                    <p>{game.gameName}</p>
+                                    <div className={styles.scheduleTitle}>
+                                        <h5>{formatShortDate(game.gameDate)}</h5>
+                                        {game.members.filter((member) => member.memberId === memberId).length > 0 ? (
+                                            <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
+                                        ) : (
+                                            <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className={styles.scheduleDescriptionBox}>
-                                    <span className={styles.descriptionSubTitle}>장소:</span>
-                                    <h5 className={styles.descriptionSubContent}>서면볼링센터</h5>
+                                <div className={styles.scheduleContnet}>
+                                    <div className={styles.imgBox}>
+                                        <img className={styles.scheduleImg} src={require("../../imges/club/bowlingGame.png")}></img>
+                                    </div>
+                                    <div className={styles.scheduleDescriptionArea}>
+                                        <div className={styles.scheduleDescriptionBox}>
+                                            <span className={styles.descriptionSubTitle}>일시:</span>
+                                            <h5 className={styles.descriptionSubContent}>{formatDateTime(game.gameDate, game.gameTime)}</h5>
+                                        </div>
+                                        <div className={styles.scheduleDescriptionBox}>
+                                            <span className={styles.descriptionSubTitle}>장소:</span>
+                                            <h5 className={styles.descriptionSubContent}>서면볼링센터</h5>
+                                        </div>
+                                        <div className={styles.scheduleDescriptionBox}>
+                                            <span className={styles.descriptionSubTitle}>참석:</span>
+                                            <h5 className={styles.descriptionSubContent}>{game.members.length + "명"}</h5>
+                                        </div>
+                                        <button className={styles.scoreboard} onClick={() => scheduleOnClickHandler(game.gameId)}>점수판</button>
+                                    </div>
                                 </div>
-                                <button className={styles.scoreboard} onClick={() => scheduleOnClickHandler(game.gameId)}>점수판</button>
                             </div>
-                        </div>
-                    </div>
-                ))}
+                            <div className={styles.memberProfileContainer}>
+                                {game.members.map((member, i) => (
+                                    <img className={styles.memberProfileImg} src={member.memberProfile}></img>
+                                ))}
+                            </div>
+                        </>
+                    ))
+                )
+                : ("")
+            }
             </div>
             <div className={styles.divSection}></div>
             <div className={styles.title}>
                 <h3>최근 게임</h3>
             </div>
             <div className={`${styles.clubRecentGame} ${styles.commonDiv}`}>
-                <div className={styles.recentGameBox}>
-                    <p>제 41회 정모</p>
-                    <div className={styles.recentGameCeremony}>
-                        <div className={styles.recentGameDescriptionBox}>
-                            <span className={styles.recentGameSubTitle}>1등</span>
-                            <h5 className={styles.recentGameSubContent}>강호</h5>
+                {ceremonys.length > 0 ? (
+                    ceremonys.map((ceremony, i) => (
+                        <div className={styles.recentGameBox}>
+                            <p>{ceremony.gameName}</p>
+                            <div className={styles.recentGameCeremony}>
+                                <div className={styles.recentGameDescriptionBox}>
+                                    <span className={styles.recentGameSubTitle}>1등</span>
+                                    <h5 className={styles.recentGameSubContent}>{ceremony.total1stId}</h5>
+                                </div>
+                                <div className={styles.recentGameDescriptionBox}>
+                                    <span className={styles.recentGameSubTitle}>에버1등</span>
+                                    <h5 className={styles.recentGameSubContent}>{ceremony.avg1stId}</h5>
+                                </div>
+                            </div>
+                            <div className={styles.recentGameCeremony}>
+                                <div className={styles.recentGameDescriptionBox}>
+                                    <span className={styles.recentGameSubTitle}>1군 1등</span>
+                                    <h5 className={styles.recentGameSubContent}>{ceremony.grade1_1stId == "" ? "-" : ceremony.grade1_1stId}</h5>
+                                </div>
+                                <div className={styles.recentGameDescriptionBox}>
+                                    <span className={styles.recentGameSubTitle}>2군 1등</span>
+                                    <h5 className={styles.recentGameSubContent}>{ceremony.grade2_1stId == "" ? "-" : ceremony.grade2_1stId}</h5>
+                                </div>
+                            </div>
+                            <div className={styles.recentGameCeremony}>
+                                <div className={styles.recentGameDescriptionBox}>
+                                    <span className={styles.recentGameSubTitle}>3군 1등</span>
+                                    <h5 className={styles.recentGameSubContent}>{ceremony.grade3_1stId == "" ? "-" : ceremony.grade3_1stId}</h5>
+                                </div>
+                                <div className={styles.recentGameDescriptionBox}>
+                                    <span className={styles.recentGameSubTitle}>4군 1등</span>
+                                    <h5 className={styles.recentGameSubContent}>{ceremony.grade4_1stId == "" ? "-" : ceremony.grade4_1stId}</h5>
+                                </div>
+                            </div>
+                            <div className={styles.recentGameTeamCeremony}>
+                                <span className={styles.recentGameSubTitle}>팀 1등</span>
+                                <h5 className={styles.recentGameSubContent}>{ceremony.team1stIds}</h5>
+                            </div>
                         </div>
-                        <div className={styles.recentGameDescriptionBox}>
-                            <span className={styles.recentGameSubTitle}>슈퍼히어로</span>
-                            <h5 className={styles.recentGameSubContent}>강호</h5>
-                        </div>
-                    </div>
-                    <div className={styles.recentGameCeremony}>
-                        <div className={styles.recentGameDescriptionBox}>
-                            <span className={styles.recentGameSubTitle}>1군 1등</span>
-                            <h5 className={styles.recentGameSubContent}>강호</h5>
-                        </div>
-                        <div className={styles.recentGameDescriptionBox}>
-                            <span className={styles.recentGameSubTitle}>2군 1등</span>
-                            <h5 className={styles.recentGameSubContent}>강호</h5>
-                        </div>
-                    </div>
-                    <div className={styles.recentGameCeremony}>
-                        <div className={styles.recentGameDescriptionBox}>
-                            <span className={styles.recentGameSubTitle}>3군 1등</span>
-                            <h5 className={styles.recentGameSubContent}>강호</h5>
-                        </div>
-                        <div className={styles.recentGameDescriptionBox}>
-                            <span className={styles.recentGameSubTitle}>4군 1등</span>
-                            <h5 className={styles.recentGameSubContent}>강호</h5>
-                        </div>
-                    </div>
-                    <div className={styles.recentGameTeamCeremony}>
-                        <span className={styles.recentGameSubTitle}>팀 1등</span>
-                        <h5 className={styles.recentGameSubContent}>강호, 강호, 강호, 강호, 강호</h5>
-                    </div>
-                </div>
+                    ))): 
+                    ("")
+                }
+                
             </div>
             <div className={styles.divSection}></div>
             <div className={styles.title}>
@@ -322,11 +379,12 @@ function ClubHome({ setLoading }) {
     )
 }
 
-function ClubCeremony({  }) {
+function ClubCeremony({ setLoading }) {
+
+    const { ceremonys } = useClubStore();
     const { signInUser, setSignInUser } = useSignInStore();
     const [cookies] = useCookies();
     const token = cookies[ACCESS_TOKEN];
-    const [ceremonys, setCeremonys] = useState([]);
     const [expandedIndices, setExpandedIndices] = useState([]);
     const [pageStates, setPageStates] = useState([]);
 
@@ -358,27 +416,6 @@ function ClubCeremony({  }) {
     const clubId = signInUser.clubId || 0;
     const memberId = signInUser.id || null;
 
-    const getCeremonysListResponse = (responseBody) => {
-        const message = 
-        !responseBody ? '서버에 문제가 있습니다.' :
-        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
-        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
-
-        const isSuccessed = responseBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
-        }
-        const { ceremonys } = responseBody
-
-        setCeremonys(ceremonys);
-        console.log(ceremonys)
-    }
-
-    const getCeremonysList = () => {
-        getCeremonysListRequest(clubId, token).then(getCeremonysListResponse);
-    }
-
     function getAvgScore(...scores) {
         const validScores = scores.filter(score => score !== null && score !== undefined);
         const totalScore = validScores.reduce((acc, score) => acc + score, 0);
@@ -396,7 +433,6 @@ function ClubCeremony({  }) {
 
     useState(() => {
         setPageStates(new Array(ceremonys.length).fill(0));
-        getCeremonysList();
     }, [ceremonys, clubId])
     
     return (
@@ -407,7 +443,7 @@ function ClubCeremony({  }) {
                         <div className={styles.filterNav}>
                             <p className={styles.filterTitle}>참석여부</p>
                             <div className={styles.filterBtns}>
-                                <button className={styles.filterBtn}>전체보기</button>
+                                <button className={styles.filterBtn}>전체</button>
                                 <button className={styles.filterBtn}>참여한 게임만 보기</button>
                             </div>
                         </div>
