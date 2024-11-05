@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class ClubDtlCustomRepositoryImpl implements ClubDtlCustomRepository{
 
@@ -25,5 +27,15 @@ public class ClubDtlCustomRepositoryImpl implements ClubDtlCustomRepository{
                 .selectFrom(clubDtl)
                 .where(clubDtl.clubMst.id.eq(clubId).and(clubDtl.member.id.eq(memberId)))
                 .fetchOne();
+    }
+
+    @Override
+    public List<ClubDtl> getClubDtlByClubMstId(Long clubId) {
+        QClubDtl clubDtl = QClubDtl.clubDtl;
+
+        return queryFactory
+                .selectFrom(clubDtl)
+                .where(clubDtl.clubMst.id.eq(clubId))
+                .fetch();
     }
 }

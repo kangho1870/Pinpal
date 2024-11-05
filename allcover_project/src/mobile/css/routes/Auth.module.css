@@ -1,0 +1,112 @@
+.signUpContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.topBox {
+    display: flex;
+    justify-content: center;
+    border-bottom: 2px solid #d1d1d1;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 23px;
+    font-weight: 400;
+}
+
+.message {
+    color: red;
+}
+
+.okMessage {
+    color: green;
+}
+
+.addInformationContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.addInformationBox {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin-bottom: 15px;
+}
+
+.signUpInput {
+    display: flex;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #dbdbdb;
+    height: 40px;
+    font-size: 12px;
+}
+
+.informationTitle {
+    display: flex;
+    font-size: 15px;
+}
+
+.emailBox {
+    display: flex;
+    justify-content: space-between;
+}
+
+.emailCheckBtn {
+    display: flex;
+    width: 40%;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #004EA2;
+    color: #004EA2;
+    background-color: #fafafa;
+    border-radius: 40px;
+    font-weight: 600;
+}
+
+.btnBox {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.btn {
+    display: flex;
+    width: 100%;
+    margin-right: 10px;
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid black;
+    align-items: center;
+    justify-content: center;
+    background-color: #fafafa;
+    font-weight: 600;
+}
+
+.selectedBtn {
+    background-color: #004EA2;
+    border: none;
+    color: white;
+}
+
+.signUpBtnBox {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.signUpBtn {
+    width: 90%;
+    height: 60px;
+    border-radius: 50px;
+    border: none;
+    background-color: #004EA2;
+    color: white;
+    font-size: 15px;
+    font-weight: 800;
+}

@@ -1,12 +1,16 @@
 package com.example.allcoverproject.service.auth;
 
 
-import com.example.allcoverproject.dto.MemberReqDto;
-import com.example.allcoverproject.dto.SignInReqDto;
+import com.example.allcoverproject.dto.request.SignInReqDto;
+import com.example.allcoverproject.dto.request.SignUpReqDto;
+import com.example.allcoverproject.dto.request.auth.IdCheckReqDto;
+import com.example.allcoverproject.dto.response.CodeMessageRespDto;
+import com.example.allcoverproject.dto.response.auth.SignInRespDto;
 import com.example.allcoverproject.entity.Member;
 import com.example.allcoverproject.provider.JwtProvider;
 import com.example.allcoverproject.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,51 +25,74 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public String signUp(MemberReqDto memberReqDto) {
+    public ResponseEntity<CodeMessageRespDto> idCheck(IdCheckReqDto idCheckReqDto) {
+        String userId = idCheckReqDto.getMemberId();
 
-        // 9/4 1:27
         try {
 
-            String memberId = memberReqDto.getEmail();
-            boolean isExistedId = memberRepository.existsByEmail(memberId);
-            if (isExistedId) return "존재하는 아이디";
-
-            String password = memberReqDto.getPassword();
-            String encodedPassword = passwordEncoder.encode(password);
-
-            memberReqDto.setPassword(encodedPassword);
-
-            Member member = new Member(memberReqDto);
-            memberRepository.save(member);
-
-            return "회원가입 완료";
+            boolean existsByEmail = memberRepository.existsByEmail(userId);
+            if(existsByEmail) return CodeMessageRespDto.duplicated();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "예외발생!";
+            return  CodeMessageRespDto.databaseError();
         }
+
+
+        return CodeMessageRespDto.success();
     }
 
     @Override
-    public String signIn(SignInReqDto signInReqDto) {
+    public ResponseEntity<CodeMessageRespDto> signUp(SignUpReqDto signUpReqDto) {
+
+        String memberId = signUpReqDto.getMemberId();
 
         try {
 
-            String memberEmail = signInReqDto.getEmail();
-            String password = signInReqDto.getPassword();
-            Member memberByEmail = memberRepository.findMemberByEmail(memberEmail);
-            if(memberByEmail == null) return "로그인 정보가 일치하지 않습니다.";
-
-            boolean matches = passwordEncoder.matches(password, memberByEmail.getPassword());
-            if (!matches) return "로그인 정보가 일치하지 않습니다.";
-
-            String token = jwtProvider.create(memberEmail);
-
-            return token;
+            boolean existsByEmail = memberRepository.existsByEmail(memberId);
+            if(existsByEmail) return CodeMessageRespDto.duplicated();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "예외 발생!";
+            return CodeMessageRespDto.databaseError();
         }
+
+        try {
+
+            Member member = new Member(signUpReqDto);
+            memberRepository.save(member);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+
+        return CodeMessageRespDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super SignInRespDto> signIn(SignInReqDto signInReqDto) {
+        String memberId = signInReqDto.getEmail();
+        String password = signInReqDto.getPassword();
+        String accessToken = null;
+
+        try {
+
+            Member memberByEmail = memberRepository.findMemberByEmail(memberId);
+            if(memberByEmail == null) return CodeMessageRespDto.signInFail();
+
+            boolean matches = passwordEncoder.matches(password, memberByEmail.getPassword());
+            if(!matches) return CodeMessageRespDto.signInFail();
+
+            accessToken = jwtProvider.create(memberByEmail.getEmail());
+            if(accessToken == null) return CodeMessageRespDto.tokenCreateFail();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+
+        return SignInRespDto.success(accessToken);
     }
 }

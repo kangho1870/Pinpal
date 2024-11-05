@@ -1,11 +1,11 @@
-package com.example.allcoverproject.dto.response.myclub;
+package com.example.allcoverproject.dto.response.game;
 
-import com.example.allcoverproject.common.object.MyClubPageResp;
+import com.example.allcoverproject.common.object.GameResp;
 import com.example.allcoverproject.dto.response.CodeMessageRespDto;
 import com.example.allcoverproject.dto.response.ResponseCode;
 import com.example.allcoverproject.dto.response.ResponseMessage;
-import com.example.allcoverproject.dto.response.scoreboard.GetScoreboardListRespDto;
 import com.example.allcoverproject.entity.Game;
+import com.example.allcoverproject.entity.Scoreboard;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,17 +13,17 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @Getter
-public class GetMyClubListRespDto extends CodeMessageRespDto {
+public class GetGameListRespDto extends CodeMessageRespDto {
 
-    private List<MyClubPageResp> myClubPageResps;
+    private List<GameResp> games;
 
-    private GetMyClubListRespDto(List<Game> games) {
+    private GetGameListRespDto(List<Game> games, List<Long> count, List<List<Scoreboard>> scoreboards) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-        this.myClubPageResps = MyClubPageResp.getClubPageRespList(games);
+        this.games = GameResp.getClubPageRespList(games, count, scoreboards);
     }
 
-    public static ResponseEntity<GetMyClubListRespDto> success(List<Game> games) {
-        GetMyClubListRespDto getMyClubListRespDto = new GetMyClubListRespDto(games);
-        return ResponseEntity.status(HttpStatus.OK).body(getMyClubListRespDto);
+    public static ResponseEntity<GetGameListRespDto> success(List<Game> games, List<Long> count, List<List<Scoreboard>> scoreboards) {
+        GetGameListRespDto getGameListRespDto = new GetGameListRespDto(games, count, scoreboards);
+        return ResponseEntity.status(HttpStatus.OK).body(getGameListRespDto);
     }
 }

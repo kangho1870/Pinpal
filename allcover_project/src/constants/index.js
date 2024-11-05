@@ -6,6 +6,8 @@ export const HOME_PATH = '/home';
 
 export const MY_CLUB_PATH = '/myclub';
 
+export const SCOREBOARD_PATH = '/scoreboard'
+
 export const SNS_SUCCESS_PATH = '/sns-success';
 
 export const ROOT_ABSOLUTE_PATH = ROOT_PATH;

@@ -1,18 +1,35 @@
 import { useEffect, useState } from "react";
 import styles from "../css/components/WaitingRoom.module.css";
 import axios from "axios";
+import useScoreboard from "../../stores/useScoreboardStore";  // 스토어 임포트
+import useSignInStore from "../../stores/useSignInStore";
+import { useSearchParams } from "react-router-dom";
+import { scoreCountingStopRequest, sideJoinRequest } from "../../apis";
+import { useCookies } from "react-cookie";
+import { ACCESS_TOKEN } from "../../constants";
 
-function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers, gradeSetModalToggle, teamSetModalToggle, confirmSetModalToggle, sideJoinSetModalToggle }) {
-    const [currentUser, setCurrentUser] = useState(null);
+function WaitingRoom({ getScoreboard }) {
+    const { 
+        members = [], reloadMembers, 
+        toggleGradeModal, toggleTeamModal, toggleConfirmModal, toggleSideJoinUserModal
+    } = useScoreboard();  // useScoreboard로 상태와 함수 가져오기
+
+    const { signInUser } = useSignInStore();
+    const [searchParams] = useSearchParams();
+    const [cookies] = useCookies();
+    const token = cookies[ACCESS_TOKEN];
+
     const [sideGrade1, setSideGrade1] = useState(false);
     const [sideAvg, setSideAvg] = useState(false);
     const [confirmedJoin, setConfirmedJoin] = useState(false);
+    const memberId = signInUser.id;
+    const gameId = searchParams.get("gameId");
+    
 
     const sideJoinBtns = ["grade1", "avg"];
 
     const findCurrentUser = () => {
         const user = members.find(member => member.memberId == memberId);
-        setCurrentUser(user);
 
         if(user) {
             setSideGrade1(user.sideGrade1);
@@ -23,27 +40,29 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers, gradeSe
 
     useEffect(() => {
         findCurrentUser();
-    }, [members, memberId]);
+    }, [members]);
+
+    const sideJoinResponse = (resposenBody) => {
+        const message = 
+            !resposenBody ? '서버에 문제가 있습니다.' :
+            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = resposenBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        getScoreboard();
+    };
 
     const sideJoinBtnsClick = (i) => {
-        axios.post(`/scoreboard/joinSide/${sideJoinBtns[i]}?gameId=${gameId}&memberId=${memberId}`)
-            .then(response => {
-                reloadMembers();
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        // 2시간동안 못찾던 오류 - post 요청 시 token 전달하지 않을 시 서버 무반응
+        sideJoinRequest(gameId, memberId, sideJoinBtns[i], token).then(sideJoinResponse);
     };
 
     const scoreCountingStop = () => {
-        axios.post(`/scoreboard/stopScoreCounting?gameId=${gameId}`)
-            .then(response => {
-                console.log("ok")
-                reloadMembers();
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        scoreCountingStopRequest(gameId, token).then(sideJoinResponse);
     }
 
     return (
@@ -59,7 +78,7 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers, gradeSe
                                 </div>
                                 <div className={styles.nameCardBox}>
                                     <div className={styles.checkIcon}>
-                                        <i class="fa-regular fa-circle-check fa-xl" style={{color:"#63E6BE"}}></i>
+                                        <i className="fa-regular fa-circle-check fa-xl" style={{color:"#63E6BE"}}></i>
                                         <h3 style={{ marginLeft: "2px" }}>{member.grade == 0 ? null : member.grade + "군"}</h3>
                                     </div>
                                     <div className={styles.description}>
@@ -99,16 +118,16 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers, gradeSe
                             ))}
                             <div className={styles.settingBox}>
                                 <div className={styles.btnBox}>
-                                    <button className={styles.settingBtn} onClick={confirmSetModalToggle}>
-                                        <div><i class="fa-solid fa-user-check"></i></div>
+                                    <button className={styles.settingBtn} onClick={toggleConfirmModal}>
+                                        <div><i className="fa-solid fa-user-check"></i></div>
                                     </button>
                                     <button className={styles.settingBtn}>
-                                        <div><i class="fa-solid fa-right-from-bracket fa-xl"></i></div>
+                                        <div><i className="fa-solid fa-right-from-bracket fa-xl"></i></div>
                                     </button>
                                 </div>
                             </div>
                             <div>
-                                <button className={styles.settingBtn2} onClick={sideJoinSetModalToggle}>
+                                <button className={styles.settingBtn2} onClick={toggleSideJoinUserModal}>
                                     <div><h4>사이드 참가자</h4></div>
                                 </button>
                             </div>
@@ -119,8 +138,8 @@ function WaitingRoom({ members, gameId, clubId, memberId, reloadMembers, gradeSe
                     </div>
                     <div className={styles.userSettingBox}>
                         <div className={styles.gameSettingBox}>
-                            <button className={styles.settingBtn2} onClick={gradeSetModalToggle}><div><h4>군 설정</h4></div></button>
-                            <button className={styles.settingBtn2} onClick={teamSetModalToggle}><div><h4>팀 설정</h4></div></button>
+                            <button className={styles.settingBtn2} onClick={toggleGradeModal}><div><h4>군 설정</h4></div></button>
+                            <button className={styles.settingBtn2} onClick={toggleTeamModal}><div><h4>팀 설정</h4></div></button>
                         </div>
                         <button className={styles.settingBtn2} onClick={scoreCountingStop}><div><h4>점수집계 종료</h4></div></button>
                     </div>

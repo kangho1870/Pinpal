@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import styles from "../css/components/HeaderCategory.module.css";
 
-function HeaderCategory(props) {
+function HeaderCategory() {
+    const navigator = useNavigate();
+
     return (
         <>
             <div className={styles.mainBox}>

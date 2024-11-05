@@ -1,11 +1,12 @@
 package com.example.allcoverproject.entity;
 
-import com.example.allcoverproject.dto.ScoreboardRespDto;
+import com.example.allcoverproject.dto.response.scoreboard.ScoreboardRespDto;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
+
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -13,6 +14,8 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class Scoreboard {
 
     @Id @GeneratedValue
@@ -34,15 +37,19 @@ public class Scoreboard {
     private Integer grade;
 
     @Column(nullable = true)
+    @ColumnDefault("0")
     private Integer game_1;
 
     @Column(nullable = true)
+    @ColumnDefault("0")
     private Integer game_2;
 
     @Column(nullable = true)
+    @ColumnDefault("0")
     private Integer game_3;
 
     @Column(nullable = true)
+    @ColumnDefault("0")
     private Integer game_4;
 
     @ColumnDefault("false")
@@ -59,29 +66,37 @@ public class Scoreboard {
 
     private int all_cover;
 
+    private String status;
+
+    private LocalDateTime createDate;
+
+    private LocalDateTime updateDate;
+
+    public Scoreboard(Member member, Game game) {
+        this.setMember_avg(member.getClubDtl().getAvg());
+        this.setGame(game);
+        this.setMember(member);
+        this.setGrade(0);
+        this.setGame_1(null);
+        this.setGame_2(null);
+        this.setGame_3(null);
+        this.setGame_4(null);
+        this.setAll_cover(0);
+        this.setTeam_number(0);
+        this.setSide_avg(false);
+        this.setSide_grade1(false);
+        this.setConfirmedJoin(false);
+        this.status = "ACTIVE";
+        this.setCreateDate(LocalDateTime.now());
+        this.setUpdateDate(LocalDateTime.now());
+    }
+
     public void setMember(Member member) {
         this.member = member;
         member.getScoreboards().add(this);
     }
 
-    public ScoreboardRespDto toScoreboardRespDto() {
-        return ScoreboardRespDto.builder()
-                .memberName(member.getName())
-                .memberId(member.getId())
-                .gameId(game.getId())
-                .gameName(game.getName())
-                .game1(game_1)
-                .game2(game_2)
-                .game3(game_3)
-                .game4(game_4)
-                .memberAvg(member_avg)
-                .grade(grade)
-                .sideGrade1(side_grade1)
-                .sideAvg(side_avg)
-                .confirmedJoin(confirmedJoin)
-                .teamNumber(team_number)
-                .ScoreCounting(game.getScoreCounting())
-                .gender(member.getGender())
-                .build();
-    }
+
+
+
 }

@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../../css/components/modal/GradeSettingModal.module.css";
+import { useSearchParams } from "react-router-dom";
+import useScoreboard from "../../../stores/useScoreboardStore";
+import { useCookies } from "react-cookie";
+import { ACCESS_TOKEN } from "../../../constants";
+import { teamRandomSettingRequest, teamSettingRequest } from "../../../apis";
 
-function TeamSettingModal({ members, gameId, teamSetModalToggle, reloadMembers }) {
+function TeamSettingModal({ getScoreboard }) {
+    const [cookies] = useCookies();
+    const token = cookies[ACCESS_TOKEN];
+    const [searchParams] = useSearchParams();
+    const gameId = searchParams.get("gameId");
+    const { members, toggleTeamModal } = useScoreboard();
     const [selectGrade, setSelectGrade] = useState(1);
     const [teamBtns, setTeamBtns] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
     const [updatedMembers, setUpdatedMembers] = useState([]);
@@ -35,15 +45,13 @@ function TeamSettingModal({ members, gameId, teamSetModalToggle, reloadMembers }
     };
 
     const randomTeamSetting = (totalTeamCount) => {
-        // 모든 멤버의 teamNumber를 0으로 초기화
         setUpdatedMembers(prev =>
             prev.map(member => ({
                 ...member,
                 teamNumber: 0
             }))
         );
-    
-        // 멤버들을 grade별로 그룹화
+
         const gradeGroups = {};
         members.forEach(member => { // members를 직접 참조
             if (!gradeGroups[member.grade]) {
@@ -52,22 +60,20 @@ function TeamSettingModal({ members, gameId, teamSetModalToggle, reloadMembers }
             gradeGroups[member.grade].push(member);
         });
     
-        // teamNumber를 배정하는 로직
         const assignTeams = (members, totalTeamCount) => {
             let teamIndex = 1;
-            const shuffledMembers = [...members].sort(() => Math.random() - 0.5); // 멤버를 랜덤으로 섞음
+            const shuffledMembers = [...members].sort(() => Math.random() - 0.5);
     
             return shuffledMembers.map(member => {
                 const updatedMember = {
                     ...member,
                     teamNumber: teamIndex
                 };
-                teamIndex = (teamIndex % totalTeamCount) + 1; // teamIndex가 totalTeamCount 범위를 넘지 않게 순환
+                teamIndex = (teamIndex % totalTeamCount) + 1;
                 return updatedMember;
             });
         };
     
-        // 각 grade 그룹의 멤버들을 랜덤으로 팀 배정
         const newMembers = [];
     
         Object.keys(gradeGroups).forEach(grade => {
@@ -79,36 +85,50 @@ function TeamSettingModal({ members, gameId, teamSetModalToggle, reloadMembers }
         saveRandomChanges(newMembers); // 저장 시 변경된 멤버 목록을 전달
     };
     
-    
-
     const teamRandomSetModalToggle = () => {
         setTeamSetModal(!teamSetModal);
     };
 
-    const saveChanges = () => {
-        axios.post(`/scoreboard/setTeam?gameId=${gameId}`, { updatedMembers })
-            .then(response => {
-                console.log("변경 사항이 저장되었습니다.");
-                reloadMembers();
-                teamRandomSetModalToggle();
-                teamSetModalToggle();
-            })
-            .catch(error => {
-                console.error("오류 발생!", error);
-            });
+    const teamSettingResponse = (resposenBody) => {
+        const message = 
+            !resposenBody ? '서버에 문제가 있습니다.' :
+            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
+            resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
+
+        const isSuccessed = resposenBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        getScoreboard();
+        toggleTeamModal();
+    }
+
+    const teamRandomSettingResponse = (resposenBody) => {
+        const message = 
+            !resposenBody ? '서버에 문제가 있습니다.' :
+            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
+            resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
+
+        const isSuccessed = resposenBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        getScoreboard();
+        teamRandomSetModalToggle();
+        toggleTeamModal();
+    }
+
+    const saveTeamChanges = () => {
+        teamSettingRequest(gameId, updatedMembers, token).then(teamSettingResponse);
     };
 
     const saveRandomChanges = (newMembers) => {
-        axios.post(`/scoreboard/setTeam?gameId=${gameId}`, { updatedMembers: newMembers })
-            .then(response => {
-                console.log("변경 사항이 저장되었습니다.");
-                reloadMembers();
-                teamRandomSetModalToggle();
-                teamSetModalToggle();
-            })
-            .catch(error => {
-                console.error("오류 발생!", error);
-            });
+        const updatedMembers = newMembers;
+        teamRandomSettingRequest(gameId, updatedMembers, token).then(teamRandomSettingResponse)
     };
 
     return (
@@ -178,8 +198,8 @@ function TeamSettingModal({ members, gameId, teamSetModalToggle, reloadMembers }
                         </div>
                     </div>
                     <div className={styles.btnBox}>
-                        <button className={styles.settingBtn} onClick={teamSetModalToggle}>취소</button>
-                        <button className={styles.settingBtn} onClick={saveChanges}>저장</button>
+                        <button className={styles.settingBtn} onClick={toggleTeamModal}>취소</button>
+                        <button className={styles.settingBtn} onClick={saveTeamChanges}>저장</button>
                     </div>
                 </div>
             </div>

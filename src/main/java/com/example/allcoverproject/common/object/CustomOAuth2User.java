@@ -1,12 +1,10 @@
-package com.example.allcoverproject.service.object;
+package com.example.allcoverproject.common.object;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 // OAuth2 인증 성공시 인증 서버로부터 클라이언트의 정보를 받아 저장할 객체
@@ -16,11 +14,13 @@ public class CustomOAuth2User implements OAuth2User {
     private String name;
     private Map<String, Object> attributes;
     private Collection<? extends GrantedAuthority> authorities;
+    private boolean existed;
 
-    public CustomOAuth2User(String name, Map<String, Object> attributes) {
+    public CustomOAuth2User(String name, Map<String, Object> attributes, boolean existed) {
         this.name = name;
         this.attributes = attributes;
-        this.authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        this.authorities = AuthorityUtils.NO_AUTHORITIES;
+        this.existed = existed;
     }
 
     @Override
@@ -36,5 +36,9 @@ public class CustomOAuth2User implements OAuth2User {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    public boolean isExisted() {
+        return this.existed;
     }
 }

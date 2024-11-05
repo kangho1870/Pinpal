@@ -8,7 +8,9 @@ package com.example.allcoverproject.provider;
 // - 페이로드 : 클라이언트 혹은 서버가 전달하려는 정보가 포함되어 있음
 // - 서명 : 헤더와 페이로드를 합쳐서 인코딩하고 비밀키로 암호화한 데이터
 
+import com.example.allcoverproject.dto.response.ResponseCode;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -35,52 +37,52 @@ public class JwtProvider {
         // 1. JWT의 만료일자 및 시간 지정
         Date expiredDate = Date.from(Instant.now().plus(4, ChronoUnit.HOURS));
 
-        // 2. 비밀키 생성
-//        String secretKey = "mySecretKeyddawasdawdwadascczcxcsdw123455687";
-        // 비밀키는 코드에 직접적으로 작성하지 않고
-        // application.yml에 작성하여 사용해야 함
+        String jwt = null;
 
+        try {
 
-        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-        // hmacShaKeyFor 알고리즘을 통해 키를 만듦
-        // 이 때 내가 만든 비밀키를 byte로 변환하여 전달해줌
+            Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
-        // 3. JWT 생성
-        String jwt = Jwts.builder()
-                // 서명 (암호화시 사용할 비밀키와 알고리즘)
-                .signWith(key, SignatureAlgorithm.HS256)
-                // 페이로드
-                // 작성자
-                .setSubject(String.valueOf(id))
-                // 생성시간 (현재시간)
-                .setIssuedAt(new Date())
-                // 만료시간
-                .setExpiration(expiredDate)
-                // 인코드 (압축)
-                .compact();
+            jwt = Jwts.builder()
+                    .signWith(key, SignatureAlgorithm.HS256)
+                    .setSubject(id)
+                    .setIssuedAt(new Date())
+                    .setExpiration(expiredDate)
+                    .compact();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
         return jwt;
     }
 
     public String validate(String jwt) {
 
-        // jwt 검증 결과로 반환되는 payload가 저장될 변수
-        Claims claims = null;
-
-        // 비킬키 생성
-        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+        String userId = null;
 
         try {
-            // 비밀키를 이용하여 jwt를 검증 작업
-            claims = Jwts.parserBuilder()
+            // jwt 검증 결과로 반환되는 payload가 저장될 변수
+            Claims claims = null;
+
+            // 비킬키 생성
+            Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+
+            // jwt 검증 및 payload의 subject 값 추출
+            userId = Jwts.parserBuilder()
                     .setSigningKey(key)
-                    .build()// parser 생성
-                    .parseClaimsJws(jwt)// 파싱 작업
-                    .getBody(); // 파싱 후 claims 값 get
+                    .build()
+                    .parseClaimsJws(jwt)
+                    .getBody()
+                    .getSubject();
+        } catch (ExpiredJwtException e) {
+            // 토큰이 만료된 경우
+            return ResponseCode.JWT_EXPIRED; // 원하는 리턴 값
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
         }
-        return claims.getSubject();
+        return userId;
     }
 }

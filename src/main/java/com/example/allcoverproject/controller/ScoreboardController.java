@@ -1,121 +1,78 @@
 package com.example.allcoverproject.controller;
 
-import com.example.allcoverproject.dto.CMRespDto;
-import com.example.allcoverproject.dto.ScoreboardReqDto;
-import com.example.allcoverproject.dto.ScoreboardRespDto;
+import com.example.allcoverproject.dto.request.scoreboard.ScoreboardReqDto;
+import com.example.allcoverproject.dto.request.scoreboard.ScoreboardStopGameReqDto;
+import com.example.allcoverproject.dto.response.CodeMessageRespDto;
+import com.example.allcoverproject.dto.response.scoreboard.GetScoreboardListRespDto;
 import com.example.allcoverproject.service.scoreboard.ScoreboardService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/scoreboard")
+@RequestMapping("/api/v1/scoreboard")
+@RequiredArgsConstructor
 public class ScoreboardController {
 
-    @Autowired
-    private ScoreboardService scoreboardService;
+    private final ScoreboardService scoreboardService;
 
-    @GetMapping
-    public ResponseEntity<?> getMembers(@RequestParam Long gameId, @RequestParam Long clubId, @RequestParam Long memberId) {
-        List<ScoreboardRespDto> member = new ArrayList<ScoreboardRespDto>();
-
-        try {
-            member = scoreboardService.getMembers(gameId, clubId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", member));
-        }
-
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", member));
+    @GetMapping(value = {"", "/"})
+    public ResponseEntity<? super GetScoreboardListRespDto> getMembers(@RequestParam Long gameId, @RequestParam Long clubId) {
+        ResponseEntity<? super GetScoreboardListRespDto> members = scoreboardService.getMembers(gameId, clubId);
+        return members;
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> joinGame(@RequestParam Long gameId, @RequestParam Long memberId) {
-        boolean status = false;
-        try {
-            status = scoreboardService.joinGame(gameId, memberId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", status));
-        }
-
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", status));
+    public ResponseEntity<CodeMessageRespDto> joinGame(@RequestParam Long gameId, @RequestParam Long memberId) {
+        System.out.println("gameId + memberId = " + gameId + memberId);
+        ResponseEntity<CodeMessageRespDto> responseBody = scoreboardService.joinGame(gameId, memberId);
+        return responseBody;
     }
 
     @PostMapping("/setGrade")
-    public ResponseEntity<?> setGrade(@RequestBody Map<String, List<Map<String, Object>>> members) {
-        try {
-            scoreboardService.setGrade(members);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", null));
-        }
-
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", null));
+    public ResponseEntity<CodeMessageRespDto> setGrade(@RequestBody Map<String, List<Map<String, Object>>> members) {
+        ResponseEntity<CodeMessageRespDto> responseBody = scoreboardService.setGrade(members);
+        return responseBody;
     }
 
     @PostMapping("/setTeam")
-    public ResponseEntity<?> setTeam(@RequestBody Map<String, List<Map<String, Object>>> members) {
-        try {
-            scoreboardService.setTeam(members);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", null));
-        }
-
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", null));
+    public ResponseEntity<CodeMessageRespDto> setTeam(@RequestBody Map<String, List<Map<String, Object>>> members) {
+        ResponseEntity<CodeMessageRespDto> responseBody = scoreboardService.setTeam(members);
+        return responseBody;
     }
 
-    @PostMapping("/joinSide/{sideType}")
-    public ResponseEntity<?> joinSide(@RequestParam Long gameId, @RequestParam Long memberId, @PathVariable String sideType) {
-        boolean status = false;
-
-        try {
-            scoreboardService.joinSideGame(gameId, memberId, sideType);
-            status = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", status));
-        }
-
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", status));
+    @PostMapping("/joinSide")
+    public ResponseEntity<CodeMessageRespDto> joinSide(@RequestParam Long gameId, @RequestParam Long memberId, @RequestParam String sideType) {
+        ResponseEntity<CodeMessageRespDto> response = scoreboardService.joinSideGame(gameId, memberId, sideType);
+        return response;
     }
 
     @PostMapping("/confirmedJoin")
-    public ResponseEntity<?> confirmedJoinGame(@RequestParam Long gameId, @RequestParam Long memberId, @RequestBody Map<String, String> confirmedCode) {
-        boolean status = false;
+    public ResponseEntity<CodeMessageRespDto> confirmedJoinGame(@RequestParam Long gameId, @RequestParam Long memberId, @RequestBody Map<String, String> confirmedCode) {
+        ResponseEntity<CodeMessageRespDto> responseBody = scoreboardService.joinConfirmedGame(gameId, memberId, confirmedCode.get("code"));
+        return responseBody;
 
-        try {
-            status = scoreboardService.joinConfirmedGame(gameId, memberId, confirmedCode.get("code"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", status));
-        }
-
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "success", status));
     }
 
     @PostMapping("/saveScore")
-    public ResponseEntity<?> saveScore(@RequestParam Long memberId, @RequestParam Long gameId, @RequestBody ScoreboardReqDto scores) {
-        try {
-            scoreboardService.saveScores(memberId, gameId, scores);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", null));
-        }
-
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "sucsess", null));
+    public ResponseEntity<CodeMessageRespDto> saveScore(@RequestParam Long memberId, @RequestParam Long gameId, @RequestBody ScoreboardReqDto scores) {
+        ResponseEntity<CodeMessageRespDto> responseBody = scoreboardService.saveScores(memberId, gameId, scores);
+        return responseBody;
     }
 
     @PostMapping("/stopScoreCounting")
-    public ResponseEntity<?> stopScoreCounting(@RequestParam Long gameId) {
-        try {
-            scoreboardService.stopScoreCounting(gameId);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(new CMRespDto<>(-1, "fail", null));
-        }
+    public ResponseEntity<CodeMessageRespDto> stopScoreCounting(@RequestParam Long gameId) {
+        ResponseEntity<CodeMessageRespDto> responseBody = scoreboardService.stopScoreCounting(gameId);
+        return responseBody;
+    }
 
-        return ResponseEntity.ok().body(new CMRespDto<>(1, "sucsess", null));
+    @PostMapping("/stop")
+    public ResponseEntity<CodeMessageRespDto> stopGame(@RequestBody ScoreboardStopGameReqDto scoreboardStopGameReqDto) {
+        System.out.println("scoreboardStopGameReqDto = " + scoreboardStopGameReqDto);
+        ResponseEntity<CodeMessageRespDto> responseBody = scoreboardService.stopGame(scoreboardStopGameReqDto);
+        return responseBody;
     }
 }

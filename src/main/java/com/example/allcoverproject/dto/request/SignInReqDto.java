@@ -1,6 +1,6 @@
-package com.example.allcoverproject.dto;
+package com.example.allcoverproject.dto.request;
 
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,9 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class SignInReqDto {
-    private String email;
-    private String password;
 
+    @NotBlank
+    private String email;
+    @NotBlank
+    private String password;
 }

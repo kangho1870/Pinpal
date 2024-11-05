@@ -1,7 +1,12 @@
 .container {
-    padding: 0px 10px 10px 10px;
+    width: 100%;
     overflow-y: scroll;
-    height: calc(var(--vh, 1vh) * 100);
+}
+
+.divSection {
+    width: 100%;
+    height: 5px;
+    background-color: #dbdbdb;
 }
 
 .top {
@@ -17,6 +22,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 13px;
+    padding: 5px;
 }
 
 .clubNav {
@@ -31,6 +37,10 @@
     border: none;
     background-color: white;
     border-bottom: 1px solid black;
+}
+
+.selectedClubNavBtn {
+    border-bottom: 3px solid black;
 }
 
 .btnSpan {
@@ -50,22 +60,40 @@
 .contextArea {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    overflow-y: scroll;
 }
 
 .commonDiv {
     margin-top: 10px;
 }
 
+.title {
+    margin-top: 5px;
+    margin-left: 7px;
+}
+
 .clubBannerArea {
     display: flex;
     width: 100%;
-    height: 150px;
-    background-color: #dbdbdb;
+    height: 100%;
     border-radius: 10px;
+    padding: 10px;
+}
+
+.bannerImage {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+}
+
+.clubDescription {
+    padding: 10px;
 }
 
 .clubSchedule {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     width: 100%;
     padding: 10px;
@@ -78,7 +106,8 @@
     border-radius: 5px;
     box-shadow: 5px 5px 5px 1px #cac9c9;
     width: 100%;
-    padding: 5px;
+    padding: 10px 18px 10px 18px;
+    margin-bottom: 15px;
 }
 
 .scheduleTitle {
@@ -92,25 +121,44 @@
     width: 70px;
     height: 40px;
     border: none;
-    background-color: rgb(34, 216, 73);
+    background-color: #004EA2;
     border-radius: 10px;
     color: white;
 }
 
+.scheduleCancleBtn {
+    margin-left: 20px;
+    width: 70px;
+    height: 40px;
+    border: 1px solid #004EA2;
+    background-color: #fafafa;
+    border-radius: 10px;
+    color: #004EA2;
+    font-weight: 800;
+}
+
 .scheduleContnet {
     display: flex;
+    justify-content: space-between;
+}
+
+.imgBox {
+    display: flex;
+    flex: 0.5;
 }
 
 .scheduleImg {
-    width: 170px;
-    height: 100px;
+    width: 100%;
+    height: 100%;
 }
 
 .scheduleDescriptionArea {
     display: flex;
+    flex: 0.5;
     flex-direction: column;
     justify-content: center;
     font-size: 14px;
+    width: 100%;
 }
 
 .scheduleDescriptionBox {
@@ -118,14 +166,27 @@
     align-items: center;
 }
 
+.scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background-color: #5794d5;
+    color: white;
+    margin-top: 10px;
+}
+
 .descriptionSubTitle {
+    display: flex;
     margin-right: 5px;
 }
 
 .descriptionSubContent {
+    display: flex;
     font-weight: 500;
     color: black;
-    margin: 0;
 }
 
 .clubRecentGame {
@@ -169,4 +230,391 @@
     display: flex;
     flex-direction: column;
     padding: 2px 5px 2px 5px;
+}
+
+.noClubContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.noClubTitle {
+    width: 100%;
+}
+
+.memberContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+}
+
+.memberBox {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.memberProfile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.memberImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.addGameModal {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.addGameModalContainer {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    height: 40%;
+    background-color: #fafafa;
+    border: 1px solid black;
+    overflow-y: scroll;
+}
+
+.titleBox {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dbdbdb;
+    padding: 10px;
+}
+
+.backBtn {
+    display: flex;
+    margin-right: 15px;
+}
+
+.gameInfoContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.gameInfoBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.infoInput {
+    height: 30px;
+    border: none;
+    background-color: #dbdbdb;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.gameTypeBtnBox {
+    display: flex;
+    justify-content: space-between;
+}
+
+.gameTypeBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 35px;
+    border: none;
+    border-radius: 10px;
+    background-color: #fafafa;
+    border: 1px solid #004EA2;
+    color: #004EA2;
+    font-weight: 600;
+}
+
+.selectedBtn {
+    background-color: #004EA2;
+    color: white;
+}
+
+.gameTypeBtn:nth-child(1) {
+    margin-right: 10px;
+}
+
+.gameTitleBox {
+    display: flex;
+    width: 20%;
+}
+
+.title {
+    width: 100%;
+}
+
+.addGameBtnBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.addGameBtn {
+    display: flex;
+    width: 80%;
+    height: 35px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: #004EA2;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+}
+
+.modalContainer {
+    display: flex;
+    position: fixed;
+    bottom: 10%;
+    right: 3%;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    background-color: #004EA2;
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 600;
+}
+
+.filterBox {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #dfdfdf;
+    height: 90px;
+}
+
+
+.clubCeremonyContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    background-color: #fafafa;
+}
+
+.filterNavBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.filterNav {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.filterTitle {
+    display: flex;
+    white-space: nowrap;
+}
+
+.filterBtns {
+    display: flex;
+    margin-left: 10px;
+    width: 100%;
+    overflow-x: scroll;
+}
+
+.filterBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    height: 30px;
+    border-radius: 30px;
+    border: 1px solid #004EA2;
+    background-color: #fafafa;
+    color: #004EA2;
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.ceremonyContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px;
+}
+
+.ceremonyBox {
+    display: flex;
+    background-color: #f3f3f3;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 10px;
+    padding: 10px;
+    align-items: center;
+    margin-top: 10px;
+    border: 1px solid black;
+}
+
+.selectedCeremony {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.simpleInformation {
+    display: flex;
+    flex-direction: column;
+    overflow-x: scroll;
+}
+
+.simpleGameInfo {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.simpleGameInfoTitle {
+    display: flex;
+    margin-right: 10px;
+}
+
+.simpleInformationBox {
+    display: flex;
+}
+
+.simpleCeremony {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+}
+
+.simpleCeremonyTitle {
+    font-size: 13px;
+    margin-right: 5px;
+}
+
+.simpleCeremonyInfoBox {
+    display: flex;
+    white-space: nowrap;
+    background-color: #ebebeb;
+}
+
+.simpleCeremonyInfo {
+    display: flex;
+}
+
+.moreInfo {
+    display: flex;
+    font-size: 30px;
+}
+
+.ceremonyInfo {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #f3f3f3;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.ceremonyInfoBtnBox {
+    display: flex;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.ceremonyContext {
+    display: flex;
+    flex-direction: column;
+    background-color: #fafafa;
+    padding: 5px;
+    overflow-y: scroll;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.infoBtn {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: #fafafa;
+    height: 30px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.infoBtnSelectedBtn {
+    background-color: #004EA2;
+    border-bottom: 2px solid black;
+    color: #fafafa;
+    font-weight: 600;
+}
+
+.teamScoreTable {
+    margin-bottom: 10px;
+    color: white;
+    font-weight: 600;
+}
+
+.teamScoreHeaderTr {
+    border: none;
+    color: #6e6e6e;
+}
+
+.teamScoreBodyTr {
+    border: none;
+}
+
+.teamScoreTh, .teamScoreTd {
+    height: 20px;
+    width: 40px;
+    border: none;
+}
+
+.teamScoreTh {
+    background-color: #e3e3e3;
+}
+
+.teamScoreBodyTr {
+    background-color: #444444;
+    border-bottom: 1px solid #a8a8a8;
+}
+
+.teamScoreBodyTr:nth-last-child(1) {
+    border: none;
+}
+
+.gameScoreBackground {
+    background-color: #a8a8a88f;
 }

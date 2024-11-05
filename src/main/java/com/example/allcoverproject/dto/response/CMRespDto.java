@@ -1,10 +1,9 @@
-package com.example.allcoverproject.dto;
+package com.example.allcoverproject.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class CMRespDto<T> {

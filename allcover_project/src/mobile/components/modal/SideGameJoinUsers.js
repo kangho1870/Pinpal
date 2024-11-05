@@ -1,7 +1,10 @@
 import { useState } from "react";
 import styles from "../../css/components/modal/SideGameJoinUsers.module.css";
+import useScoreboard from "../../../stores/useScoreboardStore";
 
-function SideGameJoinUsers({ members, sideJoinSetModalToggle }) {
+function SideGameJoinUsers({ }) {
+
+    const { members, toggleSideJoinUserModal } = useScoreboard();
 
     const [page, setPage] = useState(0);
     const [navBtns] = useState(["사이드", "Avg사이드"]);
@@ -14,7 +17,7 @@ function SideGameJoinUsers({ members, sideJoinSetModalToggle }) {
         <>
             <div className={styles.modalContainer}>
                 <div className={styles.closeBox}>
-                    <div onClick={sideJoinSetModalToggle}><i class="fa-regular fa-circle-xmark"></i></div>
+                    <div onClick={toggleSideJoinUserModal}><i class="fa-regular fa-circle-xmark"></i></div>
                 </div>
                 <div className={styles.modalArea}>
                     <div className={styles.userArea}>

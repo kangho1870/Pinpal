@@ -1,7 +1,23 @@
 import { useState } from "react";
 import styles from "../css/routes/Main.module.css";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
+import { ACCESS_TOKEN, HOME_PATH, ROOT_PATH } from "../../constants";
+import { useEffect } from "react";
 
 function Main() {
+
+      // state: 쿠키 상태 //
+    const [cookies] = useCookies();
+
+    // function: 네비게이터 함수 //
+    const navigator = useNavigate();
+
+    // effect: 마운트 시 경로 이동 effect //
+    useEffect(() => {
+        if(cookies[ACCESS_TOKEN]) navigator(HOME_PATH);
+        else navigator(ROOT_PATH);
+    }, []);
 
     const [snsBtn, setSnsBtn] = useState(["kakao", "guest"])
 
@@ -12,6 +28,7 @@ function Main() {
     return (
         <>
             <div className={styles.container}>
+                
                 <header>
                     <div>
                         <h3>

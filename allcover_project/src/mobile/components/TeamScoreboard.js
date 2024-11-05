@@ -1,6 +1,9 @@
+import { useEffect } from "react";
+import useScoreboard from "../../stores/useScoreboardStore";
 import styles from "../css/components/TeamScoreboard.module.css";
 
-export default function TeamScoreboard({ members }) {
+export default function TeamScoreboard() {
+    const { members, setTeam1stMember } = useScoreboard();
 
     const teams = members.reduce((acc, member) => {
         if (!acc[member.teamNumber]) {
@@ -14,14 +17,24 @@ export default function TeamScoreboard({ members }) {
     const teamScores = Object.keys(teams).map(teamNumber => {
         const teamMembers = teams[teamNumber];
         
-        const totalScore = teamMembers.reduce((sum, member) => {
-            const game1Score = (member.game1 || 0) - (member.memberAvg || 0);
-            const game2Score = (member.game2 || 0) - (member.memberAvg || 0);
-            const game3Score = (member.game3 || 0) - (member.memberAvg || 0);
-            const game4Score = (member.game4 || 0) - (member.memberAvg || 0);
-    
-            return sum + game1Score + game2Score + game3Score + game4Score;
-        }, 0);
+        // 팀 멤버 중 하나라도 0점이 있는지 확인
+        const hasZeroScore = teamMembers.some(member =>
+            (member.game1 === 0) || 
+            (member.game2 === 0) || 
+            (member.game3 === 0) || 
+            (member.game4 === 0)
+        );
+
+        const totalScore = hasZeroScore
+            ? 0  // 0점인 멤버가 있으면 팀 총점 0
+            : teamMembers.reduce((sum, member) => {
+                const game1Score = (member.game1 || 0) - (member.memberAvg || 0);
+                const game2Score = (member.game2 || 0) - (member.memberAvg || 0);
+                const game3Score = (member.game3 || 0) - (member.memberAvg || 0);
+                const game4Score = (member.game4 || 0) - (member.memberAvg || 0);
+
+                return sum + game1Score + game2Score + game3Score + game4Score;
+            }, 0);
     
         return {
             teamNumber,
@@ -30,18 +43,38 @@ export default function TeamScoreboard({ members }) {
         };
     });
 
-    // 총합 점수 기준으로 팀 순위 정렬
-    const sortedTeams = teamScores.sort((a, b) => b.totalScore - a.totalScore);
+    // 총합 점수 기준으로 팀 순위 정렬 및 teamNumber가 0인 팀은 제외
+    const sortedTeams = teamScores
+        .filter(team => team.teamNumber !== "0")  // teamNumber가 0이 아닌 팀만 필터링
+        .sort((a, b) => b.totalScore - a.totalScore);
+
+    useEffect(() => {
+        if (sortedTeams.length > 0) {
+            // 1등 팀의 모든 멤버의 memberId 가져오기
+            const topTeamMemberIds = sortedTeams[0]?.members.map(member => member.memberId);
+    
+            if (topTeamMemberIds) {
+                setTeam1stMember(topTeamMemberIds);
+            }
+        }
+    }, [members])
 
     return (
         <div className={styles.teamScoreboardContainer}>
             {sortedTeams.map((team, index) => {
                 // 각 게임의 총합 계산
-                const game1Total = team.members.reduce((sum, member) => sum + (member.game1 || 0) - (member.memberAvg || 0), 0);
-                const game2Total = team.members.reduce((sum, member) => sum + (member.game2 || 0) - (member.memberAvg || 0), 0);
-                const game3Total = team.members.reduce((sum, member) => sum + (member.game3 || 0) - (member.memberAvg || 0), 0);
-                const game4Total = team.members.reduce((sum, member) => sum + (member.game4 || 0) - (member.memberAvg || 0), 0);
-                const totalSum = game1Total + game2Total + game3Total + game4Total;
+                const hasZeroScore = team.members.some(member =>
+                    (member.game1 === null) || 
+                    (member.game2 === null) || 
+                    (member.game3 === null) || 
+                    (member.game4 === null)
+                );
+                
+                const game1Total = hasZeroScore ? 0 : team.members.reduce((sum, member) => sum + (member.game1 || 0) - (member.memberAvg || 0), 0);
+                const game2Total = hasZeroScore ? 0 : team.members.reduce((sum, member) => sum + (member.game2 || 0) - (member.memberAvg || 0), 0);
+                const game3Total = hasZeroScore ? 0 : team.members.reduce((sum, member) => sum + (member.game3 || 0) - (member.memberAvg || 0), 0);
+                const game4Total = hasZeroScore ? 0 : team.members.reduce((sum, member) => sum + (member.game4 || 0) - (member.memberAvg || 0), 0);
+                const totalSum = hasZeroScore ? 0 : game1Total + game2Total + game3Total + game4Total;
 
                 return (
                     <div key={team.teamNumber} className={styles.teamScoreboardBox}>

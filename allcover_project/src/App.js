@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
 import Main from './mobile/routes/Main';
@@ -10,7 +10,7 @@ import MyClub from './mobile/routes/MyClub';
 import Scoreboard from './mobile/routes/Scoreboard';
 import Auth from './mobile/routes/Auth';
 import { useCookies } from 'react-cookie';
-import { ACCESS_TOKEN, AUTH_ABSOLUTE_PATH, HOME_PATH, ROOT_PATH } from './constants';
+import { ACCESS_TOKEN, AUTH_ABSOLUTE_PATH, HOME_PATH, ROOT_PATH, SCOREBOARD_PATH } from './constants';
 import { getSignInRequest } from './apis';
 import useSignInStore from './stores/useSignInStore';
 
@@ -63,9 +63,11 @@ function SnsSuccess() {
 
 function App() {
 
-  const { signInUser, setSignInUser } = useSignInStore();
+  const { signInUser, login } = useSignInStore();
 
   const [cookies, setCookie, removeCookie] = useCookies();
+
+  const [dataLoading, setDataLoading] = useState(false);
 
   const navigator = useNavigate();
 
@@ -82,14 +84,13 @@ function App() {
     if (!isSuccessed) {
         alert(message);
         removeCookie(ACCESS_TOKEN, { path: ROOT_PATH });
-        setSignInUser(null);
+        login(null);
         navigator(ROOT_PATH);
         return;
     }
 
     const { memberId, id, clubId } = responseBody;
-    // alert(responseBody.memberId, responseBody.id, responseBody.clubId)
-    setSignInUser({ memberId, id, clubId });
+    login({ memberId, id, clubId });
   };
 
   useEffect(() => {
@@ -97,7 +98,7 @@ function App() {
     if (accessToken) {
       getSignInRequest(accessToken).then(getSignInResponse);
     } else {
-      setSignInUser(null);
+      login(null);
     }
   }, [cookies[ACCESS_TOKEN]]);
 
@@ -114,14 +115,16 @@ function App() {
   return (
     <div className="App">
       {mobile ? 
+      <>
         <Routes>
           <Route path='/' element={<Main />} />
           <Route path='/home' element={<Home />} />
           <Route path='/myclub' element={<MyClub />} />
-          <Route path='/scoreboard' element={<Scoreboard />} />
+          <Route path={SCOREBOARD_PATH} element={<Scoreboard />} />
           <Route path='/auth' element={<Auth />} />
           <Route path='/sns-success' element={<SnsSuccess />} />
-        </Routes> :
+        </Routes>
+      </> :
         <Routes>
         
         </Routes>

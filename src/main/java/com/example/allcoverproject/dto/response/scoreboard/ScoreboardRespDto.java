@@ -1,4 +1,4 @@
-package com.example.allcoverproject.dto.response;
+package com.example.allcoverproject.dto.response.scoreboard;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

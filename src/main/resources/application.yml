@@ -17,12 +17,26 @@ spring:
             redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
             authorization-grant-type: authorization_code
             scope: read:user
+          kakao:
+            client-id: 320f3d357cee3c0df63beb6a76af684e
+            client-secret: 532cc41e46fb35e22e03ab684747b5be
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            scope:
+              - profile_nickname
+              - profile_image
         # 인증서버 설정
         provider:
           github:
             authorization-uri: https://github.com/login/oauth/authorize
             token-uri: https://github.com/login/oauth/access_token
             user-info-uri: https://api.github.com/user
+            user-name-attribute: id
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
   jpa:

@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import styles from "../../css/components/modal/SideRankingModal.module.css";
+import useScoreboard from "../../../stores/useScoreboardStore";
 
-export default function SideRankingModal({ members, sideRankingModalToggle }) {
+export default function SideRankingModal({ }) {
+    const { members, toggleSideRankingModal } = useScoreboard();
     const [page, setPage] = useState(0);
     const [btns] = useState(["사이드", "에버 사이드"]);
 
@@ -43,7 +45,7 @@ export default function SideRankingModal({ members, sideRankingModalToggle }) {
     return (
         <>
             <div className={styles.modal}>
-                <div className={styles.closeBox} onClick={sideRankingModalToggle}>
+                <div className={styles.closeBox} onClick={toggleSideRankingModal}>
                     <i class="fa-regular fa-circle-xmark"></i>
                 </div>
                 <div className={styles.sideRankingModalContainer}>

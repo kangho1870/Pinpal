@@ -9,19 +9,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Getter
-public class GetSignIRespDto extends CodeMessageRespDto {
+public class GetSignInRespDto extends CodeMessageRespDto {
 
     private String memberId;
-    private String memberName;
+    private Long id;
+    private Long clubId;
 
-    public GetSignIRespDto(Member member) {
+    public GetSignInRespDto(Member member) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
         this.memberId = member.getEmail();
-        this.memberName = member.getName();
+        this.id = member.getId();
+        this.clubId = (member.getClubDtl() != null && member.getClubDtl().getId() != null)
+                ? member.getClubDtl().getClubMst().getId()
+                : null;
     }
 
-    public static ResponseEntity<GetSignIRespDto> success(Member member) {
-        GetSignIRespDto responseBody = new GetSignIRespDto(member);
+    public static ResponseEntity<GetSignInRespDto> success(Member member) {
+        GetSignInRespDto responseBody = new GetSignInRespDto(member);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 }

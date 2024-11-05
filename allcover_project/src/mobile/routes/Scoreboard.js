@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import RankingBoard from "../components/RankingBoard";
 import WaitingRoom from "../components/WaitingRoom";
 import styles from "../css/routes/Scoreboard.module.css";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import GradeSettingModal from "../components/modal/GradeSettingModal";
 import TeamSettingModal from "../components/modal/TeamSettingModal";
@@ -12,28 +12,31 @@ import SideRankingModal from "../components/modal/SideRankingModal";
 import ScoreInputModal from "../components/modal/ScoreInputModal";
 import GameResult from "../components/GameResult";
 import TeamScoreboard from "../components/TeamScoreboard";
-import useStore from "../../stores/useSignInStore";
+import useSignInStore from "../../stores/useSignInStore";
+import useScoreboard from "../../stores/useScoreboardStore";
+import { getScoreboardMembers } from "../../apis";
+import { useCookies } from "react-cookie";
+import { ACCESS_TOKEN, ROOT_PATH } from "../../constants";
+import { onClickBackBtn } from "../../hooks";
 
 function Scoreboard() {
-    const { signInUser } = useStore();
+    const { signInUser } = useSignInStore();
+    const [cookies] = useCookies();
+
+    const { 
+        members, gradeModal, teamModal, confirmModal, sideJoinUserModal,
+        sideRankingModal, scoreInputModal, page, navTitle,
+        setMembers, toggleGradeModal, toggleTeamModal, toggleConfirmModal,
+        toggleSideJoinUserModal, toggleSideRankingModal, toggleScoreInputModal, setPage, clearMembers
+    } = useScoreboard();
 
     const [searchParams] = useSearchParams();
+    const navigator = useNavigate();
     const gameId = searchParams.get('gameId');
-    const clubId = searchParams.get('clubId');
-    const memberId = signInUser.id;
-    const [members, setMembers] = useState([]);
-    const [gradeModal, setGradeModal] = useState(false);
-    const [teamModal, setTeamModal] = useState(false);
-    const [confirmModal, setConfirmModal] = useState(false);
-    const [sideJoinUserModal, setSideJoinUserModal] = useState(false);
-    const [sideRankingModal, setSideRankingModal] = useState(false);
-    const [scoreInputModal, setScoreInputModal] = useState(false);
-    const [navTitle] = useState(['대기실', '점수표', '팀전', '시상']);
-
-    const [page, setPage] = useState(0);
+    const clubId = signInUser.clubId || null;
 
     const loadMembers = () => {
-        axios.get(`/scoreboard?gameId=${gameId}&clubId=${clubId}&memberId=${memberId}`)
+        axios.get()
             .then(response => {
                 const data = response.data.data;
                 console.log(data)
@@ -44,124 +47,135 @@ function Scoreboard() {
             });
     };
 
-    const gradeSetModalToggle = () => {
-        setGradeModal(!gradeModal);
-    }
+    const getScoreboardResponse = (resposenBody) => {
+        const message = 
+            !resposenBody ? '서버에 문제가 있습니다.' :
+            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
 
-    const teamSetModalToggle = () => {
-        setTeamModal(!teamModal);
-    }
+        const isSuccessed = resposenBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
 
-    const confirmSetModalToggle = () => {
-        setConfirmModal(!confirmModal)
-    }
+        const { members } = resposenBody;
+        setMembers(members)
+    };
 
-    const sideJoinSetModalToggle = () => {
-        setSideJoinUserModal(!sideJoinUserModal)
-    }
-
-    const navBtnClickHandler = (index) => {
-        setPage(index);
-    }
-
-    const sideRankingModalToggle = () => {
-        setSideRankingModal(!sideRankingModal)
-    }
-
-    const scoreInputModalToggle = () => {
-        setScoreInputModal(!scoreInputModal)
+    const getScoreboard = () => {
+        const accessToken = cookies[ACCESS_TOKEN];
+        if(!accessToken) return;
+        getScoreboardMembers(gameId, clubId, accessToken).then(getScoreboardResponse);
     }
 
     useEffect(() => {
-        loadMembers();
-    }, [gameId, clubId, memberId])
+        if(cookies[ACCESS_TOKEN] == null) {
+            alert("로그인이 필요한 서비스입니다.")
+            navigator(ROOT_PATH);
+        }
+        getScoreboard();
+        // return (
+        //     clearMembers
+        // )
+    }, [signInUser]);
+
+    const navBtnClickHandler = (index) => {
+        setPage(index);
+    };
 
     return (
         <>
             <div className={styles.container}>
                 <div className={styles.topBox}>
-                    <div>
-                        <i class="fa-solid fa-reply"></i>
+                    <div onClick={() => onClickBackBtn(navigator)}>
+                        <i class="fa-solid fa-chevron-left"></i>
                     </div>
                     <div>
-                        <p>제 3회 정기모임</p>
+                        <p>{members.length > 0 ? (
+                            members[0].gameName
+                        ) : ""}</p>
                     </div>
                     <div>
-                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <i className="fa-solid fa-circle-exclamation"></i>
                     </div>
                 </div>
                 <div className={styles.main}>
                     <div className={styles.navBox}>
                         <div>
                             {navTitle.map((btn, index) => (
-                                <>
-                                    <button className={`${styles.navBtn} ${page === index ? styles.selectedBtn : ""}`} onClick={() => navBtnClickHandler(index)}>{btn}</button>
-                                </>
+                                <button
+                                    key={index}
+                                    className={`${styles.navBtn} ${page === index ? styles.selectedBtn : ""}`}
+                                    onClick={() => navBtnClickHandler(index)}
+                                >
+                                    {btn}
+                                </button>
                             ))}
                         </div>
                     </div>
                     <div className={styles.contentsBox}>
-                        {page == 0 && 
-                            <WaitingRoom 
-                                members={members} 
-                                gameId={gameId} 
-                                clubId={clubId} 
-                                memberId={memberId} 
+                        {page === 0 && (
+                            <WaitingRoom getScoreboard={getScoreboard}/>
+                        )}
+                        {page === 1 && (
+                            <RankingBoard
+                                members={members}
                                 reloadMembers={loadMembers}
-                                gradeSetModalToggle={gradeSetModalToggle}
-                                teamSetModalToggle={teamSetModalToggle}
-                                confirmSetModalToggle={confirmSetModalToggle}
-                                sideJoinSetModalToggle={sideJoinSetModalToggle}
+                                sideRankingModalToggle={toggleSideRankingModal}
+                                scoreInputModalToggle={toggleScoreInputModal}
                             />
-                        }
-                        {page == 1 &&
-                            <RankingBoard members={members} reloadMembers={loadMembers} sideRankingModalToggle={sideRankingModalToggle} scoreInputModalToggle={scoreInputModalToggle}></RankingBoard>
-                        }
-                        {page == 2 &&
-                            <TeamScoreboard members={members}></TeamScoreboard>
-                        }
-
-                        {page == 3 &&
-                            <GameResult members={members}></GameResult>
-                        }
+                        )}
+                        {page === 2 && <TeamScoreboard members={members} />}
+                        {page === 3 && <GameResult members={members} />}
+                        {page === 4 && <div>1</div>}
                     </div>
                 </div>
-                <div>
-
-                </div>
-                {gradeModal && 
+                {gradeModal && (
                     <div className={styles.modalArea}>
-                        <GradeSettingModal members={members} gameId={gameId} gradeSetModalToggle={gradeSetModalToggle} reloadMembers={loadMembers}></GradeSettingModal>
+                        <GradeSettingModal
+                            getScoreboard={getScoreboard}
+                        />
                     </div>
-                }
-                {teamModal && 
+                )}
+                {teamModal && (
                     <div className={styles.modalArea}>
-                        <TeamSettingModal members={members} gameId={gameId} teamSetModalToggle={teamSetModalToggle} reloadMembers={loadMembers}></TeamSettingModal>
+                        <TeamSettingModal
+                            getScoreboard={getScoreboard}
+                        />
                     </div>
-                }
-                {confirmModal &&
+                )}
+                {confirmModal && (
                     <div className={styles.modalArea}>
-                        <ConfirmModal confirmSetModalToggle={confirmSetModalToggle} reloadMembers={loadMembers}></ConfirmModal>
+                        <ConfirmModal
+                            getScoreboard={getScoreboard}
+                        />
                     </div>
-                }
-                {sideJoinUserModal &&
+                )}
+                {sideJoinUserModal && (
                     <div className={styles.modalArea}>
-                        <SideGameJoinUsers members={members} sideJoinSetModalToggle={sideJoinSetModalToggle}></SideGameJoinUsers>
+                        <SideGameJoinUsers
+                            sideJoinSetModalToggle={toggleSideJoinUserModal}
+                        />
                     </div>
-                }
-                {sideRankingModal &&
+                )}
+                {sideRankingModal && (
                     <div className={styles.modalArea}>
-                        <SideRankingModal members={members} sideRankingModalToggle={sideRankingModalToggle}></SideRankingModal>
+                        <SideRankingModal
+                            sideRankingModalToggle={toggleSideRankingModal}
+                        />
                     </div>
-                }
-                {scoreInputModal &&
+                )}
+                {scoreInputModal && (
                     <div className={styles.modalArea}>
-                        <ScoreInputModal members={members} scoreInputModalToggle={scoreInputModalToggle} reloadMembers={loadMembers}></ScoreInputModal>    
+                        <ScoreInputModal
+                            getScoreboard={getScoreboard}
+                        />
                     </div>
-                }
+                )}
             </div>
         </>
-    )
+    );
 }
 
 export default Scoreboard;

@@ -1,11 +1,12 @@
 package com.example.allcoverproject.entity;
 
-import com.example.allcoverproject.dto.MemberReqDto;
-import com.example.allcoverproject.dto.MemberRespDto;
+import com.example.allcoverproject.dto.request.SignUpReqDto;
+import com.example.allcoverproject.dto.response.member.MemberRespDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     @JsonIgnore
-    List<Scoreboard> scoreboards = new ArrayList<>();
+    private List<Scoreboard> scoreboards = new ArrayList<>();
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -37,13 +38,33 @@ public class Member {
 
     private String roles;
 
+    @Column(name = "sns_id")
+    private String snsId;
 
-    public Member(MemberReqDto memberReqDto) {
-        this.name = memberReqDto.getName();
-        this.email = memberReqDto.getEmail();
-        this.password = memberReqDto.getPassword();
-        this.gender = memberReqDto.getGender();
+    private String joinPath;
+
+    private String birth;
+
+    private String status;
+
+    private String profile;
+
+    private LocalDateTime createDate;
+
+    private LocalDateTime updateDate;
+
+
+    public Member(SignUpReqDto signUpReqDto) {
+        this.name = signUpReqDto.getMemberName();
+        this.email = signUpReqDto.getMemberId();
+        this.gender = signUpReqDto.getGender();
+        this.birth = signUpReqDto.getMemberBirth();
         this.roles = "ROLE_USER";
+        this.snsId = signUpReqDto.getSnsId();
+        this.joinPath = signUpReqDto.getJoinPath();
+        this.createDate = LocalDateTime.now();
+        this.updateDate = LocalDateTime.now();
+        this.profile = signUpReqDto.getProfileImageUrl();
     }
 
     public MemberRespDto toMemberDto() {

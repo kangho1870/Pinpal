@@ -2,13 +2,21 @@ import { useSearchParams } from "react-router-dom";
 import styles from "../../css/components/modal/ScoreInputModal.module.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import useScoreboard from "../../../stores/useScoreboardStore";
+import useSignInStore from "../../../stores/useSignInStore";
+import { scoreInputRequest } from "../../../apis";
+import { useCookies } from "react-cookie";
+import { ACCESS_TOKEN } from "../../../constants";
 
-export default function ScoreInputModal({ members, scoreInputModalToggle, reloadMembers }) {
+export default function ScoreInputModal({ getScoreboard }) {
+    const [cookies] = useCookies();
+    const token = cookies[ACCESS_TOKEN];
     const [searchParams] = useSearchParams();
-    const memberId = searchParams.get('memberId');
     const gameId = searchParams.get('gameId');
-
-    const [games] = useState(["1G", "2G", "3G", "4G"]);
+    const { members, toggleScoreInputModal } = useScoreboard();
+    const { signInUser } = useSignInStore();
+    
+    const memberId = signInUser.id;
 
     const member = members.find(member => member.memberId == memberId);
     
@@ -29,20 +37,29 @@ export default function ScoreInputModal({ members, scoreInputModalToggle, reload
         setScore(value);
     };
 
-    const saveScore = () => {
-        axios.post(`/scoreboard/saveScore?memberId=${memberId}&gameId=${gameId}`, scores)
-            .then(response => {
-                reloadMembers();
-                scoreInputModalToggle();
-            })
-            .catch(error => {
-                console.log(error);
-            })
+    const saveScoreResponse = (resposenBody) => {
+        const message = 
+            !resposenBody ? '서버에 문제가 있습니다.' :
+            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
+            resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
+
+        const isSuccessed = resposenBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        getScoreboard();
+        toggleScoreInputModal();
+    }
+
+    const saveScoreRequest = () => {
+        scoreInputRequest(gameId, memberId, scores, token).then(saveScoreResponse);
     }
 
     return (
         <div className={styles.modalContainer}>
-            <div className={styles.closeBox} onClick={scoreInputModalToggle}>
+            <div className={styles.closeBox} onClick={toggleScoreInputModal}>
                 <i class="fa-regular fa-circle-xmark"></i>
             </div>
             <div className={styles.modalArea}>
@@ -88,8 +105,8 @@ export default function ScoreInputModal({ members, scoreInputModalToggle, reload
                     </div>
                 </div>
                 <div className={styles.btnBox}>
-                    <button className={styles.btns} onClick={scoreInputModalToggle}>취소</button>
-                    <button className={styles.btns} onClick={saveScore}>확인</button>
+                    <button className={styles.btns} onClick={toggleScoreInputModal}>취소</button>
+                    <button className={styles.btns} onClick={saveScoreRequest}>확인</button>
                 </div>
             </div>
         </div>
