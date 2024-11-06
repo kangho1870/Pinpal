@@ -64,9 +64,47 @@ section::-webkit-scrollbar {
 .contentArea {
     display: flex;
     flex-direction: column;
+    padding: 10px;
 }
 
 .contentBox {
-    padding: 10px;
-    height: 100%;
+    margin-top: 10px;
+}
+
+.clubContainer {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.clubLogo {
+    display: flex;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+}
+
+.clubDescription {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+}
+
+.clubPlace {
+    display: flex;
+    font-size: 10px;
+    text-align: center;
+    align-items: center;
+    margin-top: 3px;
+}
+
+.clubPlaceBox {
+    background-color: #dbdbdb;
+    border-radius: 3px;
+    margin-right: 5px;
+    font-size: 10px;
+}
+
+.clubDescriptionFont {
+    font-size: 9px;
 }

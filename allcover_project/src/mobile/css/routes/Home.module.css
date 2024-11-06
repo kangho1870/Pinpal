@@ -37,3 +37,24 @@
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.modalContainer {
+    display: flex;
+    position: fixed;
+    bottom: 10%;
+    right: 3%;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    background-color: #004EA2;
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 600;
+}

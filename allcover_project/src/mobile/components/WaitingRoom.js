@@ -22,7 +22,7 @@ function WaitingRoom({ getScoreboard }) {
     const [sideGrade1, setSideGrade1] = useState(false);
     const [sideAvg, setSideAvg] = useState(false);
     const [confirmedJoin, setConfirmedJoin] = useState(false);
-    const memberId = signInUser.id;
+    const memberId = signInUser?.id || null;
     const gameId = searchParams.get("gameId");
     const roles = signInUser.clubRole.split(", ").map(role => role.trim());
     
@@ -31,7 +31,6 @@ function WaitingRoom({ getScoreboard }) {
 
     const findCurrentUser = () => {
         const user = members.find(member => member.memberId == memberId);
-        console.log(members)
         if(user) {
             setSideGrade1(user.sideGrade1);
             setSideAvg(user.sideAvg);

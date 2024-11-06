@@ -33,7 +33,7 @@ function Scoreboard() {
     const [searchParams] = useSearchParams();
     const navigator = useNavigate();
     const gameId = searchParams.get('gameId');
-    const clubId = signInUser.clubId;
+    const clubId = signInUser?.clubId || null;
 
     const loadMembers = () => {
         axios.get()

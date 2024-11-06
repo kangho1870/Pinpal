@@ -10,9 +10,10 @@ import MyClub from './mobile/routes/MyClub';
 import Scoreboard from './mobile/routes/Scoreboard';
 import Auth from './mobile/routes/Auth';
 import { useCookies } from 'react-cookie';
-import { ACCESS_TOKEN, AUTH_ABSOLUTE_PATH, HOME_PATH, ROOT_PATH, SCOREBOARD_PATH } from './constants';
+import { ACCESS_TOKEN, ADD_CLUB_PATH, AUTH_ABSOLUTE_PATH, CLUB_DETAIL_PATH, HOME_PATH, MY_CLUB_PATH, ROOT_PATH, SCOREBOARD_PATH } from './constants';
 import { getSignInRequest } from './apis';
 import useSignInStore from './stores/useSignInStore';
+import AddClub from './mobile/routes/AddClub';
 
 function Index() {
 
@@ -72,7 +73,6 @@ function App() {
   const navigator = useNavigate();
 
   const getSignInResponse = (responseBody) => {
-
     const message = 
         !responseBody ? '로그인 유저 정보를 불러오는데 문제가 발생했습니다.' :
         responseBody.code === 'NI' ? '로그인 유저 정보가 존재하지 않습니다.' :
@@ -119,10 +119,11 @@ function App() {
         <Routes>
           <Route path='/' element={<Main />} />
           <Route path='/home' element={<Home />} />
-          <Route path='/myclub' element={<MyClub />} />
+          <Route path={CLUB_DETAIL_PATH()} element={<MyClub />} />
           <Route path={SCOREBOARD_PATH} element={<Scoreboard />} />
           <Route path='/auth' element={<Auth />} />
           <Route path='/sns-success' element={<SnsSuccess />} />
+          <Route path={ADD_CLUB_PATH} element={<AddClub></AddClub>}></Route>
         </Routes>
       </> :
         <Routes>

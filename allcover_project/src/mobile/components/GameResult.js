@@ -16,8 +16,8 @@ export default function GameResult() {
     const [scoreCounting, setScoreCounting] = useState(true);
     const [searchParams] = useSearchParams();
     const gameId = searchParams.get("gameId");
-    const clubId = signInUser.clubId;
-    const roles = signInUser.clubRole.split(", ").map(role => role.trim());
+    const clubId = signInUser?.clubId || null;
+    const roles = signInUser?.clubRole.split(", ").map(role => role.trim()) || null;
     
 
     const findCurrentUser = () => {

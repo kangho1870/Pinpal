@@ -3,11 +3,12 @@ import styles from "../css/routes/MyClub.module.css";
 import useSignInStore from "../../stores/useSignInStore";
 import { useCookies } from "react-cookie";
 import { ACCESS_TOKEN, ROOT_PATH, SCOREBOARD_PATH } from "../../constants";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { onClickBackBtn } from "../../hooks";
-import { addGameRequest, getCeremonysListRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
+import { addGameRequest, clubMemberAvgUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
 import Loading from "../components/loading/Loading";
 import useClubStore from "../../stores/useClubStore";
+import TextEditor from "../components/textEditor/TextEditor";
 
 function MyClub() {
 
@@ -17,11 +18,11 @@ function MyClub() {
     const [addGameModal, setAddGameModal] = useState(false);
     const navigator = useNavigate();
     const [cookies] = useCookies();
+    const [clubInfo, setClubInfo] = useState({});
     const token = cookies[ACCESS_TOKEN];
     const [page, setPage] = useState(0);
-    const clubId = signInUser.clubId;
-    const roles = signInUser.clubRole.split(", ").map(role => role.trim()) || null;
-    const [clubName, setClubName] = useState("");
+    const { clubId } = useParams();
+    const roles = signInUser?.clubRole ? signInUser.clubRole.split(", ").map(role => role.trim()) : [];
 
     const getMembersResponse = (responseBody) => {
 
@@ -91,22 +92,38 @@ function MyClub() {
         getGameListRequest(clubId, token).then(getGamesResponse);
     }
 
-    const getClubName = () => {
-        if (members && members.length > 0) {  // members가 존재하고 길이가 0보다 클 때만 실행
-            setClubName(members[0].clubName);
+    const getClubInfoResponse = (responseBody) => {
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = responseBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
         }
-    };
+        const { clubName, clubDescription } = responseBody
+        setClubInfo({ clubName, clubDescription });
+    }
+
+    const getClubInfo = () => {
+        getClubInfoRequest(clubId, token).then(getClubInfoResponse)
+    }
 
     useEffect(() => {
         if(cookies[ACCESS_TOKEN] == null) {
             alert("로그인이 필요한 서비스입니다.");
             navigator(ROOT_PATH);
         }
+        if(clubId == null) {
+            return;
+        }
         getMembersRequest();
         getCeremonysList();
         getGamesRequest();
-        getClubName();
-    },[])
+        getClubInfo();
+    },[clubId])
 
     return (
         <>
@@ -114,7 +131,7 @@ function MyClub() {
                 <div className={styles.top}>
                     <div className={styles.clubTitle}>
                         <div className={styles.topCategory} onClick={() => onClickBackBtn(navigator)}><i class="fa-solid fa-chevron-left"></i></div>
-                        <span className={styles.topCategory}>{clubName}</span>
+                        <span className={styles.topCategory}>{clubInfo.clubName}</span>
                         <div className={styles.topCategory}><i class="fa-solid fa-right-from-bracket"></i></div>
                     </div>
                     <div className={styles.clubNav}>
@@ -122,24 +139,24 @@ function MyClub() {
                         <button className={`${styles.clubNavBtns} ${page == 1 ? styles.selectedClubNavBtn : ""}`} onClick={() => setPage(1)}><span className={styles.btnSpan}>기록실</span></button>
                         <button className={`${styles.clubNavBtns} ${page == 2 ? styles.selectedClubNavBtn : ""}`} onClick={() => setPage(2)}><span className={styles.btnSpan}>게시판</span></button>
                         <button className={`${styles.clubNavBtns} ${page == 3 ? styles.selectedClubNavBtn : ""}`} onClick={() => setPage(3)}><span className={styles.btnSpan}>랭킹</span></button>
+                        {(roles.includes("STAFF") || roles.includes("MASTER")) &&
+                            <button className={`${styles.clubNavBtns} ${page == 4 ? styles.selectedClubNavBtn : ""}`} onClick={() => setPage(4)}><span className={styles.btnSpan}>관리</span></button>
+                        }
                     </div>
                 </div>
                 <div className={styles.contextArea}>
-                {signInUser && signInUser.clubId !== null && page == 0 &&
-                    <ClubHome setLoading={setLoading} getGamesRequest={getGamesRequest}></ClubHome>
+                {page == 0 &&
+                    <ClubHome clubInfo={clubInfo} setLoading={setLoading} getGamesRequest={getGamesRequest}></ClubHome>
                 }
-                {signInUser && signInUser.clubId !== null && page == 1 &&
+                {page == 1 &&
                     <ClubCeremony setLoading={setLoading}></ClubCeremony>
                 }
-                {!signInUser && signInUser.clubId == null &&
-                    <div className={styles.noClubContainer}>
-                        <p className={styles.noClubTitle}>가입한 클럽이 없습니다.</p>
-                    </div>
+                {page == 4 &&
+                    <ClubSetting setLoading={setLoading}></ClubSetting>
                 }
-                    
                 </div>
             </div>
-            {page === 0 && roles.includes("STAFF") &&
+            {page === 0 && (roles.includes("STAFF") || roles.includes("MASTER")) &&
                 <div className={styles.modalContainer}>
                     <div className={styles.modalBox}>
                         <div className={styles.modal} onClick={addGameModalBtnClickHandler}>
@@ -149,7 +166,7 @@ function MyClub() {
                     </div>
                 </div>
             }
-            {addGameModal && roles.includes("STAFF") &&
+            {addGameModal && (roles.includes("STAFF") || roles.includes("MASTER")) &&
                 <div className={styles.addGameModal}>
                     <AddGameModal clubId={clubId} token={token} addGameModalBtnClickHandler={addGameModalBtnClickHandler}></AddGameModal>
                 </div>
@@ -163,7 +180,7 @@ function MyClub() {
 
 export default MyClub;
 
-function ClubHome({ setLoading, getGamesRequest }) {
+function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
 
     const { members, ceremonys, games } = useClubStore();
     const { signInUser, setSignInUser } = useSignInStore();
@@ -171,8 +188,8 @@ function ClubHome({ setLoading, getGamesRequest }) {
     const [cookies] = useCookies();
     const token = cookies[ACCESS_TOKEN];
 
-    const clubId = signInUser.clubId || 0;
-    const memberId = signInUser.id || null;
+    const clubId = signInUser?.clubId || 0;
+    const memberId = signInUser?.id || null;
 
     const scheduleOnClickHandler = (gameId) => {
         navigator(`${SCOREBOARD_PATH}?gameId=${gameId}&clubId=${clubId}`);
@@ -240,22 +257,10 @@ function ClubHome({ setLoading, getGamesRequest }) {
             <div className={`${styles.clubBannerArea} ${styles.commonDiv}`}>
                 <img className={styles.bannerImage} src=""></img>
             </div>
-            <div className={`${styles.clubDescription} ${styles.commonDiv}`}>
-                부산 서면볼링센터 상주 <br></br>
-                정모 : 매월 2,4주 일요일 오후 2시 <br></br>
-                정법 : 매월 1,3주 월요일 오후 8시 <br></br>
-                회비 : 매월 1만원 <br></br>
-                · 볼링초보, 볼링구력자 모두 대환영 (장비와 유니폼은 필수 구입해야 함!) <br></br>
-                번개 매일, <br></br>
-                금요일 정기 판게임 있음 3인조, <br></br>
-                주간하이 등 수시 이벤트 다양 <br></br>
-                진정 볼링을 사랑하는 볼러들 모집중 <br></br>
-                볼링레슨 가능~~ <br></br>
-                볼링이중 클럽 <br></br>
-                나이제한 83년생까지 <br></br>
-                가입 후 한달이내 참석필수 <br></br>
-                #부산볼링 #볼링클럽 #서면볼링 #볼링 #부산볼링클럽 #볼링동호회 #2030 #부산동호회
-            </div>
+            <div
+                className={`${styles.clubDescription} ${styles.commonDiv}`}
+                dangerouslySetInnerHTML={{ __html: clubInfo.clubDescription }}
+            />
             <div className={styles.divSection}></div>
             <div className={styles.title}>
                 <h3>클럽 일정</h3>
@@ -305,7 +310,11 @@ function ClubHome({ setLoading, getGamesRequest }) {
                         </>
                     ))
                 )
-                : ("")
+                : (
+                    <div className={styles.nodataContainer}>
+                        <Nodata text={"진행중인 일정이 없습니다."}></Nodata>
+                    </div>
+                )
             }
             </div>
             <div className={styles.divSection}></div>
@@ -353,7 +362,11 @@ function ClubHome({ setLoading, getGamesRequest }) {
                             </div>
                         </div>
                     ))): 
-                    ("")
+                    (
+                        <div className={styles.nodataContainer}>
+                            <Nodata text={"최근 게임 데이터가 없습니다."}></Nodata>
+                        </div>
+                    )
                 }
                 
             </div>
@@ -413,8 +426,8 @@ function ClubCeremony({ setLoading }) {
         });
     };
 
-    const clubId = signInUser.clubId || 0;
-    const memberId = signInUser.id || null;
+    const clubId = signInUser?.clubId || 0;
+    const memberId = signInUser?.id || null;
 
     function getAvgScore(...scores) {
         const validScores = scores.filter(score => score !== null && score !== undefined);
@@ -459,7 +472,7 @@ function ClubCeremony({ setLoading }) {
                     </div>
                 </div>
                 <div className={styles.ceremonyContainer}>
-                    {ceremonys.map((data, i) => (
+                    {ceremonys.length > 0 ? ceremonys.map((data, i) => (
                         <>
                             <div className={`${styles.ceremonyBox} ${expandedIndices.includes(i) ? styles.selectedCeremony : ""}`} key={data.gameId}>
                                 <div className={styles.simpleInformation}>
@@ -658,12 +671,269 @@ function ClubCeremony({ setLoading }) {
                                 </div>
                             }
                         </>
-                    ))}
+                    )) : (
+                            <div className={styles.nodataContainer}>
+                                <Nodata text={"진행중인 일정이 없습니다."}></Nodata>
+                            </div>
+                        )
+                    }
                 </div>
             </div>
         </>
     )
 };
+
+function ClubSetting() {
+    const { members } = useClubStore();
+    const [cookies] = useCookies();
+    const token = cookies[ACCESS_TOKEN];
+    const [page, setPage] = useState(0);
+    const [updatedMembers, setUpdatedMembers] = useState([]);
+
+    const groupedMembers = members.reduce((acc, member) => {
+        const { memberGrade } = member;
+        if (!acc[memberGrade]) {
+            acc[memberGrade] = [];
+        }
+        acc[memberGrade].push(member);
+        return acc;
+    }, {});
+
+    const memberAvgUpdate = (memberId, newAvg) => {
+        setUpdatedMembers(prev =>
+            prev.map(member =>
+                member.memberId === memberId ? { ...member, memberAvg: newAvg } : member
+            )
+        );
+    };
+    
+    const memberGradeUpdate = (memberId, newGrade) => {
+        console.log(newGrade)
+        setUpdatedMembers(prev =>
+            prev.map(member =>
+                member.memberId === memberId ? { ...member, memberGrade: newGrade } : member
+            )
+        );
+    };
+
+    const memberAvgUpdateResponse = (responseBody) => {
+
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'SJC' ? '취소 처리되었습니다.' : 
+        responseBody.code === 'SU' ? '저장 완료되었습니다..' : '';
+
+        const isSuccessed = responseBody.code === 'SU' || 'SJC';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        
+        alert(message);
+
+    }
+
+    const memberAvgUpdateRequest = () => {
+        const dto = {
+            ids: updatedMembers.map(member => member.memberId),
+            avg: updatedMembers.map(member => member.memberAvg),
+            grades: updatedMembers.map(member => member.memberGrade),
+        }
+        console.log(dto)
+        clubMemberAvgUpdateRequest(dto, token).then(memberAvgUpdateResponse);
+    }
+
+    useEffect(() => {
+        setUpdatedMembers(members);
+    }, [members])
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.clubNav}>
+                <button
+                    className={`${styles.clubNavBtns} ${page === 0 ? styles.selectedClubNavBtn : ""}`}
+                    onClick={() => setPage(0)}
+                >
+                    에버
+                </button>
+                <button
+                    className={`${styles.clubNavBtns} ${page === 1 ? styles.selectedClubNavBtn : ""}`}
+                    onClick={() => setPage(1)}
+                >
+                    회원관리
+                </button>
+            </div>
+            <div className={styles.contextArea}>
+                {page == 0 && 
+                    <>
+                        <div className={styles.gradesAvg}>
+                            {Object.keys(groupedMembers).map((grade, i) => (
+                                grade !== 0 && grade < 3 && (
+                                    <div key={grade} className={styles.gradeGroup}>
+                                        {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
+                                        {groupedMembers[grade].map((member) => (
+                                            <div key={member.memberId} className={styles.gradeBox}>
+                                                <div className={styles.memberAvgBox}>
+                                                    <p>{member.memberName}</p>
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <p>{member.memberAvg}</p>
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="에버"
+                                                        className={styles.avgInput}
+                                                        onChange={(e) =>
+                                                            memberAvgUpdate(member.memberId, e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="군"
+                                                        className={styles.avgInput}
+                                                        onChange={(e) =>
+                                                            memberGradeUpdate(member.memberId, e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )
+                            ))}
+                        </div>
+                        <div className={styles.gradesAvg}>
+                            {Object.keys(groupedMembers).map((grade, i) => (
+                                grade !== 0 && grade > 2 && grade < 5 && (
+                                    <div key={grade} className={styles.gradeGroup}>
+                                        {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
+                                        {groupedMembers[grade].map((member) => (
+                                            <div key={member.memberId} className={styles.gradeBox}>
+                                                <div className={styles.memberAvgBox}>
+                                                    <p>{member.memberName}</p>
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <p>{member.memberAvg}</p>
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="에버"
+                                                        className={styles.avgInput}
+                                                        onChange={(e) =>
+                                                            memberAvgUpdate(member.memberId, e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="군"
+                                                        className={styles.avgInput}
+                                                        onChange={(e) =>
+                                                            memberGradeUpdate(member.memberId, e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )
+                            ))}
+                        </div>
+                        <div className={styles.gradesAvg}>
+                            {Object.keys(groupedMembers).map((grade, i) => (
+                                grade !== 0 && grade > 4 && grade < 7 && (
+                                    <div key={grade} className={styles.gradeGroup}>
+                                        {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
+                                        {groupedMembers[grade].map((member) => (
+                                            <div key={member.memberId} className={styles.gradeBox}>
+                                                <div className={styles.memberAvgBox}>
+                                                    <p>{member.memberName}</p>
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <p>{member.memberAvg}</p>
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="에버"
+                                                        className={styles.avgInput}
+                                                        onChange={(e) =>
+                                                            memberAvgUpdate(member.memberId, e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="군"
+                                                        className={styles.avgInput}
+                                                        onChange={(e) =>
+                                                            memberGradeUpdate(member.memberId, e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )
+                            ))}
+                        </div>
+                        <div className={styles.gradesAvg}>
+                            {Object.keys(groupedMembers).map((grade, i) => (
+                                grade == 0 && (
+                                    <div key={grade} className={styles.gradeGroup}>
+                                        {i === 0 ? <h3 className={styles.gradeTitle}>신입</h3> : ""}
+                                        {groupedMembers[grade].map((member) => (
+                                            <div key={member.memberId} className={styles.gradeBox}>
+                                                <div className={styles.memberAvgBox}>
+                                                    <p>{member.memberName}</p>
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <p>{member.memberAvg}</p>
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="에버"
+                                                        className={styles.avgInput}
+                                                        onChange={(e) =>
+                                                            memberAvgUpdate(member.memberId, e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className={styles.memberAvgBox}>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="군"
+                                                        className={styles.avgInput}
+                                                        onChange={(e) =>
+                                                            memberGradeUpdate(member.memberId, e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )
+                            ))}
+                        </div>
+                        <div className={styles.avgSaveBtnBox}>
+                            <button className={styles.avgSaveBtn} onClick={memberAvgUpdateRequest}>저장하기</button>
+                        </div>
+                    </>
+                }
+            </div>
+            
+        </div>
+    );
+}
 
 function AddGameModal({ clubId, token, addGameModalBtnClickHandler }) {
     const [gameName, setGameName] = useState("");
@@ -769,4 +1039,14 @@ function AddGameModal({ clubId, token, addGameModalBtnClickHandler }) {
             </div>
         </>
     );
+}
+
+
+function Nodata({ text }) {
+    return (
+        <div className={styles.nodataBox}>
+            <img className={styles.nodataImg} src={require("../../imges/club/noData.png")}></img>
+            <span>{text}</span>
+        </div>
+    )
 }

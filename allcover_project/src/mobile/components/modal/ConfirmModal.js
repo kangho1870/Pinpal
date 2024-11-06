@@ -16,7 +16,7 @@ export default function ConfirmModal({ getScoreboard }) {
     const { members, toggleConfirmModal } = useScoreboard();
     const gameId = searchParams.get("gameId");
 
-    const memberId = signInUser.id;
+    const memberId = signInUser?.id || null;
 
     const [isConfirm, setIsConfirm] = useState(false);
     const [code, setCode] = useState("");

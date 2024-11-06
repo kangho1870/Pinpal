@@ -1,0 +1,66 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.top {
+    display: flex;
+    font-size: 22px;
+    align-items: center;
+    padding: 5px;
+}
+
+.topCategory {
+    margin-right: 20px;
+}
+
+.topCategoryTitle {
+    font-weight: 400;
+}
+
+.contents {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.inputBox {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.inputBox:nth-last-child(1) {
+    height: 250px;
+}
+
+.inputText {
+    width: 100%;
+    height: 45px;
+    border: none;
+    background-color: #dbdbdb;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.clubAddBtnBox {
+    display: flex;
+    margin-top: 40px;
+    padding: 10px;
+}
+.clubAddBtn {
+    display: flex;
+    width: 100%;
+    height: 45px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    color: #fafafa;
+    background-color: #004EA2;
+    font-size: 15px;
+    font-weight: 600;
+}

@@ -5,21 +5,31 @@ import DefaultMain from "./DefaultMain";
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, HOME_PATH, MY_CLUB_PATH, ROOT_PATH } from "../../constants";
+import { ACCESS_TOKEN, ADD_CLUB_PATH, CLUB_DETAIL_PATH, HOME_PATH, MY_CLUB_PATH, ROOT_PATH } from "../../constants";
 import useSignInStore from "../../stores/useSignInStore";
 import MyClub from "./MyClub";
+import AddClub from "./AddClub";
 
 function Home() {
 
-    const signInUser = useSignInStore();
+    const { signInUser } = useSignInStore();
     const [cookies] = useCookies();
     const navigator = useNavigate();
+    const clubId = signInUser?.clubId || null;
 
     const [page, setPage] = useState(0);
 
     const getButtonColor = (buttonPage) => {
         return page === buttonPage ? "#000000" : "#a3a3a3";  // 선택된 버튼은 검은색, 나머지는 회색
     };
+
+    const myClubBtnClickHandler = () => {
+        if(clubId == null) {
+            alert("가입한 클럽이 없습니다.")
+            return;
+        }
+        navigator(CLUB_DETAIL_PATH(clubId));
+    }
     
     useEffect(() => {
         if(cookies[ACCESS_TOKEN] == null) {
@@ -44,10 +54,7 @@ function Home() {
                         ""
                     }
                     {page == 2 &&
-                        <MyClub></MyClub>
-                    }
-                    {page == 3 &&
-                        ""
+                        <AddClub></AddClub>
                     }
                 </div>
                 <div className={styles.bottom}>
@@ -65,7 +72,7 @@ function Home() {
                                 <span style={{color: getButtonColor(1)}}>검색</span>
                             </div>
                             <div className={styles.categoryBox} onClick={() => {
-                                setPage(2);
+                                myClubBtnClickHandler();
                             }}>
                                 <i className="fa-solid fa-users" style={{color: getButtonColor(2)}}></i>
                                 <span style={{color: getButtonColor(2)}}>내모임</span>
@@ -78,6 +85,14 @@ function Home() {
                             </div>
                         </div>
                     }
+                </div>
+            </div>
+            <div className={styles.modalContainer}>
+                <div className={styles.modalBox} onClick={() => navigator(ADD_CLUB_PATH)}>
+                    <div className={styles.modal}>
+                        <i className="fa-solid fa-plus"></i>
+                        <span className={styles.title}>클럽 개설</span>
+                    </div>
                 </div>
             </div>
         </>

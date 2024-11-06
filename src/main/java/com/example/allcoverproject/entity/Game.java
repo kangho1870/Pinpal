@@ -21,7 +21,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class Game {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "game_id")
     private Long id;
     private String name;

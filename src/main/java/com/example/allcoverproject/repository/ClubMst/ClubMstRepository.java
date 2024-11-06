@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ClubMstRepository extends JpaRepository<ClubMst, Long> {
     List<ClubMst> findAllById(Long id);
+    ClubMst findByMemberId(Long memberId);
 }

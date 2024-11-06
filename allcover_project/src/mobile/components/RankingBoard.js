@@ -8,7 +8,7 @@ function RankingBoard({ sideRankingModalToggle, scoreInputModalToggle }) {
 
     const { members } = useScoreboard();
     const { signInUser } = useSignInStore();
-    const memberId = signInUser.id;
+    const memberId = signInUser?.id || null;
 
     const getCardClass = (grade) => {
         switch (grade) {

@@ -44,9 +44,15 @@ const ADD_GAME_API_URL = `${GAME_MODULE_URL}`;
 
 const CLUB_MODULE_URL = `${ROOT_API_DOMAIN}/api/v1/club`;
 
+const GET_CLUB_INFO_API_URL = (clubId) => `${CLUB_MODULE_URL}/${clubId}`;
+
 const GET_MEMBERS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/home?clubId=${clubId}`;
 
 const GET_CEREMONYS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/ceremony?clubId=${clubId}`;
+
+const ADD_CLUB_API_URL = `${CLUB_MODULE_URL}`;
+
+const CLUB_MEMBERS_AVG_UPDATE_API_URL = `${CLUB_MODULE_URL}/update-avg`;
 
 const responseDataHandler = (response) => {
     const { data } = response;
@@ -185,6 +191,13 @@ export const addGameRequest = async (game, accessToken) => {
 
 // club관련 함수
 
+export const getClubInfoRequest = async (clubId, accessToken) => {
+    const responseBody = await axios.get(`${GET_CLUB_INFO_API_URL(clubId)}`, bearerAuthorization(accessToken))
+        .then(responseDataHandler)
+        .catch(responseErrorHandler)
+    return responseBody;
+}
+
 export const getMemberListRequest = async (clubId, accessToken) => {
     const responseBody = await axios.get(`${GET_MEMBERS_BY_CLUB_API_URL(clubId)}`, bearerAuthorization(accessToken))
         .then(responseDataHandler)
@@ -194,6 +207,22 @@ export const getMemberListRequest = async (clubId, accessToken) => {
 
 export const getCeremonysListRequest = async (clubId, accessToken) => {
     const responseBody = await axios.get(`${GET_CEREMONYS_BY_CLUB_API_URL(clubId)}`, bearerAuthorization(accessToken))
+        .then(responseDataHandler)
+        .catch(responseErrorHandler)
+    return responseBody;
+}
+
+export const addClubRequest = async (data, accessToken) => {
+    const responseBody = await axios.post(`${ADD_CLUB_API_URL}`, data, bearerAuthorization(accessToken))
+        .then(responseDataHandler)
+        .catch(responseErrorHandler)
+    return responseBody;
+}
+
+
+export const clubMemberAvgUpdateRequest = async (data, accessToken) => {
+    console.log(data)
+    const responseBody = await axios.post(`${CLUB_MEMBERS_AVG_UPDATE_API_URL}`, data, bearerAuthorization(accessToken))
         .then(responseDataHandler)
         .catch(responseErrorHandler)
     return responseBody;

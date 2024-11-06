@@ -1,8 +1,10 @@
 package com.example.allcoverproject.service.club;
 
+import com.example.allcoverproject.dto.request.club.AddClubReqDto;
 import com.example.allcoverproject.dto.response.CodeMessageRespDto;
 import com.example.allcoverproject.dto.response.clubDtl.GetCeremonyRespDto;
 import com.example.allcoverproject.dto.response.clubDtl.GetClubDtlRespDto;
+import com.example.allcoverproject.dto.response.clubMst.GetClubMstRespDto;
 import com.example.allcoverproject.entity.*;
 import com.example.allcoverproject.repository.ClubMst.ClubMstRepository;
 import com.example.allcoverproject.repository.ceremony.CeremonyRepository;
@@ -16,12 +18,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ClubServiceImpl implements ClubService {
 
     private final ClubDtlRepository clubDtlRepository;
+    private final ClubMstRepository clubMstRepository;
     private final MemberRepository memberRepository;
     private final ScoreboardRepository scoreboardRepository;
     private final CeremonyRepository ceremonyRepository;
@@ -57,4 +62,75 @@ public class ClubServiceImpl implements ClubService {
 
         return GetCeremonyRespDto.success(ceremonys, allScoreboards, games, memberRepository);
     }
+
+    @Override
+    public ResponseEntity<CodeMessageRespDto> addClub(AddClubReqDto addClubReqDto) {
+        Member member = memberRepository.findMemberById(addClubReqDto.getMemberId());
+        if (member == null) return CodeMessageRespDto.noExistMemberData();
+
+        ClubMst byMemberId = clubMstRepository.findByMemberId(member.getId());
+        if(byMemberId != null) return CodeMessageRespDto.noExistMemberData();
+
+        try {
+
+            ClubMst clubMst = new ClubMst(addClubReqDto, member);
+            clubMstRepository.save(clubMst);
+
+            ClubDtl clubDtl = new ClubDtl(member, clubMst, "MASTER");
+            clubDtlRepository.save(clubDtl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+
+        return CodeMessageRespDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super GetClubMstRespDto> getClubData(Long clubId) {
+        Optional<ClubMst> clubMstOpt = clubMstRepository.findById(clubId);
+        if(clubMstOpt.isEmpty()) return CodeMessageRespDto.noExistMemberData();
+
+        ClubMst clubMst = null;
+        try {
+
+            clubMst = clubMstOpt.get();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+
+        return GetClubMstRespDto.success(clubMst);
+    }
+
+    @Override
+    public ResponseEntity<CodeMessageRespDto> updateOfMembersAvg(Map<String, List<Object>> map) {
+        List<Object> ids = map.get("ids");
+        List<Object> avg = map.get("avg");
+        List<Object> grades = map.get("grades");
+        if(ids == null || avg == null) return CodeMessageRespDto.noExistMemberData();
+
+        try {
+
+            for (int i = 0; i < ids.size(); i++) {
+                Long memberId = Long.valueOf(ids.get(i).toString()); // Integer to Long 변환
+                ClubDtl clubDtl = clubDtlRepository.findByMemberId(memberId);
+                Integer avgNum = Integer.valueOf(avg.get(i).toString());
+                Integer gradeNum = Integer.valueOf(grades.get(i).toString());
+                clubDtl.setAvg(avgNum);
+                clubDtl.setGrade(gradeNum);
+                clubDtlRepository.save(clubDtl);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+
+
+        return CodeMessageRespDto.success();
+    }
+
+
 }

@@ -16,7 +16,7 @@ export default function ScoreInputModal({ getScoreboard }) {
     const { members, toggleScoreInputModal } = useScoreboard();
     const { signInUser } = useSignInStore();
     
-    const memberId = signInUser.id;
+    const memberId = signInUser?.id || null;
 
     const member = members.find(member => member.memberId == memberId);
     
