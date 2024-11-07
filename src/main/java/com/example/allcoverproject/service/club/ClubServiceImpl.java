@@ -108,10 +108,15 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ResponseEntity<? super GetClubListRespDto> getClubList(int page) {
-        System.out.println("page = " + page);
         int count = 5;
         List<Tuple> clubTupleList = clubMstRepository.getClubList(page, count);
+        if (clubTupleList.isEmpty() || clubTupleList.get(0) == null) {
+            return CodeMessageRespDto.noFundGame();
+        }
+
         List<ClubMst> clubMst = new ArrayList<>();
+        System.out.println("clubMst = " + clubMst);
+
         List<Long> clubCount = new ArrayList<>();
         try {
             QClubMst QclubMst = QClubMst.clubMst;

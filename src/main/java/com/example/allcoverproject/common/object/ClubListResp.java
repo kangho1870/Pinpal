@@ -15,8 +15,8 @@ public class ClubListResp {
     private Long clubCount;
 
     private ClubListResp(ClubMst clubMst, Long clubCount) {
-        this.clubName = clubMst.getName();
-        this.clubDescription = clubMst.getDescription();
+        this.clubName = clubMst == null ? null : clubMst.getName();
+        this.clubDescription = clubMst == null ? null : clubMst.getDescription();
         this.clubCount = clubCount;
     }
 
