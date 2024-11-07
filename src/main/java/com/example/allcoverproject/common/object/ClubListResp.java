@@ -10,13 +10,15 @@ import java.util.List;
 @Getter
 public class ClubListResp {
 
+    private Long clubId;
     private String clubName;
     private String clubDescription;
     private Long clubCount;
 
     private ClubListResp(ClubMst clubMst, Long clubCount) {
-        this.clubName = clubMst == null ? null : clubMst.getName();
-        this.clubDescription = clubMst == null ? null : clubMst.getDescription();
+        this.clubId = clubMst.getId();
+        this.clubName = clubMst.getName();
+        this.clubDescription = clubMst.getDescription();
         this.clubCount = clubCount;
     }
 

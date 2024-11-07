@@ -21,7 +21,7 @@ public class GetClubListRespDto extends CodeMessageRespDto {
     }
 
     public static ResponseEntity<GetClubListRespDto> success(List<ClubMst> clubMstList, List<Long> count) {
-       GetClubListRespDto responseBody = new GetClubListRespDto(clubMstList, count);
+        GetClubListRespDto responseBody = new GetClubListRespDto(clubMstList, count);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 }

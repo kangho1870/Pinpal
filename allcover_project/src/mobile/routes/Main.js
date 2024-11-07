@@ -22,7 +22,7 @@ function Main() {
     const [snsBtn, setSnsBtn] = useState(["kakao", "guest"])
 
     const authBtnClickHandler = (sns) => {
-        window.location.href = `http://52.78.178.156/ap1/v1/auth/sns-sign-in/${sns}`
+        window.location.href = `http://52.78.178.156:8000/ap1/v1/auth/sns-sign-in/${sns}`
     };
 
     return (

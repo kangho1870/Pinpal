@@ -21,7 +21,7 @@ function DefaultMain() {
     const elementRef = useRef(null); 
 
     const goToClub = (clubId) => {
-        navigator(CLUB_DETAIL_PATH(clubId));
+        navigator(`/club/${clubId}`);
     };
 
     const onIntersection = (entries) => {
@@ -50,7 +50,7 @@ function DefaultMain() {
     }, [hasMore]);
 
     const getClubListResponse = (responseBody) => {
-        
+
         const message = 
         !responseBody ? '서버에 문제가 있습니다.' :
         responseBody.code === 'AF' ? '잘못된 접근입니다.' :
@@ -66,13 +66,14 @@ function DefaultMain() {
         }
         const { clubList } = responseBody;
 
-        if(clubList.length < 5) {
+        if(clubList == null || clubList.length < 5) {
             setHasMore(false);
         }
 
         setClubList((prevClubList) => [...prevClubList, ...clubList]);
         setPage((prevPage) => prevPage + 1);
         setIsLoading(false);
+        console.log(clubList)
     }
 
     const getClubListRequest = () => {
@@ -140,21 +141,25 @@ function DefaultMain() {
             <div className={styles.line}></div>
             <div className={styles.contentArea}>
                 <p>신규 클럽</p>
-                {clubList.map((club, i) => (
-                    <div className={styles.contentBox}>
-                        <div className={styles.clubContainer} onClick={() => goToClub(1)}>
-                            <img className={styles.clubLogo} src={require("../../imges/headerCategory-img/logo.png")}></img>
-                            <div className={styles.clubDescription}>
-                                <p>{club.clubName}</p>
-                                <span className={styles.clubDescriptionFont} dangerouslySetInnerHTML={{ __html: club.clubDescription }}></span>
-                                <div className={styles.clubPlace}>
-                                    <div className={styles.clubPlaceBox}>부산/진구</div>
-                                    <span className={styles.clubDescriptionFont}>멤버 : {club.clubCount}</span>
+                {clubList && clubList.length > 0 ? (
+                    clubList.map((club, i) => (
+                        <div className={styles.contentBox} key={i}>
+                            <div className={styles.clubContainer} onClick={() => goToClub(club.clubId)}>
+                                <img className={styles.clubLogo} src={require("../../imges/headerCategory-img/logo.png")} alt="club logo" />
+                                <div className={styles.clubDescription}>
+                                    <p>{club.clubName}</p>
+                                    <span className={styles.clubDescriptionFont} dangerouslySetInnerHTML={{ __html: club.clubDescription }}></span>
+                                    <div className={styles.clubPlace}>
+                                        <div className={styles.clubPlaceBox}>부산/진구</div>
+                                        <span className={styles.clubDescriptionFont}>멤버 : {club.clubCount}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    ""
+                )}
                 {hasMore && (
                     <div ref={elementRef} style={{ textAlign: 'center' }}></div>
                 )}

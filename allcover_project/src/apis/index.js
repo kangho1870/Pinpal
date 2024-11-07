@@ -195,6 +195,7 @@ export const addGameRequest = async (game, accessToken) => {
 
 // club관련 함수
 export const getClubList = async (page, accessToken) => {
+    console.log(GET_CLUB_LIST_API_URL(page))
     const responseBody = await axios.get(`${GET_CLUB_LIST_API_URL(page)}`, bearerAuthorization(accessToken))
         .then(responseDataHandler)
         .catch(responseErrorHandler)

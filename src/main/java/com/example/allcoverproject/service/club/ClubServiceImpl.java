@@ -110,19 +110,19 @@ public class ClubServiceImpl implements ClubService {
     public ResponseEntity<? super GetClubListRespDto> getClubList(int page) {
         int count = 5;
         List<Tuple> clubTupleList = clubMstRepository.getClubList(page, count);
-        if (clubTupleList.isEmpty() || clubTupleList.get(0) == null) {
-            return CodeMessageRespDto.noFundGame();
-        }
 
         List<ClubMst> clubMst = new ArrayList<>();
-        System.out.println("clubMst = " + clubMst);
-
         List<Long> clubCount = new ArrayList<>();
         try {
             QClubMst QclubMst = QClubMst.clubMst;
             QClubDtl QclubDtl = QClubDtl.clubDtl;
-            for(Tuple tuple : clubTupleList) {
+
+            // clubTupleList에서 데이터를 추출하여 clubMst와 clubCount에 저장
+            for (Tuple tuple : clubTupleList) {
                 ClubMst club = tuple.get(QclubMst);
+                if(club == null) {
+                    continue;
+                }
                 clubMst.add(club);
                 Long memberCount = tuple.get(QclubDtl.count());
                 clubCount.add(memberCount);
@@ -130,9 +130,10 @@ public class ClubServiceImpl implements ClubService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return CodeMessageRespDto.databaseError();
+            return CodeMessageRespDto.databaseError();  // DB 오류 처리
         }
-        return GetClubListRespDto.success(clubMst, clubCount);
+
+        return GetClubListRespDto.success(clubMst, clubCount);  // 정상 응답
     }
 
     @Override

@@ -6,7 +6,7 @@ import ReactQuill from "react-quill";
 import useSignInStore from "../../stores/useSignInStore";
 import { addClubRequest } from "../../apis";
 import { useCookies } from "react-cookie";
-import { ACCESS_TOKEN, MY_CLUB_PATH } from "../../constants";
+import { ACCESS_TOKEN, MY_CLUB_PATH, ROOT_PATH } from "../../constants";
 
 export default function AddClub() {
     const navigator = useNavigate();
@@ -34,6 +34,7 @@ export default function AddClub() {
         }
         
         alert(message);
+        navigator(ROOT_PATH);
     }
 
     const addClub = () => {
