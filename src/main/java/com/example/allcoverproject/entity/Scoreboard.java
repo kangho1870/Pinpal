@@ -74,8 +74,8 @@ public class Scoreboard {
 
     private LocalDateTime updateDate;
 
-    public Scoreboard(Member member, Game game) {
-        this.setMember_avg(member.getClubDtl().getAvg());
+    public Scoreboard(Member member, Game game, ClubDtl clubDtl) {
+        this.setMember_avg(clubDtl.getAvg());
         this.setGame(game);
         this.setMember(member);
         this.setGrade(0);
@@ -98,8 +98,5 @@ public class Scoreboard {
         this.member = member;
         member.getScoreboards().add(this);
     }
-
-
-
 
 }

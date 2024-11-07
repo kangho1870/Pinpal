@@ -8,7 +8,7 @@ import { getClubList } from "../../apis";
 import { useCookies } from "react-cookie";
 
 
-function DefaultMain() {
+function DefaultMain({ setLoading }) {
     const [clubList, setClubList] = useState([]);
     const [addClubModal, setAddClubModal] = useState(true);
     const [hasMore, setHasMore] = useState(true);
@@ -28,6 +28,7 @@ function DefaultMain() {
         const firstEntry = entries[0];
         
         if (firstEntry.isIntersecting && hasMore) {
+            setLoading(true);
             setIsLoading(true);
             getClubListRequest();
         }
@@ -73,6 +74,7 @@ function DefaultMain() {
         setClubList((prevClubList) => [...prevClubList, ...clubList]);
         setPage((prevPage) => prevPage + 1);
         setIsLoading(false);
+        setLoading(false);
         console.log(clubList)
     }
 

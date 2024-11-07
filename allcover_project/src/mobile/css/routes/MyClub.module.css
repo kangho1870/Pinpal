@@ -63,6 +63,16 @@
     font-size: 20px;
 }
 
+.clubNameTitle {
+    font-size: 17px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .contextArea {
     display: flex;
     flex-direction: column;
@@ -82,19 +92,19 @@
 .clubBannerArea {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: 200px;
     border-radius: 10px;
-    padding: 10px;
+    padding: 0px 0px 10px 0px;
 }
 
 .bannerImage {
     width: 100%;
-    height: 200px;
+    height: 100%;
     border-radius: 10px;
 }
 
 .clubDescription {
-    padding: 10px;
+    padding: 10px 10px 30px 10px;
 }
 
 .clubSchedule {
@@ -117,16 +127,16 @@
 }
 
 .memberProfileContainer {
+    position: relative;
     display: flex;
-    overflow-x: scroll;
 }
 
 .memberProfileImg {
+    position: relative;
     width: 37px;
     height: 37px;
     border-radius: 50%;
     margin-right: 5px;
-    margin-bottom: 10px;
 }
 
 .scheduleTitle {
@@ -272,15 +282,19 @@
 }
 
 .memberBox {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
     margin-bottom: 5px;
+    overflow-x: scroll;
 }
 
 .memberProfile {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 10px;
 }
 
 .memberImg {
@@ -288,6 +302,14 @@
     height: 40px;
     border-radius: 50%;
     margin-right: 5px;
+}
+
+.staffImg {
+    position: absolute;
+    width: 23px;
+    height: 23px;
+    right: 0;
+    bottom: 0;
 }
 
 .addGameModal {

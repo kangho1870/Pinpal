@@ -30,7 +30,7 @@ public class Member {
     @JsonIgnore
     private List<Scoreboard> scoreboards = new ArrayList<>();
 
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "member", fetch = FetchType.EAGER)
     private ClubDtl clubDtl;
 
     private int gender;

@@ -51,7 +51,7 @@ public class Game {
         this.type = addGameReqDto.getGameType() == 0 ? GameType.정기번개
                 : addGameReqDto.getGameType() == 1 ? GameType.정기모임 : null;
         this.confirmedCode = addGameReqDto.getConfirmCode();
-        this.scoreCounting = false;
+        this.scoreCounting = true;
         this.date = addGameReqDto.getDate();
         this.time = addGameReqDto.getTime();
         this.status = "NOT_END";

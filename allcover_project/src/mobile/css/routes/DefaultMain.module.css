@@ -107,4 +107,10 @@ section::-webkit-scrollbar {
 
 .clubDescriptionFont {
     font-size: 9px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

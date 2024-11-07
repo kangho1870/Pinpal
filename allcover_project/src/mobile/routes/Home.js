@@ -9,6 +9,7 @@ import { ACCESS_TOKEN, ADD_CLUB_PATH, CLUB_DETAIL_PATH, HOME_PATH, MY_CLUB_PATH,
 import useSignInStore from "../../stores/useSignInStore";
 import MyClub from "./MyClub";
 import AddClub from "./AddClub";
+import Loading from "../components/loading/Loading";
 
 function Home() {
 
@@ -18,9 +19,10 @@ function Home() {
     const clubId = signInUser?.clubId || null;
 
     const [page, setPage] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const getButtonColor = (buttonPage) => {
-        return page === buttonPage ? "#000000" : "#a3a3a3";  // 선택된 버튼은 검은색, 나머지는 회색
+        return page === buttonPage ? "#000000" : "#a3a3a3"; 
     };
 
     const myClubBtnClickHandler = () => {
@@ -48,13 +50,13 @@ function Home() {
                 </div>
                 <div className={styles.contentsBox}>
                     {page == 0 && 
-                        <DefaultMain></DefaultMain>
+                        <DefaultMain setLoading={setLoading}></DefaultMain>
                     }
                     {page == 1 &&
                         ""
                     }
                     {page == 2 &&
-                        <AddClub></AddClub>
+                        ""
                     }
                 </div>
                 <div className={styles.bottom}>
@@ -95,6 +97,12 @@ function Home() {
                     </div>
                 </div>
             </div>
+            {loading && 
+                <div className={styles.loadingModal}>
+                    <Loading></Loading>
+                </div>
+            }
+            
         </>
     )
 }

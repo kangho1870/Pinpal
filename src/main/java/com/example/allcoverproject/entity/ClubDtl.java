@@ -33,7 +33,7 @@ public class ClubDtl {
     private LocalDateTime updateDate;
 
     public ClubDtl(Member member, ClubMst clubMst, String role) {
-        this.member = member;
+        setMember(member);
         this.clubMst = clubMst;
         this.role = role;
         this.grade = 0;
@@ -41,4 +41,16 @@ public class ClubDtl {
         this.createDate = LocalDateTime.now();
         this.updateDate = LocalDateTime.now();
     }
+
+    public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.setClubDtl(null);
+        }
+        this.member = member;
+
+        if (member != null && member.getClubDtl() != this) {
+            member.setClubDtl(this);
+        }
+    }
+
 }

@@ -74,7 +74,7 @@ function RankingBoard({ sideRankingModalToggle, scoreInputModalToggle }) {
                                     </div>
                                     <div className={styles.memberCard}>
                                         <span className={styles.infoTitle}>에버</span>
-                                        <p className={styles.info}>{member.memberAvg}</p>
+                                        <p className={styles.info}>{member.memberAvg == 0 ? "신입" : member.memberAvg}</p>
                                     </div>
                                     <div className={styles.memberCard}>
                                         <span>점수</span>

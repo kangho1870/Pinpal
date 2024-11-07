@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "../css/routes/MyClub.module.css";
 import useSignInStore from "../../stores/useSignInStore";
 import { useCookies } from "react-cookie";
-import { ACCESS_TOKEN, ROOT_PATH, SCOREBOARD_PATH } from "../../constants";
+import { ACCESS_TOKEN, CLUB_DETAIL_PATH, ROOT_PATH, SCOREBOARD_PATH } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import { onClickBackBtn } from "../../hooks";
 import { addGameRequest, clubJoinRequest, clubMemberAvgUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
@@ -162,7 +162,7 @@ function MyClub() {
                 <div className={styles.top}>
                     <div className={styles.clubTitle}>
                         <div className={styles.topCategory} onClick={() => onClickBackBtn(navigator)}><i class="fa-solid fa-chevron-left"></i></div>
-                        <span className={styles.topCategory}>{clubInfo.clubName}</span>
+                        <span className={styles.clubNameTitle}>{clubInfo.clubName}</span>
                         <div className={styles.topCategory}><i class="fa-solid fa-right-from-bracket"></i></div>
                     </div>
                     <div className={styles.clubNav}>
@@ -176,15 +176,15 @@ function MyClub() {
                     </div>
                 </div>
                 <div className={styles.contextArea}>
-                {page == 0 &&
-                    <ClubHome clubInfo={clubInfo} setLoading={setLoading} getGamesRequest={getGamesRequest}></ClubHome>
-                }
-                {page == 1 &&
-                    <ClubCeremony setLoading={setLoading}></ClubCeremony>
-                }
-                {page == 4 &&
-                    <ClubSetting setLoading={setLoading}></ClubSetting>
-                }
+                    {page == 0 &&
+                        <ClubHome clubInfo={clubInfo} setLoading={setLoading} getGamesRequest={getGamesRequest}></ClubHome>
+                    }
+                    {page == 1 &&
+                        <ClubCeremony setLoading={setLoading}></ClubCeremony>
+                    }
+                    {page == 4 &&
+                        <ClubSetting setLoading={setLoading}></ClubSetting>
+                    }
                 </div>
             </div>
             {page === 0 && (roles.includes("STAFF") || roles.includes("MASTER")) &&
@@ -199,7 +199,7 @@ function MyClub() {
             }
             {addGameModal && (roles.includes("STAFF") || roles.includes("MASTER")) &&
                 <div className={styles.addGameModal}>
-                    <AddGameModal clubId={clubId} token={token} addGameModalBtnClickHandler={addGameModalBtnClickHandler}></AddGameModal>
+                    <AddGameModal clubId={clubId} token={token} addGameModalBtnClickHandler={addGameModalBtnClickHandler} ></AddGameModal>
                 </div>
             }
             {loading &&
@@ -224,6 +224,7 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
 
     const clubId = signInUser?.clubId || 0;
     const memberId = signInUser?.id || null;
+    const roles = signInUser?.clubRole ? signInUser.clubRole.split(", ").map(role => role.trim()) : [];
 
     const scheduleOnClickHandler = (gameId) => {
         navigator(`${SCOREBOARD_PATH}?gameId=${gameId}&clubId=${clubId}`);
@@ -288,8 +289,8 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
 
     return (
         <>
-            <div className={`${styles.clubBannerArea} ${styles.commonDiv}`}>
-                <img className={styles.bannerImage} src=""></img>
+            <div className={`${styles.clubBannerArea}`}>
+                <img className={styles.bannerImage} src={require("../../imges/KakaoTalk_20241108_021010839.jpg")}></img>
             </div>
             <div
                 className={`${styles.clubDescription} ${styles.commonDiv}`}
@@ -301,55 +302,63 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
             </div>
             <div className={`${styles.clubSchedule} ${styles.commonDiv}`}>
                 {games.length > 0 ? (
-                    games.map((game, index) => (
-                        <>
-                            <div className={styles.scheduleBox}>
-                                <div className={styles.scheduleTitle}>
-                                    <p>{game.gameName}</p>
+                    games
+                        .filter((game) => new Date(game.gameDate) >= new Date()) // 현재 날짜와 같거나 큰 날짜만 필터링
+                        .map((game, index) => (
+                            <>
+                                <div className={styles.scheduleBox}>
                                     <div className={styles.scheduleTitle}>
-                                        <h5>{formatShortDate(game.gameDate)}</h5>
-                                        {game.members.filter((member) => member.memberId === memberId).length > 0 ? (
-                                            <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
-                                        ) : (
-                                            <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
-                                        )}
+                                        <p>{game.gameName}</p>
+                                        <div className={styles.scheduleTitle}>
+                                            <h5>{formatShortDate(game.gameDate)}</h5>
+                                            {game.members.filter((member) => member.memberId === memberId).length > 0 ? (
+                                                <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
+                                            ) : (
+                                                <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className={styles.scheduleContnet}>
+                                        <div className={styles.imgBox}>
+                                            <img className={styles.scheduleImg} src={require("../../imges/club/bowlingGame.png")}></img>
+                                        </div>
+                                        <div className={styles.scheduleDescriptionArea}>
+                                            <div className={styles.scheduleDescriptionBox}>
+                                                <span className={styles.descriptionSubTitle}>일시:</span>
+                                                <h5 className={styles.descriptionSubContent}>{formatDateTime(game.gameDate, game.gameTime)}</h5>
+                                            </div>
+                                            <div className={styles.scheduleDescriptionBox}>
+                                                <span className={styles.descriptionSubTitle}>장소:</span>
+                                                <h5 className={styles.descriptionSubContent}>서면볼링센터</h5>
+                                            </div>
+                                            <div className={styles.scheduleDescriptionBox}>
+                                                <span className={styles.descriptionSubTitle}>참석:</span>
+                                                <h5 className={styles.descriptionSubContent}>{game.members.length + "명"}</h5>
+                                            </div>
+                                            <button className={styles.scoreboard} onClick={() => scheduleOnClickHandler(game.gameId)}>점수판</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className={styles.scheduleContnet}>
-                                    <div className={styles.imgBox}>
-                                        <img className={styles.scheduleImg} src={require("../../imges/club/bowlingGame.png")}></img>
-                                    </div>
-                                    <div className={styles.scheduleDescriptionArea}>
-                                        <div className={styles.scheduleDescriptionBox}>
-                                            <span className={styles.descriptionSubTitle}>일시:</span>
-                                            <h5 className={styles.descriptionSubContent}>{formatDateTime(game.gameDate, game.gameTime)}</h5>
+                                <div className={styles.memberProfileContainer}>
+                                    {game.members.map((member, i) => (
+                                        <div className={styles.memberBox}>
+                                            <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
+                                            {roles.includes("MASTER") && 
+                                                <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
+                                            }
+                                            {roles.includes("STAFF") && 
+                                                <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
+                                            }
                                         </div>
-                                        <div className={styles.scheduleDescriptionBox}>
-                                            <span className={styles.descriptionSubTitle}>장소:</span>
-                                            <h5 className={styles.descriptionSubContent}>서면볼링센터</h5>
-                                        </div>
-                                        <div className={styles.scheduleDescriptionBox}>
-                                            <span className={styles.descriptionSubTitle}>참석:</span>
-                                            <h5 className={styles.descriptionSubContent}>{game.members.length + "명"}</h5>
-                                        </div>
-                                        <button className={styles.scoreboard} onClick={() => scheduleOnClickHandler(game.gameId)}>점수판</button>
-                                    </div>
+                                    ))}
                                 </div>
-                            </div>
-                            <div className={styles.memberProfileContainer}>
-                                {game.members.map((member, i) => (
-                                    <img className={styles.memberProfileImg} src={member.memberProfile}></img>
-                                ))}
-                            </div>
-                        </>
-                    ))
-                )
-                : (
+                            </>
+                        ))
+                ) : (
                     <div className={styles.nodataContainer}>
                         <Nodata text={"진행중인 일정이 없습니다."}></Nodata>
                     </div>
-                )
-            }
+                )}
             </div>
             <div className={styles.divSection}></div>
             <div className={styles.subTitle}>
@@ -414,9 +423,15 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
                         <div className={styles.memberBox}>
                             <div className={styles.memberProfile}>
                                 <img className={styles.memberImg} src={member.memberProfile}></img>
-                                <div>
-                                    {member.memberName}
-                                </div>
+                                {roles.includes("MASTER") && 
+                                    <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
+                                }
+                                {roles.includes("STAFF") && 
+                                    <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
+                                }
+                            </div>
+                            <div className={styles.memberProfileBox}>
+                                {member.memberName}
                             </div>
                         </div>
                     </>
@@ -707,7 +722,7 @@ function ClubCeremony({ setLoading }) {
                         </>
                     )) : (
                             <div className={styles.nodataContainer}>
-                                <Nodata text={"진행중인 일정이 없습니다."}></Nodata>
+                                <Nodata text={"기록이 없습니다."}></Nodata>
                             </div>
                         )
                     }
@@ -804,7 +819,7 @@ function ClubSetting() {
                     <>
                         <div className={styles.gradesAvg}>
                             {Object.keys(groupedMembers).map((grade, i) => (
-                                grade !== 0 && grade < 3 && (
+                                grade != 0 && grade < 3 && (
                                     <div key={grade} className={styles.gradeGroup}>
                                         {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
                                         {groupedMembers[grade].map((member) => (
@@ -843,7 +858,7 @@ function ClubSetting() {
                         </div>
                         <div className={styles.gradesAvg}>
                             {Object.keys(groupedMembers).map((grade, i) => (
-                                grade !== 0 && grade > 2 && grade < 5 && (
+                                grade != 0 && grade > 2 && grade < 5 && (
                                     <div key={grade} className={styles.gradeGroup}>
                                         {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
                                         {groupedMembers[grade].map((member) => (
@@ -882,7 +897,7 @@ function ClubSetting() {
                         </div>
                         <div className={styles.gradesAvg}>
                             {Object.keys(groupedMembers).map((grade, i) => (
-                                grade !== 0 && grade > 4 && grade < 7 && (
+                                grade != 0 && grade > 4 && grade < 7 && (
                                     <div key={grade} className={styles.gradeGroup}>
                                         {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
                                         {groupedMembers[grade].map((member) => (
@@ -973,6 +988,7 @@ function AddGameModal({ clubId, token, addGameModalBtnClickHandler }) {
     const [gameName, setGameName] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
+    const navigator = useNavigate();
     const [gameType, setGameType] = useState(null);
     const [confirmCode, setConfirmCode] = useState("");
 
@@ -996,6 +1012,7 @@ function AddGameModal({ clubId, token, addGameModalBtnClickHandler }) {
 
         addGameModalBtnClickHandler();
         alert(message);
+        navigator(CLUB_DETAIL_PATH(clubId));
     };
 
     const addGame = () => {

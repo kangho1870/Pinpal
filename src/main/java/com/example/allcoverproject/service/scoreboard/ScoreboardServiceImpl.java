@@ -7,6 +7,7 @@ import com.example.allcoverproject.dto.response.scoreboard.GetScoreboardListResp
 import com.example.allcoverproject.entity.*;
 import com.example.allcoverproject.repository.ClubMst.ClubMstRepository;
 import com.example.allcoverproject.repository.ceremony.CeremonyRepository;
+import com.example.allcoverproject.repository.clubDtl.ClubDtlRepository;
 import com.example.allcoverproject.repository.game.GameRepository;
 import com.example.allcoverproject.repository.member.MemberRepository;
 import com.example.allcoverproject.repository.scoreboard.ScoreboardRepository;
@@ -26,6 +27,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
     private final GameRepository gameRepository;
     private final CeremonyRepository ceremonyRepository;
     private final ClubMstRepository clubMstRepository;
+    private final ClubDtlRepository clubDtlRepository;
 
     @Override
     public ResponseEntity<? super GetScoreboardListRespDto> getMembers(Long gameId, Long clubId) {
@@ -49,6 +51,8 @@ public class ScoreboardServiceImpl implements ScoreboardService{
         if(member == null) return CodeMessageRespDto.noExistMemberId();
         Game game = gameRepository.findGameById(gameId);
         if(game == null) return CodeMessageRespDto.noFundGame();
+        ClubDtl clubDtl = clubDtlRepository.findByMemberId(memberId);
+        if(clubDtl == null) return CodeMessageRespDto.noExistMemberData();
 
         Optional<Scoreboard> existingScoreboard = scoreboardRepository.findByGameIdAndMemberId(gameId, memberId);
 
@@ -57,7 +61,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
                 scoreboardRepository.delete(existingScoreboard.get());
                 return CodeMessageRespDto.scoreboardJoinCancle();
             }
-            Scoreboard scoreboard = new Scoreboard(member, game);
+            Scoreboard scoreboard = new Scoreboard(member, game, clubDtl);
             scoreboardRepository.save(scoreboard);
         } catch (Exception e) {
             e.printStackTrace();

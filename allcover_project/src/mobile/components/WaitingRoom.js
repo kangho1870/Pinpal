@@ -133,7 +133,7 @@ function WaitingRoom({ getScoreboard }) {
                             </div>
                         </div>
                     </div>
-                    {roles.includes("STAFF") &&
+                    {roles.includes("STAFF") || roles.includes("MASTER") &&
                         <>
                             <div className={styles.settingBoxTitle}>
                                 <h4>게임 설정</h4>
@@ -162,7 +162,17 @@ function WaitingRoom({ getScoreboard }) {
                                         <div className={styles.waitingUserDesBox}>
                                             <span className={styles.waitingSpan}>name</span>
                                             <div className={styles.memberBox}>
-                                                <img className={styles.memberProfile} src={member.memberProfile}></img>
+                                            <div className={styles.profileContainer}>
+                                                <img className={styles.memberProfile} src={member.memberProfile} />
+                                                
+                                                {/* 역할에 따라 staff 이미지 겹치기 */}
+                                                {roles.includes("MASTER") && 
+                                                    <img className={styles.staffImg} src={require("../../imges/club/master.png")} />
+                                                }
+                                                {roles.includes("STAFF") && 
+                                                    <img className={styles.staffImg} src={require("../../imges/club/staff.png")} />
+                                                }
+                                            </div>
                                                 <h4 className={styles.userInfo}>{member.memberName}</h4>
                                             </div>
                                         </div>
