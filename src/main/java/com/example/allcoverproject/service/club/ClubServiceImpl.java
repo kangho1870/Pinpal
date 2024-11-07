@@ -4,6 +4,7 @@ import com.example.allcoverproject.dto.request.club.AddClubReqDto;
 import com.example.allcoverproject.dto.response.CodeMessageRespDto;
 import com.example.allcoverproject.dto.response.clubDtl.GetCeremonyRespDto;
 import com.example.allcoverproject.dto.response.clubDtl.GetClubDtlRespDto;
+import com.example.allcoverproject.dto.response.clubMst.GetClubListRespDto;
 import com.example.allcoverproject.dto.response.clubMst.GetClubMstRespDto;
 import com.example.allcoverproject.entity.*;
 import com.example.allcoverproject.repository.ClubMst.ClubMstRepository;
@@ -12,6 +13,7 @@ import com.example.allcoverproject.repository.clubDtl.ClubDtlRepository;
 import com.example.allcoverproject.repository.game.GameRepository;
 import com.example.allcoverproject.repository.member.MemberRepository;
 import com.example.allcoverproject.repository.scoreboard.ScoreboardRepository;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -102,6 +104,53 @@ public class ClubServiceImpl implements ClubService {
         }
 
         return GetClubMstRespDto.success(clubMst);
+    }
+
+    @Override
+    public ResponseEntity<? super GetClubListRespDto> getClubList(int page) {
+        System.out.println("page = " + page);
+        int count = 5;
+        List<Tuple> clubTupleList = clubMstRepository.getClubList(page, count);
+        List<ClubMst> clubMst = new ArrayList<>();
+        List<Long> clubCount = new ArrayList<>();
+        try {
+            QClubMst QclubMst = QClubMst.clubMst;
+            QClubDtl QclubDtl = QClubDtl.clubDtl;
+            for(Tuple tuple : clubTupleList) {
+                ClubMst club = tuple.get(QclubMst);
+                clubMst.add(club);
+                Long memberCount = tuple.get(QclubDtl.count());
+                clubCount.add(memberCount);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+        return GetClubListRespDto.success(clubMst, clubCount);
+    }
+
+    @Override
+    public ResponseEntity<CodeMessageRespDto> joinClub(Long clubId, Long memberId) {
+        Member member = memberRepository.findMemberById(memberId);
+        if(member == null) return CodeMessageRespDto.noExistMemberData();
+        ClubDtl byMemberId = clubDtlRepository.findByMemberId(memberId);
+        if(byMemberId != null) return CodeMessageRespDto.noExistMemberData();
+        Optional<ClubMst> clubMst = clubMstRepository.findById(clubId);
+        if(clubMst.isEmpty()) return CodeMessageRespDto.noExistMemberData();
+
+        try {
+
+            ClubDtl clubDtl = new ClubDtl(member, clubMst.get(), "member");
+            clubDtlRepository.save(clubDtl);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+
+
+        return CodeMessageRespDto.success();
     }
 
     @Override

@@ -32,6 +32,12 @@ public class MyClubController {
         return responseBody;
     }
 
+    @PostMapping("/joinClub")
+    public ResponseEntity<CodeMessageRespDto> joinClub(@RequestParam Long clubId, @RequestParam Long memberId) {
+        ResponseEntity<CodeMessageRespDto> responseBody = clubService.joinClub(clubId, memberId);
+        return responseBody;
+    }
+
     @GetMapping("/home")
     public ResponseEntity<? super GetClubDtlRespDto> getMemberList(@RequestParam Long clubId) {
         ResponseEntity<? super GetClubDtlRespDto> responseBody = clubService.getMemberList(clubId);
@@ -40,7 +46,6 @@ public class MyClubController {
 
     @PostMapping(value = {"", "/"})
     public ResponseEntity<CodeMessageRespDto> addClub(@RequestBody AddClubReqDto addClubReqDto) {
-        System.out.println("addClubReqDto = " + addClubReqDto.getMemberId());
         ResponseEntity<CodeMessageRespDto> responseBody = clubService.addClub(addClubReqDto);
         return responseBody;
     }

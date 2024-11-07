@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ClubMstRepository extends JpaRepository<ClubMst, Long> {
+public interface ClubMstRepository extends JpaRepository<ClubMst, Long>, ClubMstCustomRepository {
     List<ClubMst> findAllById(Long id);
     ClubMst findByMemberId(Long memberId);
 }

@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { HOME_PATH } from "../constants";
 
 const ROOT_API_DOMAIN = process.env.REACT_APP_ROOT_API_DOMAIN;
 
@@ -44,11 +45,15 @@ const ADD_GAME_API_URL = `${GAME_MODULE_URL}`;
 
 const CLUB_MODULE_URL = `${ROOT_API_DOMAIN}/api/v1/club`;
 
+const GET_CLUB_LIST_API_URL = (page) => `${ROOT_API_DOMAIN}${HOME_PATH}?page=${page}`;
+
 const GET_CLUB_INFO_API_URL = (clubId) => `${CLUB_MODULE_URL}/${clubId}`;
 
 const GET_MEMBERS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/home?clubId=${clubId}`;
 
 const GET_CEREMONYS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/ceremony?clubId=${clubId}`;
+
+const JOIN_CLUB_MEMBER_API_URL = (clubId, memberId) => `${CLUB_MODULE_URL}/joinClub?clubId=${clubId}&memberId=${memberId}`;
 
 const ADD_CLUB_API_URL = `${CLUB_MODULE_URL}`;
 
@@ -127,7 +132,6 @@ export const confirmCheckRequest = async (gameId, memberId, code, accessToken) =
 }
 
 export const scoreCountingStopRequest = async (gameId, accessToken) => {
-    console.log(gameId + " + " + accessToken)
     const responseBody = await axios.post(`${SCOREBOARD_SCORE_COUNTING_STOP_API_URL(gameId)}`, {}, bearerAuthorization(accessToken))
         .then(responseDataHandler)
         .catch(responseErrorHandler);
@@ -190,6 +194,12 @@ export const addGameRequest = async (game, accessToken) => {
 }
 
 // club관련 함수
+export const getClubList = async (page, accessToken) => {
+    const responseBody = await axios.get(`${GET_CLUB_LIST_API_URL(page)}`, bearerAuthorization(accessToken))
+        .then(responseDataHandler)
+        .catch(responseErrorHandler)
+    return responseBody;
+}
 
 export const getClubInfoRequest = async (clubId, accessToken) => {
     const responseBody = await axios.get(`${GET_CLUB_INFO_API_URL(clubId)}`, bearerAuthorization(accessToken))
@@ -219,10 +229,16 @@ export const addClubRequest = async (data, accessToken) => {
     return responseBody;
 }
 
-
 export const clubMemberAvgUpdateRequest = async (data, accessToken) => {
-    console.log(data)
     const responseBody = await axios.post(`${CLUB_MEMBERS_AVG_UPDATE_API_URL}`, data, bearerAuthorization(accessToken))
+        .then(responseDataHandler)
+        .catch(responseErrorHandler)
+    return responseBody;
+}
+
+
+export const clubJoinRequest = async (clubId, memberId, accessToken) => {
+    const responseBody = await axios.post(`${JOIN_CLUB_MEMBER_API_URL(clubId, memberId)}`, {}, bearerAuthorization(accessToken))
         .then(responseDataHandler)
         .catch(responseErrorHandler)
     return responseBody;

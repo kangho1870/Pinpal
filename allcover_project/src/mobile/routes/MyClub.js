@@ -5,7 +5,7 @@ import { useCookies } from "react-cookie";
 import { ACCESS_TOKEN, ROOT_PATH, SCOREBOARD_PATH } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import { onClickBackBtn } from "../../hooks";
-import { addGameRequest, clubMemberAvgUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
+import { addGameRequest, clubJoinRequest, clubMemberAvgUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
 import Loading from "../components/loading/Loading";
 import useClubStore from "../../stores/useClubStore";
 import TextEditor from "../components/textEditor/TextEditor";
@@ -22,6 +22,7 @@ function MyClub() {
     const token = cookies[ACCESS_TOKEN];
     const [page, setPage] = useState(0);
     const { clubId } = useParams();
+    const memberId = signInUser?.id || null;
     const roles = signInUser?.clubRole ? signInUser.clubRole.split(", ").map(role => role.trim()) : [];
 
     const getMembersResponse = (responseBody) => {
@@ -108,7 +109,37 @@ function MyClub() {
     }
 
     const getClubInfo = () => {
-        getClubInfoRequest(clubId, token).then(getClubInfoResponse)
+        getClubInfoRequest(clubId, token).then(getClubInfoResponse);
+    }
+
+    const memberJoinClubResponse = (responseBody) => {
+
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'SJC' ? '취소 처리되었습니다.' : 
+        responseBody.code === 'SU' ? '클럽에 가입되었습니다.' : '';
+
+        const isSuccessed = responseBody.code === 'SU' || 'SJC';
+
+        if (!isSuccessed) {
+            alert(message);
+            return; 
+        }
+        
+        alert(message);
+        getMemberListRequest();
+        setLoading(false);
+    }
+
+    const memberJoinClubRequest = () => {
+        if(members.filter((member) => member.memberId === memberId)) {
+            alert("이미 가입한 클럽입니다.")
+            return;
+        }
+        setLoading(true);
+        clubJoinRequest(clubId, memberId, token).then(memberJoinClubResponse);
     }
 
     useEffect(() => {
@@ -173,6 +204,9 @@ function MyClub() {
             }
             {loading &&
                 <Loading></Loading>
+            }
+            {page == 0 && !members.filter((member) => member.memberId == memberId) &&
+                <button className={styles.clubJoinBtn} onClick={memberJoinClubRequest}>클럽 가입하기</button>
             }
         </>
     )
@@ -262,7 +296,7 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
                 dangerouslySetInnerHTML={{ __html: clubInfo.clubDescription }}
             />
             <div className={styles.divSection}></div>
-            <div className={styles.title}>
+            <div className={styles.subTitle}>
                 <h3>클럽 일정</h3>
             </div>
             <div className={`${styles.clubSchedule} ${styles.commonDiv}`}>
@@ -318,7 +352,7 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
             }
             </div>
             <div className={styles.divSection}></div>
-            <div className={styles.title}>
+            <div className={styles.subTitle}>
                 <h3>최근 게임</h3>
             </div>
             <div className={`${styles.clubRecentGame} ${styles.commonDiv}`}>
@@ -371,7 +405,7 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
                 
             </div>
             <div className={styles.divSection}></div>
-            <div className={styles.title}>
+            <div className={styles.subTitle}>
                 <h3>클럽 멤버</h3>
             </div>
             <div className={`${styles.memberContainer} ${styles.commonDiv}`}>

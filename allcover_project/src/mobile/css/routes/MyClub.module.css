@@ -17,6 +17,12 @@
     background-color: white;
 }
 
+.subTitle {
+    display: flex;
+    width: 100%;
+    padding: 3px;
+}
+
 .clubTitle {
     display: flex;
     justify-content: space-between;
@@ -60,8 +66,8 @@
 .contextArea {
     display: flex;
     flex-direction: column;
-    width: 100%;
     overflow-y: scroll;
+    width: 100%;
 }
 
 .commonDiv {
@@ -720,4 +726,18 @@
     color: #fafafa;
     font-weight: 600;
     font-size: 14px;
+}
+
+.clubJoinBtn {
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 20px;
+    width: 80%;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    background-color: #004EA2;
+    color: #fafafa;
+    font-weight: 600;
+    margin-left: 10%;
 }

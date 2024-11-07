@@ -36,6 +36,8 @@ public class ClubDtl {
         this.member = member;
         this.clubMst = clubMst;
         this.role = role;
+        this.grade = 0;
+        this.avg = 0;
         this.createDate = LocalDateTime.now();
         this.updateDate = LocalDateTime.now();
     }

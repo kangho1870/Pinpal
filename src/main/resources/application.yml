@@ -11,12 +11,6 @@ spring:
     oauth2:
       client:
         registration:
-          github:
-            client-id: Ov23lixx6twLpkqrUuSi
-            client-secret: 230e2dabd6e2f5a543f901b704e4c5c65df7654d
-            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
-            authorization-grant-type: authorization_code
-            scope: read:user
           kakao:
             client-id: 320f3d357cee3c0df63beb6a76af684e
             client-secret: 532cc41e46fb35e22e03ab684747b5be
@@ -28,11 +22,6 @@ spring:
               - profile_image
         # 인증서버 설정
         provider:
-          github:
-            authorization-uri: https://github.com/login/oauth/authorize
-            token-uri: https://github.com/login/oauth/access_token
-            user-info-uri: https://api.github.com/user
-            user-name-attribute: id
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
             token-uri: https://kauth.kakao.com/oauth/token
@@ -43,7 +32,7 @@ spring:
     hibernate:
 #      ddl-auto: create
 #         ddlAuto: create-drop
-         ddlAuto: update
-#         ddlAuto: validate
+#         ddlAuto: update
+         ddlAuto: validate
 jwt:
   secret: mySecretKeyddawasdawdwadascczcxcsdw123455687
