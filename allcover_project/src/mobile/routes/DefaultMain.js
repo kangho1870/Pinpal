@@ -50,32 +50,29 @@ function DefaultMain() {
     }, [hasMore]);
 
     const getClubListResponse = (responseBody) => {
-        if(responseBody && responseBody.data) {
-            const message = 
-            !responseBody ? '서버에 문제가 있습니다.' :
-            responseBody.code === 'AF' ? '잘못된 접근입니다.' :
-            responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' :
-            responseBody.code === 'SJC' ? '취소 처리되었습니다.' : 
-            responseBody.code === 'SU' ? '데이터를 성공적으로 불러왔습니다.' : '';
-    
-            const isSuccessed = responseBody.code === 'SU' || 'SJC';
-    
-            if (!isSuccessed) {
-                alert(message);
-                return; 
-            }
-            const { clubList } = responseBody;
-    
-            if(clubList.length < 5) {
-                setHasMore(false);
-            }
-    
-            setClubList((prevClubList) => [...prevClubList, ...clubList]);
-            setPage((prevPage) => prevPage + 1);
-            setIsLoading(false);
-        }else {
-            return;
+        
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'SJC' ? '취소 처리되었습니다.' : 
+        responseBody.code === 'SU' ? '데이터를 성공적으로 불러왔습니다.' : '';
+
+        const isSuccessed = responseBody.code === 'SU' || 'SJC';
+
+        if (!isSuccessed) {
+            alert(message);
+            return; 
         }
+        const { clubList } = responseBody;
+
+        if(clubList.length < 5) {
+            setHasMore(false);
+        }
+
+        setClubList((prevClubList) => [...prevClubList, ...clubList]);
+        setPage((prevPage) => prevPage + 1);
+        setIsLoading(false);
     }
 
     const getClubListRequest = () => {
