@@ -169,7 +169,7 @@ function MyClub() {
                         <button className={`${styles.clubNavBtns} ${page == 1 ? styles.selectedClubNavBtn : ""}`} onClick={() => setPage(1)}><span className={styles.btnSpan}>기록실</span></button>
                         <button className={`${styles.clubNavBtns} ${page == 2 ? styles.selectedClubNavBtn : ""}`} onClick={() => setPage(2)}><span className={styles.btnSpan}>게시판</span></button>
                         <button className={`${styles.clubNavBtns} ${page == 3 ? styles.selectedClubNavBtn : ""}`} onClick={() => setPage(3)}><span className={styles.btnSpan}>랭킹</span></button>
-                        {(roles.includes("STAFF") || roles.includes("MASTER")) &&
+                        {(roles === "STAFF" || roles === "MASTER") &&
                             <button className={`${styles.clubNavBtns} ${page == 4 ? styles.selectedClubNavBtn : ""}`} onClick={() => setPage(4)}><span className={styles.btnSpan}>관리</span></button>
                         }
                     </div>
