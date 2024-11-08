@@ -81,7 +81,6 @@ export const idCheckRequest = async (requestBody) => {
 };
 
 export const signUpRequest = async (requestBody) => {
-    console.log(SIGN_UP_API_URL);
     const responseBody = await axios.post(SIGN_UP_API_URL, requestBody)
         .then(responseDataHandler)
         .catch(responseErrorHandler);
@@ -168,12 +167,8 @@ export const scoreInputRequest = async (gameId, memberId, scores, accessToken) =
 
 export const scoreboardGameStop = async (dto, accessToken) => {
     const responsBody = await axios.post(`${SCOREBOARD_GAME_STOP_API_URL()}`, dto, bearerAuthorization(accessToken))
-        .then((response) => {
-            console.log(response)
-        })
-        .catch((error) => {
-            console.log(error)
-        });
+        .then(responseDataHandler)
+        .catch(responseErrorHandler);
     return responsBody;
 }
 

@@ -48,7 +48,7 @@ public class CeremonyResp {
         this.gameDate = game.getDate();
         this.gameTime = game.getTime();
         setMemberName(ceremony);
-        this.scoreboards = ScoreboardResp.getList(scoreboards);
+        this.scoreboards = ScoreboardResp.getScoreboardList(scoreboards);
     }
 
     private void setMemberName(Ceremony ceremony) {

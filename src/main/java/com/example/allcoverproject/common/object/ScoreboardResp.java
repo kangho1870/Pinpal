@@ -1,5 +1,6 @@
 package com.example.allcoverproject.common.object;
 
+import com.example.allcoverproject.entity.ClubDtl;
 import com.example.allcoverproject.entity.Scoreboard;
 import lombok.Getter;
 
@@ -24,7 +25,29 @@ public class ScoreboardResp {
     private Integer teamNumber;
     private Boolean scoreCounting;
     private String memberProfile;
+    private String memberRole;
     private int gender;
+
+    private ScoreboardResp(Scoreboard scoreboard, ClubDtl clubDtl) {
+        this.memberId = scoreboard.getMember().getId();
+        this.memberName = scoreboard.getMember().getName();
+        this.gameId = scoreboard.getGame().getId();
+        this.gameName = scoreboard.getGame().getName();
+        this.memberAvg = scoreboard.getMember_avg();
+        this.grade = scoreboard.getGrade();
+        this.game1 = scoreboard.getGame_1();
+        this.game2 = scoreboard.getGame_2();
+        this.game3 = scoreboard.getGame_3();
+        this.game4 = scoreboard.getGame_4();
+        this.sideGrade1 = scoreboard.getSide_grade1();
+        this.sideAvg = scoreboard.getSide_avg();
+        this.confirmedJoin = scoreboard.getConfirmedJoin();
+        this.teamNumber = scoreboard.getTeam_number();
+        this.scoreCounting = scoreboard.getGame().getScoreCounting();
+        this.gender = scoreboard.getMember().getGender();
+        this.memberProfile = scoreboard.getMember().getProfile();
+        this.memberRole = clubDtl.getRole();
+    }
 
     private ScoreboardResp(Scoreboard scoreboard) {
         this.memberId = scoreboard.getMember().getId();
@@ -46,9 +69,18 @@ public class ScoreboardResp {
         this.memberProfile = scoreboard.getMember().getProfile();
     }
 
-    public static List<ScoreboardResp> getList(List<Scoreboard> scoreboards) {
+    public static List<ScoreboardResp> getList(List<Scoreboard> scoreboards, List<ClubDtl> clubDtlList) {
         List<ScoreboardResp> respList = new ArrayList<>();
-        for (Scoreboard scoreboard : scoreboards) {
+        for(int i = 0; i < scoreboards.size(); i++) {
+            ScoreboardResp resp = new ScoreboardResp(scoreboards.get(i), clubDtlList.get(i));
+            respList.add(resp);
+        }
+        return respList;
+    }
+
+    public static List<ScoreboardResp> getScoreboardList(List<Scoreboard> scoreboards) {
+        List<ScoreboardResp> respList = new ArrayList<>();
+        for(Scoreboard scoreboard : scoreboards) {
             ScoreboardResp resp = new ScoreboardResp(scoreboard);
             respList.add(resp);
         }

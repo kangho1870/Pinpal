@@ -205,7 +205,7 @@ function MyClub() {
             {loading &&
                 <Loading></Loading>
             }
-            {page == 0 && !members.filter((member) => member.memberId == memberId) &&
+            {page == 0 && !members.filter((member) => member.memberId == memberId).length === 0 && 
                 <button className={styles.clubJoinBtn} onClick={memberJoinClubRequest}>클럽 가입하기</button>
             }
         </>
@@ -423,10 +423,10 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
                         <div className={styles.memberBox}>
                             <div className={styles.memberProfile}>
                                 <img className={styles.memberImg} src={member.memberProfile}></img>
-                                {roles.includes("MASTER") && 
+                                {member.memberRole.includes("MASTER") && 
                                     <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
                                 }
-                                {roles.includes("STAFF") && 
+                                {member.memberRole.includes("STAFF") && 
                                     <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
                                 }
                             </div>

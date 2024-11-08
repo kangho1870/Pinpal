@@ -27,7 +27,7 @@ function DefaultMain({ setLoading }) {
     const onIntersection = (entries) => {
         const firstEntry = entries[0];
         
-        if (firstEntry.isIntersecting && hasMore) {
+        if (firstEntry.isIntersecting && hasMore && cookies[ACCESS_TOKEN]) {
             setLoading(true);
             setIsLoading(true);
             getClubListRequest();
@@ -51,6 +51,7 @@ function DefaultMain({ setLoading }) {
     }, [hasMore]);
 
     const getClubListResponse = (responseBody) => {
+        console.log(responseBody)
 
         const message = 
         !responseBody ? '서버에 문제가 있습니다.' :
@@ -75,7 +76,6 @@ function DefaultMain({ setLoading }) {
         setPage((prevPage) => prevPage + 1);
         setIsLoading(false);
         setLoading(false);
-        console.log(clubList)
     }
 
     const getClubListRequest = () => {

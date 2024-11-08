@@ -27,7 +27,7 @@ public class GameResp {
         this.gameType = game.getType();
         this.gameDate = game.getDate();
         this.gameTime = game.getTime();
-        this.members = ScoreboardResp.getList(scoreboards);
+        this.members = ScoreboardResp.getScoreboardList(scoreboards);
     }
 
     public static List<GameResp> getClubPageRespList(List<Game> games, List<List<Scoreboard>> scoreboards) {

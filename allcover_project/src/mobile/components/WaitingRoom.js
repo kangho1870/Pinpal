@@ -164,12 +164,10 @@ function WaitingRoom({ getScoreboard }) {
                                             <div className={styles.memberBox}>
                                             <div className={styles.profileContainer}>
                                                 <img className={styles.memberProfile} src={member.memberProfile} />
-                                                
-                                                {/* 역할에 따라 staff 이미지 겹치기 */}
-                                                {roles.includes("MASTER") && 
+                                                {member.memberRole.includes("MASTER") && 
                                                     <img className={styles.staffImg} src={require("../../imges/club/master.png")} />
                                                 }
-                                                {roles.includes("STAFF") && 
+                                                {member.memberRole.includes("STAFF") && 
                                                     <img className={styles.staffImg} src={require("../../imges/club/staff.png")} />
                                                 }
                                             </div>
