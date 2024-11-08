@@ -23,7 +23,7 @@ function MyClub() {
     const [page, setPage] = useState(0);
     const { clubId } = useParams();
     const memberId = signInUser?.id || null;
-    const roles = signInUser?.clubRole ? signInUser.clubRole.split(", ").map(role => role.trim()) : [];
+    const roles = signInUser?.clubRole ? signInUser.clubRole : null;
 
     const getMembersResponse = (responseBody) => {
 

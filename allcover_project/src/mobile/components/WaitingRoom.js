@@ -24,7 +24,8 @@ function WaitingRoom({ getScoreboard }) {
     const [confirmedJoin, setConfirmedJoin] = useState(false);
     const memberId = signInUser?.id || null;
     const gameId = searchParams.get("gameId");
-    const roles = signInUser.clubRole.split(", ").map(role => role.trim());
+    const roles = signInUser?.clubRole ? signInUser.clubRole : null;
+
     
 
     const sideJoinBtns = ["grade1", "avg"];
@@ -133,7 +134,7 @@ function WaitingRoom({ getScoreboard }) {
                             </div>
                         </div>
                     </div>
-                    {roles.includes("STAFF") || roles.includes("MASTER") &&
+                    {(roles.includes("STAFF") || roles.includes("MASTER")) &&
                         <>
                             <div className={styles.settingBoxTitle}>
                                 <h4>게임 설정</h4>
