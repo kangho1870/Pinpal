@@ -134,7 +134,7 @@ function WaitingRoom({ getScoreboard }) {
                             </div>
                         </div>
                     </div>
-                    {(roles.includes("STAFF") || roles.includes("MASTER")) &&
+                    {(roles === "STAFF" || roles === "MASTER") &&
                         <>
                             <div className={styles.settingBoxTitle}>
                                 <h4>게임 설정</h4>
@@ -165,10 +165,10 @@ function WaitingRoom({ getScoreboard }) {
                                             <div className={styles.memberBox}>
                                             <div className={styles.profileContainer}>
                                                 <img className={styles.memberProfile} src={member.memberProfile} />
-                                                {member.memberRole.includes("MASTER") && 
+                                                {member.memberRole === "MASTER" && 
                                                     <img className={styles.staffImg} src={require("../../imges/club/master.png")} />
                                                 }
-                                                {member.memberRole.includes("STAFF") && 
+                                                {member.memberRole === "STAFF" && 
                                                     <img className={styles.staffImg} src={require("../../imges/club/staff.png")} />
                                                 }
                                             </div>
