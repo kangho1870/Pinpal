@@ -64,6 +64,7 @@ public class Member {
         this.createDate = LocalDateTime.now();
         this.updateDate = LocalDateTime.now();
         this.profile = signUpReqDto.getProfileImageUrl();
+        this.status = "ACTIVE";
     }
 
     public MemberRespDto toMemberDto() {

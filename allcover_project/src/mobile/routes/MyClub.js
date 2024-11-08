@@ -133,7 +133,7 @@ function MyClub() {
     }
 
     const memberJoinClubRequest = () => {
-        if(members.filter((member) => member.memberId === memberId)) {
+        if (members.some((member) => member.memberId === memberId)) {
             alert("이미 가입한 클럽입니다.")
             return;
         }
