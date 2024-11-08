@@ -223,7 +223,8 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
 
     const clubId = signInUser?.clubId || 0;
     const memberId = signInUser?.id || null;
-    const roles = signInUser?.clubRole ? signInUser.clubRole.split(", ").map(role => role.trim()) : [];
+    const roles = signInUser?.clubRole ? signInUser.clubRole : null;
+
 
     const scheduleOnClickHandler = (gameId) => {
         navigator(`${SCOREBOARD_PATH}?gameId=${gameId}&clubId=${clubId}`);
@@ -346,10 +347,10 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
                                     {game.members.map((member, i) => (
                                         <div className={styles.memberBox}>
                                             <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
-                                            {roles.includes("MASTER") && 
+                                            {roles === "MASTER" && 
                                                 <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
                                             }
-                                            {roles.includes("STAFF") && 
+                                            {roles === "STAFF" && 
                                                 <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
                                             }
                                         </div>
@@ -426,10 +427,10 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
                         <div className={styles.memberBox}>
                             <div className={styles.memberProfile}>
                                 <img className={styles.memberImg} src={member.memberProfile}></img>
-                                {member.memberRole.includes("MASTER") && 
+                                {member.memberRole === "MASTER" && 
                                     <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
                                 }
-                                {member.memberRole.includes("STAFF") && 
+                                {member.memberRole === "STAFF" && 
                                     <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
                                 }
                             </div>
