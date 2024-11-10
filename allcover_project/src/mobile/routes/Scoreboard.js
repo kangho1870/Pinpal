@@ -26,26 +26,13 @@ function Scoreboard() {
     const { 
         members, gradeModal, teamModal, confirmModal, sideJoinUserModal,
         sideRankingModal, scoreInputModal, page, navTitle,
-        setMembers, toggleGradeModal, toggleTeamModal, toggleConfirmModal,
-        toggleSideJoinUserModal, toggleSideRankingModal, toggleScoreInputModal, setPage, clearMembers
+        setMembers, toggleSideJoinUserModal, toggleSideRankingModal, toggleScoreInputModal, setPage, clearMembers
     } = useScoreboard();
 
     const [searchParams] = useSearchParams();
     const navigator = useNavigate();
     const gameId = searchParams.get('gameId');
     const clubId = signInUser?.clubId || null;
-
-    const loadMembers = () => {
-        axios.get()
-            .then(response => {
-                const data = response.data.data;
-                console.log(data)
-                setMembers(data);
-            })
-            .catch(error => {
-                console.log("error!!", error);
-            });
-    };
 
     const getScoreboardResponse = (resposenBody) => {
         const message = 
@@ -75,9 +62,9 @@ function Scoreboard() {
             navigator(ROOT_PATH);
         }
         getScoreboard();
-        // return (
-        //     clearMembers
-        // )
+        return (
+            setPage(0)
+        )
     }, [signInUser]);
 
     const navBtnClickHandler = (index) => {

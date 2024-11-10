@@ -128,7 +128,8 @@ function MyClub() {
         }
         
         alert(message);
-        getMemberListRequest();
+        getMembersRequest();
+        pageLoad();
         setLoading(false);
     }
 
@@ -141,18 +142,17 @@ function MyClub() {
         clubJoinRequest(clubId, memberId, token).then(memberJoinClubResponse);
     }
 
-    useEffect(() => {
-        if(cookies[ACCESS_TOKEN] == null) {
-            alert("로그인이 필요한 서비스입니다.");
-            navigator(ROOT_PATH);
-        }
-        if(clubId == null) {
-            return;
-        }
+    const pageLoad = () => {
         getMembersRequest();
         getCeremonysList();
         getGamesRequest();
         getClubInfo();
+    }
+
+    useEffect(() => {
+        if(cookies[ACCESS_TOKEN] && clubId) {
+            pageLoad();
+        }
     },[clubId])
 
     return (
@@ -176,13 +176,13 @@ function MyClub() {
                 </div>
                 <div className={styles.contextArea}>
                     {page == 0 &&
-                        <ClubHome clubInfo={clubInfo} setLoading={setLoading} getGamesRequest={getGamesRequest}></ClubHome>
+                        <ClubHome clubInfo={clubInfo} setLoading={setLoading} pageLoad={pageLoad}></ClubHome>
                     }
                     {page == 1 &&
                         <ClubCeremony setLoading={setLoading}></ClubCeremony>
                     }
                     {page == 4 &&
-                        <ClubSetting setLoading={setLoading}></ClubSetting>
+                        <ClubSetting setLoading={setLoading} pageLoad={pageLoad}></ClubSetting>
                     }
                 </div>
             </div>
@@ -191,14 +191,14 @@ function MyClub() {
                     <div className={styles.modalBox}>
                         <div className={styles.modal} onClick={addGameModalBtnClickHandler}>
                             <i className="fa-solid fa-plus"></i>
-                            <span className={styles.title}>게임 생성</span>
+                            <span className={styles.modalTitle}>게임 생성</span>
                         </div>
                     </div>
                 </div>
             }
             {addGameModal && (roles === "STAFF" || roles === "MASTER") &&
                 <div className={styles.addGameModal}>
-                    <AddGameModal clubId={clubId} token={token} addGameModalBtnClickHandler={addGameModalBtnClickHandler} ></AddGameModal>
+                    <AddGameModal clubId={clubId} token={token} pageLoad={pageLoad} addGameModalBtnClickHandler={addGameModalBtnClickHandler} ></AddGameModal>
                 </div>
             }
             {loading &&
@@ -213,7 +213,7 @@ function MyClub() {
 
 export default MyClub;
 
-function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
+function ClubHome({ clubInfo, setLoading, pageLoad }) {
 
     const { members, ceremonys, games } = useClubStore();
     const { signInUser, setSignInUser } = useSignInStore();
@@ -237,7 +237,7 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
             weekday: 'short'
         }).format(new Date(date));
         
-        return formattedDate.replace(/\./g, '/').replace(') ', ')').replace('/(', ' (');
+        return formattedDate.replace(/\./g, ' /').replace(') ', ')').replace('/(', ' (');
     };
 
     const formatDateTime = (date, time) => {
@@ -251,8 +251,7 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
             hour12: true
         }).format(dateTime);
     
-        // Replace dots with slashes and remove the period after the weekday
-        return formattedDate.replace(/\./g, '/').replace(') ', ')').replace('/(', ' (');
+        return formattedDate.replace(/\./g, '/').replace('/(', ' (');
     };
 
     const scoreboardJoinResponse = (responseBody) => {
@@ -271,7 +270,7 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
         }
         
         alert(message);
-        getGamesRequest();
+        pageLoad();
         setLoading(false);
     }
 
@@ -289,7 +288,7 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
             alert("로그인이 필요한 서비스입니다.");
             navigator(ROOT_PATH);
         }
-    },[clubId])
+    },[members])
 
     return (
         <>
@@ -347,10 +346,10 @@ function ClubHome({ clubInfo, setLoading, getGamesRequest }) {
                                     {game.members.map((member, i) => (
                                         <div className={styles.memberBox}>
                                             <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
-                                            {roles === "MASTER" && 
+                                            {member.memberRole == "MASTER" && 
                                                 <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
                                             }
-                                            {roles === "STAFF" && 
+                                            {member.memberRole == "STAFF" && 
                                                 <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
                                             }
                                         </div>
@@ -744,12 +743,14 @@ function ClubCeremony({ setLoading }) {
     )
 };
 
-function ClubSetting() {
+function ClubSetting({ pageLoad }) {
     const { members } = useClubStore();
+    const { signInUser } = useSignInStore();
     const [cookies] = useCookies();
     const token = cookies[ACCESS_TOKEN];
     const [page, setPage] = useState(0);
     const [updatedMembers, setUpdatedMembers] = useState([]);
+    const roles = signInUser?.clubRole ? signInUser.clubRole : null;
 
     const groupedMembers = members.reduce((acc, member) => {
         const { memberGrade } = member;
@@ -793,22 +794,26 @@ function ClubSetting() {
         }
         
         alert(message);
-
+        pageLoad();
     }
 
     const memberAvgUpdateRequest = () => {
-        const dto = {
-            ids: updatedMembers.map(member => member.memberId),
-            avg: updatedMembers.map(member => member.memberAvg),
-            grades: updatedMembers.map(member => member.memberGrade),
+        if((roles !== "STAFF" || roles !== "MASTER")) {
+            const dto = {
+                ids: updatedMembers.map(member => member.memberId),
+                avg: updatedMembers.map(member => member.memberAvg),
+                grades: updatedMembers.map(member => member.memberGrade),
+            }
+            clubMemberAvgUpdateRequest(dto, token).then(memberAvgUpdateResponse);
+        }else {
+            alert("접근 권한이 없습니다.")
+            return;
         }
-        console.log(dto)
-        clubMemberAvgUpdateRequest(dto, token).then(memberAvgUpdateResponse);
     }
 
     useEffect(() => {
         setUpdatedMembers(members);
-    }, [members])
+    }, [])
 
     return (
         <div className={styles.container}>
@@ -827,176 +832,79 @@ function ClubSetting() {
                 </button>
             </div>
             <div className={styles.contextArea}>
-                {page == 0 && 
+                {page === 0 && (
                     <>
-                        <div className={styles.gradesAvg}>
-                            {Object.keys(groupedMembers).map((grade, i) => (
-                                grade != 0 && grade < 3 && (
-                                    <div key={grade} className={styles.gradeGroup}>
-                                        {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
-                                        {groupedMembers[grade].map((member) => (
-                                            <div key={member.memberId} className={styles.gradeBox}>
-                                                <div className={styles.memberAvgBox}>
-                                                    <p>{member.memberName}</p>
+                        {/* 표시된 군을 추적하는 Set 초기화 */}
+                        {["0-2", "3-4", "5-6", "new"].map((range, rangeIndex) => {
+                            // 각 범위에 대해 Set 생성
+                            const displayedGrades = new Set();
+
+                            return (
+                                <div key={rangeIndex} className={styles.gradesAvg}>
+                                    {Object.keys(groupedMembers).map((grade) => {
+                                        // 해당 범위에 해당하는 grade만 출력
+                                        if (
+                                            (range === "0-2" && grade != 0 && grade < 3) ||
+                                            (range === "3-4" && grade > 2 && grade < 5) ||
+                                            (range === "5-6" && grade > 4 && grade < 7) ||
+                                            (range === "new" && grade == 0)
+                                        ) {
+                                            return (
+                                                <div key={grade} className={styles.gradeGroup}>
+                                                    {/* 해당 군이 아직 표시되지 않은 경우에만 제목을 출력 */}
+                                                    {!displayedGrades.has(grade) && (
+                                                        <h3 className={styles.gradeTitle}>
+                                                            {grade === "0" ? "신입" : `${grade} 군`}
+                                                        </h3>
+                                                    )}
+                                                    {groupedMembers[grade].map((member) => (
+                                                        <div key={member.memberId} className={styles.gradeBox}>
+                                                            <div className={styles.memberAvgBox}>
+                                                                <p>{member.memberName}</p>
+                                                            </div>
+                                                            <div className={styles.memberAvgBox}>
+                                                                <p>{member.memberAvg}</p>
+                                                            </div>
+                                                            <div className={styles.memberAvgBox}>
+                                                                <input
+                                                                    type="number"
+                                                                    placeholder="에버"
+                                                                    className={styles.avgInput}
+                                                                    onChange={(e) =>
+                                                                        memberAvgUpdate(member.memberId, e.target.value)
+                                                                    }
+                                                                />
+                                                            </div>
+                                                            <div className={styles.memberAvgBox}>
+                                                                <input
+                                                                    type="number"
+                                                                    placeholder="군"
+                                                                    className={styles.avgInput}
+                                                                    onChange={(e) =>
+                                                                        memberGradeUpdate(member.memberId, e.target.value)
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <p>{member.memberAvg}</p>
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="에버"
-                                                        className={styles.avgInput}
-                                                        onChange={(e) =>
-                                                            memberAvgUpdate(member.memberId, e.target.value)
-                                                        }
-                                                    />
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="군"
-                                                        className={styles.avgInput}
-                                                        onChange={(e) =>
-                                                            memberGradeUpdate(member.memberId, e.target.value)
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )
-                            ))}
-                        </div>
-                        <div className={styles.gradesAvg}>
-                            {Object.keys(groupedMembers).map((grade, i) => (
-                                grade != 0 && grade > 2 && grade < 5 && (
-                                    <div key={grade} className={styles.gradeGroup}>
-                                        {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
-                                        {groupedMembers[grade].map((member) => (
-                                            <div key={member.memberId} className={styles.gradeBox}>
-                                                <div className={styles.memberAvgBox}>
-                                                    <p>{member.memberName}</p>
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <p>{member.memberAvg}</p>
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="에버"
-                                                        className={styles.avgInput}
-                                                        onChange={(e) =>
-                                                            memberAvgUpdate(member.memberId, e.target.value)
-                                                        }
-                                                    />
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="군"
-                                                        className={styles.avgInput}
-                                                        onChange={(e) =>
-                                                            memberGradeUpdate(member.memberId, e.target.value)
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )
-                            ))}
-                        </div>
-                        <div className={styles.gradesAvg}>
-                            {Object.keys(groupedMembers).map((grade, i) => (
-                                grade != 0 && grade > 4 && grade < 7 && (
-                                    <div key={grade} className={styles.gradeGroup}>
-                                        {i === 0 ? <h3 className={styles.gradeTitle}>{grade} 군</h3> : ""}
-                                        {groupedMembers[grade].map((member) => (
-                                            <div key={member.memberId} className={styles.gradeBox}>
-                                                <div className={styles.memberAvgBox}>
-                                                    <p>{member.memberName}</p>
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <p>{member.memberAvg}</p>
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="에버"
-                                                        className={styles.avgInput}
-                                                        onChange={(e) =>
-                                                            memberAvgUpdate(member.memberId, e.target.value)
-                                                        }
-                                                    />
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="군"
-                                                        className={styles.avgInput}
-                                                        onChange={(e) =>
-                                                            memberGradeUpdate(member.memberId, e.target.value)
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )
-                            ))}
-                        </div>
-                        <div className={styles.gradesAvg}>
-                            {Object.keys(groupedMembers).map((grade, i) => (
-                                grade == 0 && (
-                                    <div key={grade} className={styles.gradeGroup}>
-                                        {i === 0 ? <h3 className={styles.gradeTitle}>신입</h3> : ""}
-                                        {groupedMembers[grade].map((member) => (
-                                            <div key={member.memberId} className={styles.gradeBox}>
-                                                <div className={styles.memberAvgBox}>
-                                                    <p>{member.memberName}</p>
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <p>{member.memberAvg}</p>
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="에버"
-                                                        className={styles.avgInput}
-                                                        onChange={(e) =>
-                                                            memberAvgUpdate(member.memberId, e.target.value)
-                                                        }
-                                                    />
-                                                </div>
-                                                <div className={styles.memberAvgBox}>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="군"
-                                                        className={styles.avgInput}
-                                                        onChange={(e) =>
-                                                            memberGradeUpdate(member.memberId, e.target.value)
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )
-                            ))}
-                        </div>
+                                            );
+                                        }
+                                    })}
+                                </div>
+                            );
+                        })}
                         <div className={styles.avgSaveBtnBox}>
                             <button className={styles.avgSaveBtn} onClick={memberAvgUpdateRequest}>저장하기</button>
                         </div>
                     </>
-                }
-            </div>
-            
+                )}
+            </div> 
         </div>
     );
 }
 
-function AddGameModal({ clubId, token, addGameModalBtnClickHandler }) {
+function AddGameModal({ clubId, token, addGameModalBtnClickHandler, pageLoad }) {
     const [gameName, setGameName] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
@@ -1024,7 +932,7 @@ function AddGameModal({ clubId, token, addGameModalBtnClickHandler }) {
 
         addGameModalBtnClickHandler();
         alert(message);
-        navigator(CLUB_DETAIL_PATH(clubId));
+        pageLoad();
     };
 
     const addGame = () => {

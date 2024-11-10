@@ -54,7 +54,11 @@ export default function ScoreInputModal({ getScoreboard }) {
     }
 
     const saveScoreRequest = () => {
-        scoreInputRequest(gameId, memberId, scores, token).then(saveScoreResponse);
+        if(members.some((member) => member.memberId === memberId)) {
+            scoreInputRequest(gameId, memberId, scores, token).then(saveScoreResponse);
+        } else {
+            alert("게임에 참석하지 않았습니다.")
+        }
     }
 
     return (

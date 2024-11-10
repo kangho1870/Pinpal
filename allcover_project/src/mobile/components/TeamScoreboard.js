@@ -18,20 +18,27 @@ export default function TeamScoreboard() {
         const teamMembers = teams[teamNumber];
         
         // 팀 멤버 중 하나라도 0점이 있는지 확인
-        const hasZeroScore = teamMembers.some(member =>
-            (member.game1 === 0) || 
-            (member.game2 === 0) || 
-            (member.game3 === 0) || 
-            (member.game4 === 0)
+        const hasZeroScore1 = teamMembers.some(member =>
+            member.game1 === null
         );
 
-        const totalScore = hasZeroScore
-            ? 0  // 0점인 멤버가 있으면 팀 총점 0
-            : teamMembers.reduce((sum, member) => {
-                const game1Score = (member.game1 || 0) - (member.memberAvg || 0);
-                const game2Score = (member.game2 || 0) - (member.memberAvg || 0);
-                const game3Score = (member.game3 || 0) - (member.memberAvg || 0);
-                const game4Score = (member.game4 || 0) - (member.memberAvg || 0);
+        const hasZeroScore2 = teamMembers.some(member =>
+            member.game2 === null
+        );
+
+        const hasZeroScore3 = teamMembers.some(member =>
+            member.game3 === null
+        );
+
+        const hasZeroScore4 = teamMembers.some(member =>
+            member.game4 === null
+        );
+
+        const totalScore = teamMembers.reduce((sum, member) => {
+                const game1Score = hasZeroScore1 ? 0 : (member.game1 || 0) - (member.memberAvg || 0);
+                const game2Score = hasZeroScore2 ? 0 : (member.game2 || 0) - (member.memberAvg || 0);
+                const game3Score = hasZeroScore3 ? 0 : (member.game3 || 0) - (member.memberAvg || 0);
+                const game4Score = hasZeroScore4 ? 0 : (member.game4 || 0) - (member.memberAvg || 0);
 
                 return sum + game1Score + game2Score + game3Score + game4Score;
             }, 0);
@@ -68,19 +75,27 @@ export default function TeamScoreboard() {
     return (
         <div className={styles.teamScoreboardContainer}>
             {sortedTeams.map((team, index) => {
-                // 각 게임의 총합 계산
-                const hasZeroScore = team.members.some(member =>
-                    (member.game1 === null) || 
-                    (member.game2 === null) || 
-                    (member.game3 === null) || 
-                    (member.game4 === null)
+                const hasZeroScore1 = team.members.some(member =>
+                    member.game1 === null
+                );
+
+                const hasZeroScore2 = team.members.some(member =>
+                    member.game2 === null
+                );
+
+                const hasZeroScore3 = team.members.some(member =>
+                    member.game3 === null
+                );
+
+                const hasZeroScore4 = team.members.some(member =>
+                    member.game4 === null
                 );
                 
-                const game1Total = hasZeroScore ? 0 : team.members.reduce((sum, member) => sum + (member.game1 || 0) - (member.memberAvg || 0), 0);
-                const game2Total = hasZeroScore ? 0 : team.members.reduce((sum, member) => sum + (member.game2 || 0) - (member.memberAvg || 0), 0);
-                const game3Total = hasZeroScore ? 0 : team.members.reduce((sum, member) => sum + (member.game3 || 0) - (member.memberAvg || 0), 0);
-                const game4Total = hasZeroScore ? 0 : team.members.reduce((sum, member) => sum + (member.game4 || 0) - (member.memberAvg || 0), 0);
-                const totalSum = hasZeroScore ? 0 : game1Total + game2Total + game3Total + game4Total;
+                const game1Total = hasZeroScore1 ? 0 : team.members.reduce((sum, member) => sum + (member.game1 || 0) - (member.memberAvg || 0), 0);
+                const game2Total = hasZeroScore2 ? 0 : team.members.reduce((sum, member) => sum + (member.game2 || 0) - (member.memberAvg || 0), 0);
+                const game3Total = hasZeroScore3 ? 0 : team.members.reduce((sum, member) => sum + (member.game3 || 0) - (member.memberAvg || 0), 0);
+                const game4Total = hasZeroScore4 ? 0 : team.members.reduce((sum, member) => sum + (member.game4 || 0) - (member.memberAvg || 0), 0);
+                const totalSum = game1Total + game2Total + game3Total + game4Total;
 
                 return (
                     <div key={team.teamNumber} className={styles.teamScoreboardBox}>
@@ -107,8 +122,7 @@ export default function TeamScoreboard() {
                                         const scores = [member.game1, member.game2, member.game3, member.game4].filter(score => score !== null && score !== 0);
                                         const memberTotal = scores.reduce((sum, score) => sum + score, 0);
                                         const memberAvg = scores.length > 0 ? memberTotal / scores.length : 0;
-                                        const avgTotla = ((scores[0] || 0) + (scores[1] || 0) + (scores[2] || 0) + (scores[3] || 0)) - (member.memberAvg * 4);
-
+                                        const avgTotal = scores.reduce((sum, score) => sum + score, 0) - (member.memberAvg * scores.length);
                                         return (
                                             <tr key={idx} className={styles.teamScoreBodyTr}>
                                                 {/* 첫 번째 멤버에만 팀 이름과 rowSpan 적용 */}
@@ -118,13 +132,13 @@ export default function TeamScoreboard() {
                                                 <td className={styles.teamScoreTd}>{idx + 1}</td>
                                                 <td className={styles.teamScoreTd}>{member.memberName}</td>
                                                 <td className={styles.teamScoreTd}>{member.memberAvg}</td>
-                                                <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game1 || 0}</td>
-                                                <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game2 || 0}</td>
-                                                <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game3 || 0}</td>
-                                                <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game4 || 0}</td>
+                                                <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game1 == null ? "" : member.game1}</td>
+                                                <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game2 == null ? "" : member.game2}</td>
+                                                <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game3 == null ? "" : member.game3}</td>
+                                                <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game4 == null ? "" : member.game4}</td>
                                                 <td className={styles.teamScoreTd}>{memberTotal}</td>
                                                 <td className={styles.teamScoreTd}>{memberAvg.toFixed(1)}</td>
-                                                <td className={styles.teamScoreTd}>{avgTotla}</td>
+                                                <td className={styles.teamScoreTd}>{avgTotal}</td>
                                             </tr>
                                         );
                                     })}
@@ -132,12 +146,12 @@ export default function TeamScoreboard() {
                                 <tfoot>
                                     <tr className={styles.teamScoreHeaderTr}>
                                         <td className={styles.teamScoreTh} colSpan={4}>합계</td>
-                                        <td className={styles.teamScoreTh}>{game1Total}</td>
-                                        <td className={styles.teamScoreTh}>{game2Total}</td>
-                                        <td className={styles.teamScoreTh}>{game3Total}</td>
-                                        <td className={styles.teamScoreTh}>{game4Total}</td>
+                                        <td className={styles.teamScoreTh}>{game1Total || ""}</td>
+                                        <td className={styles.teamScoreTh}>{game2Total || ""}</td>
+                                        <td className={styles.teamScoreTh}>{game3Total || ""}</td>
+                                        <td className={styles.teamScoreTh}>{game4Total || ""}</td>
                                         <td className={styles.teamScoreTh} colSpan={2}>팀 종합</td>
-                                        <td className={styles.teamScoreTh}>{totalSum}</td>
+                                        <td className={styles.teamScoreTh}>{totalSum || ""}</td>
                                     </tr>
                                 </tfoot>
                             </table>

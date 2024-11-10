@@ -66,7 +66,7 @@ function RankingBoard({ sideRankingModalToggle, scoreInputModalToggle }) {
                                 <div className={styles.memberCardBox}>
                                     <div className={styles.memberCard}>
                                         <span className={styles.infoTitle}>군</span>
-                                        <p className={styles.info}>{member.grade}군</p>
+                                        <p className={styles.info}>{member.grade === 0 ? "-" : (member.grade + "군")}</p>
                                     </div>
                                     <div className={styles.memberCard}>
                                         <span className={styles.infoTitle}>이름</span>

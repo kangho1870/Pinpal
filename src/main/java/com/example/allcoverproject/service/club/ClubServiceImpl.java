@@ -147,7 +147,7 @@ public class ClubServiceImpl implements ClubService {
 
         try {
 
-            ClubDtl clubDtl = new ClubDtl(member, clubMst.get(), "member");
+            ClubDtl clubDtl = new ClubDtl(member, clubMst.get(), "MEMBER");
             clubDtlRepository.save(clubDtl);
 
         } catch (Exception e) {

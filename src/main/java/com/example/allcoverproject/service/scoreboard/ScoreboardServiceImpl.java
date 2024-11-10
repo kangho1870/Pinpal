@@ -32,7 +32,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
     @Override
     public ResponseEntity<? super GetScoreboardListRespDto> getMembers(Long gameId, Long clubId) {
         List<Scoreboard> scoreboards = new ArrayList<>();
-        List<ClubDtl> clubDtl = clubDtlRepository.findAllByClubMst(clubId);
+        List<ClubDtl> clubDtl = clubDtlRepository.findAllByClubMst_Id(clubId);
 
         try {
 

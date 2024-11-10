@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface ClubDtlRepository extends JpaRepository<ClubDtl, Long>, ClubDtlCustomRepository {
 
-    List<ClubDtl> findAllByClubMst(Long clubId);
+    List<ClubDtl> findAllByClubMst_Id(Long clubId);
     ClubDtl findByMemberId(Long memberId);
 }

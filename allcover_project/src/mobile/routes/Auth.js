@@ -92,7 +92,6 @@ function SignUp() {
             !responseBody ? '서버에 문제가 있습니다.' :
             responseBody.code === 'VF' ? '올바른 데이터가 아닙니다.' :
             responseBody.code === 'DI' ? '중복된 아이디입니다.' :
-            responseBody.code === 'DT' ? '중복된 전화번호입니다.' :
             responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
         
         const isSuccessed = responseBody !== null && responseBody.code === 'SU';

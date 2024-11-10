@@ -58,39 +58,51 @@ function WaitingRoom({ getScoreboard }) {
     };
 
     const sideJoinBtnsClick = (i) => {
-        // 2시간동안 못찾던 오류 - post 요청 시 token 전달하지 않을 시 서버 무반응
-        sideJoinRequest(gameId, memberId, sideJoinBtns[i], token).then(sideJoinResponse);
+        if(members.some((member) => member.memberId === memberId)) {
+            sideJoinRequest(gameId, memberId, sideJoinBtns[i], token).then(sideJoinResponse);
+        } else {
+            alert("게임에 참석하지 않았습니다.")
+        }
     };
 
     const scoreCountingStop = () => {
-        scoreCountingStopRequest(gameId, token).then(sideJoinResponse);
+        if(members.some((member) => member.memberId === memberId)) {
+            scoreCountingStopRequest(gameId, token).then(sideJoinResponse);
+        } else {
+            alert("게임에 참석하지 않았습니다.")
+        }
     }
 
     return (
         <div className={styles.mainBox}>
             <div className={styles.contentsBox}>
                 <div className={styles.leftSide}>
-                    {members
-                        .filter(member => member.confirmedJoin === true)
-                        .map((member, i) => (
-                            <div key={i} className={styles.userBox}>
-                                <div className={styles.noBox}>
-                                    <p>{i + 1}</p>
+                    <div className={styles.settingBoxTitle}>
+                        <h4>확정 볼러</h4>
+                    </div>
+                    <div className={styles.confirmedMemberBox}>
+                        {members
+                            .filter(member => member.confirmedJoin === true)
+                            .map((member, i) => (
+                                <div key={i} className={styles.userBox}>
+                                    <div className={styles.noBox}>
+                                        <p>{i + 1}</p>
+                                    </div>
+                                    <div className={styles.nameCardBox}>
+                                        <div className={styles.checkIcon}>
+                                            <i className="fa-regular fa-circle-check fa-xl" style={{color:"#63E6BE"}}></i>
+                                            <h3 style={{ marginLeft: "2px" }}>{member.grade == 0 ? null : member.grade + "군"}</h3>
+                                        </div>
+                                        <div className={styles.description}>
+                                            <h2>{member.memberName}</h2>
+                                        </div>
+                                        <div className={styles.description}>
+                                            <p>{member.memberAvg}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className={styles.nameCardBox}>
-                                    <div className={styles.checkIcon}>
-                                        <i className="fa-regular fa-circle-check fa-xl" style={{color:"#63E6BE"}}></i>
-                                        <h3 style={{ marginLeft: "2px" }}>{member.grade == 0 ? null : member.grade + "군"}</h3>
-                                    </div>
-                                    <div className={styles.description}>
-                                        <h2>{member.memberName}</h2>
-                                    </div>
-                                    <div className={styles.description}>
-                                        <p>{member.memberAvg}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                    </div>
                 </div>
                 <div className={styles.rightSide}>
                     <div className={styles.settingBoxTitle}>
