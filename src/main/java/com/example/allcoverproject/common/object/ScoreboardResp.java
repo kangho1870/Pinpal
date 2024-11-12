@@ -28,27 +28,6 @@ public class ScoreboardResp {
     private String memberRole;
     private int gender;
 
-    private ScoreboardResp(Scoreboard scoreboard, ClubDtl clubDtl) {
-        this.memberId = scoreboard.getMember().getId();
-        this.memberName = scoreboard.getMember().getName();
-        this.gameId = scoreboard.getGame().getId();
-        this.gameName = scoreboard.getGame().getName();
-        this.memberAvg = scoreboard.getMember_avg();
-        this.grade = scoreboard.getGrade();
-        this.game1 = scoreboard.getGame_1();
-        this.game2 = scoreboard.getGame_2();
-        this.game3 = scoreboard.getGame_3();
-        this.game4 = scoreboard.getGame_4();
-        this.sideGrade1 = scoreboard.getSide_grade1();
-        this.sideAvg = scoreboard.getSide_avg();
-        this.confirmedJoin = scoreboard.getConfirmedJoin();
-        this.teamNumber = scoreboard.getTeam_number();
-        this.scoreCounting = scoreboard.getGame().getScoreCounting();
-        this.gender = scoreboard.getMember().getGender();
-        this.memberProfile = scoreboard.getMember().getProfile();
-        this.memberRole = scoreboard.getMember().getClubDtl().getRole();
-    }
-
     private ScoreboardResp(Scoreboard scoreboard) {
         this.memberId = scoreboard.getMember().getId();
         this.memberName = scoreboard.getMember().getName();
@@ -68,15 +47,6 @@ public class ScoreboardResp {
         this.gender = scoreboard.getMember().getGender();
         this.memberProfile = scoreboard.getMember().getProfile();
         this.memberRole = scoreboard.getMember().getClubDtl().getRole();
-    }
-
-    public static List<ScoreboardResp> getList(List<Scoreboard> scoreboards, List<ClubDtl> clubDtlList) {
-        List<ScoreboardResp> respList = new ArrayList<>();
-        for(int i = 0; i < scoreboards.size(); i++) {
-            ScoreboardResp resp = new ScoreboardResp(scoreboards.get(i), clubDtlList.get(i));
-            respList.add(resp);
-        }
-        return respList;
     }
 
     public static List<ScoreboardResp> getScoreboardList(List<Scoreboard> scoreboards) {

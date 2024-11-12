@@ -20,19 +20,16 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public ResponseEntity<? super GetSignInRespDto> getSignIn(String memberId) {
         Member member = null;
-        ClubDtl clubDtl = null;
         try {
 
             Member memberByEmail = memberRepository.findMemberByEmail(memberId);
             if(memberByEmail == null) return CodeMessageRespDto.noExistMemberId();
             member = memberByEmail;
-            clubDtl = clubDtlRepository.findByMemberId(member.getId());
-            System.out.println("member.getClubDtl() = " + clubDtl);
 
         } catch (Exception e) {
             e.printStackTrace();
             return CodeMessageRespDto.databaseError();
         }
-        return GetSignInRespDto.success(member, clubDtl);
+        return GetSignInRespDto.success(member);
     }
 }

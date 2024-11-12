@@ -15,6 +15,8 @@ public class ScoreboardStopGameReqDto {
     private Long grade2st;
     private Long grade3st;
     private Long grade4st;
+    private Long grade5st;
+    private Long grade6st;
     private Long highScoreOfMan;
     private Long highScoreOfGirl;
     private Map<String, List<Object>> team1stIds;

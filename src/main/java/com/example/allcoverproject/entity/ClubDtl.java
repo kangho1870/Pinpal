@@ -17,11 +17,11 @@ public class ClubDtl {
     @Column(name = "no")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id")
     private ClubMst clubMst;
 
@@ -44,13 +44,14 @@ public class ClubDtl {
 
     public void setMember(Member member) {
         if (this.member != null) {
+            System.out.println("null이 아니야");
             this.member.setClubDtl(null);
         }
+        System.out.println("null 이야");
         this.member = member;
-
-        if (member != null && member.getClubDtl() != this) {
-            member.setClubDtl(this);
-        }
+        System.out.println("member.getName() = " + member.getName());
+        member.setClubDtl(this);
+        System.out.println("member.getClubDtl().getRole() = " + member.getClubDtl().getRole());
     }
 
 }

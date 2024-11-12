@@ -70,16 +70,22 @@ public class ClubServiceImpl implements ClubService {
         Member member = memberRepository.findMemberById(addClubReqDto.getMemberId());
         if (member == null) return CodeMessageRespDto.noExistMemberData();
 
-        ClubMst byMemberId = clubMstRepository.findByMemberId(member.getId());
-        if(byMemberId != null) return CodeMessageRespDto.noExistMemberData();
-
+        if (member.getClubDtl() != null) {
+            return CodeMessageRespDto.noExistMemberData(); // 이미 클럽에 가입된 경우
+        }
         try {
 
-            ClubMst clubMst = new ClubMst(addClubReqDto, member);
+            ClubMst clubMst = new ClubMst(addClubReqDto);
             clubMstRepository.save(clubMst);
 
             ClubDtl clubDtl = new ClubDtl(member, clubMst, "MASTER");
             clubDtlRepository.save(clubDtl);
+
+            member.setClubDtl(clubDtl);
+            System.out.println("member = " + member.getClubDtl().getRole());
+            memberRepository.save(member);
+            Member member1 = memberRepository.findMemberByEmail("ho_gang@naver.com");
+            System.out.println("member1.getClubDtl().getRole() = " + member1.toString());
         } catch (Exception e) {
             e.printStackTrace();
             return CodeMessageRespDto.databaseError();
@@ -149,6 +155,9 @@ public class ClubServiceImpl implements ClubService {
 
             ClubDtl clubDtl = new ClubDtl(member, clubMst.get(), "MEMBER");
             clubDtlRepository.save(clubDtl);
+
+            member.setClubDtl(clubDtl);
+            memberRepository.save(member);
 
         } catch (Exception e) {
             e.printStackTrace();

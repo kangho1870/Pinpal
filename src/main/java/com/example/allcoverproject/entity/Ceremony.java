@@ -70,7 +70,8 @@ public class Ceremony {
         this.grade4_1stId = scoreboardStopGameReqDto.getGrade4st();
         this.avg1stId = scoreboardStopGameReqDto.getAvgTopScoreMember();
         scoreboardStopGameReqDto.getTeam1stIds().get("ids").forEach(id -> {
-            team1stIds.add((Long) id);
+            Long ids = Long.valueOf(id.toString());
+            team1stIds.add(ids);
         });
         this.highScoreOfMan = scoreboardStopGameReqDto.getHighScoreOfMan();
         this.highScoreOfGirl = scoreboardStopGameReqDto.getHighScoreOfGirl();

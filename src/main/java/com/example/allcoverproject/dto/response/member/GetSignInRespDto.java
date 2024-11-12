@@ -17,17 +17,16 @@ public class GetSignInRespDto extends CodeMessageRespDto {
     private Long clubId;
     private String clubRole;
 
-    public GetSignInRespDto(Member member, ClubDtl clubDtl) {
+    public GetSignInRespDto(Member member) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
         this.memberId = member.getEmail();
         this.id = member.getId();
-        this.clubRole = clubDtl != null ? clubDtl.getRole() : null;
-        System.out.println("club_role = " + member.getName());
-        this.clubId = clubDtl != null ? clubDtl.getId() : null;
+        this.clubRole = member.getClubDtl() == null ? null : member.getClubDtl().getRole();
+        this.clubId = member.getClubDtl() == null ? null : member.getClubDtl().getId();
     }
 
-    public static ResponseEntity<GetSignInRespDto> success(Member member, ClubDtl clubDtl) {
-        GetSignInRespDto responseBody = new GetSignInRespDto(member, clubDtl);
+    public static ResponseEntity<GetSignInRespDto> success(Member member) {
+        GetSignInRespDto responseBody = new GetSignInRespDto(member);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 }

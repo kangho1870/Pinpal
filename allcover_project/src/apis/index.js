@@ -31,7 +31,7 @@ const SCOREBOARD_SCORE_COUNTING_STOP_API_URL = (gameId) => `${SCOREBOARD_MODUEL_
 
 const SCORE_INPUT_API_URL = (gameId, memberId) => `${SCOREBOARD_MODUEL_URL}/saveScore?memberId=${memberId}&gameId=${gameId}`;
 
-const SCOREBOARD_GAME_STOP_API_URL = () => `${SCOREBOARD_MODUEL_URL}/stop`;
+const SCOREBOARD_GAME_STOP_API_URL = `${SCOREBOARD_MODUEL_URL}/stop`;
 
 const bearerAuthorization = (accessToken) => ({ headers: { 'Authorization': `Bearer ${accessToken}` } });
 
@@ -166,7 +166,7 @@ export const scoreInputRequest = async (gameId, memberId, scores, accessToken) =
 }
 
 export const scoreboardGameStop = async (dto, accessToken) => {
-    const responsBody = await axios.post(`${SCOREBOARD_GAME_STOP_API_URL()}`, dto, bearerAuthorization(accessToken))
+    const responsBody = await axios.post(`${SCOREBOARD_GAME_STOP_API_URL}`, dto, bearerAuthorization(accessToken))
         .then(responseDataHandler)
         .catch(responseErrorHandler);
     return responsBody;

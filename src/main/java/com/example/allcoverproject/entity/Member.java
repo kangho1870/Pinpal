@@ -26,7 +26,7 @@ public class Member {
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Scoreboard> scoreboards = new ArrayList<>();
 
@@ -67,10 +67,4 @@ public class Member {
         this.status = "ACTIVE";
     }
 
-    public MemberRespDto toMemberDto() {
-        return MemberRespDto.builder()
-                .memberId(id)
-                .memberName(name)
-                .build();
-    }
 }

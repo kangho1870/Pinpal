@@ -17,7 +17,7 @@ export default function GameResult() {
     const [searchParams] = useSearchParams();
     const gameId = searchParams.get("gameId");
     const clubId = signInUser?.clubId || null;
-    const roles = signInUser?.clubRole.split(", ").map(role => role.trim()) || null;
+    const roles = signInUser?.clubRole || null;
     
 
     const findCurrentUser = () => {
@@ -147,9 +147,9 @@ export default function GameResult() {
         // 각 군별로 멤버를 필터링하고 점수 계산
         grades.forEach((grade) => {
             const gradeMembers = members.filter(member => member.grade === grade);
-    
+            
             // 멤버가 존재하는지 확인
-            if (gradeMembers.length === 0) {
+            if (gradeMembers.length === 0 || excludedNames.includes(gradeMembers[0].memberName)) {
                 finalGrades.push(null); // 해당 군에 멤버가 없으면 null 추가
                 return;
             }
@@ -169,7 +169,6 @@ export default function GameResult() {
                     excludedNames.push(member.memberName)
                 }
             })
-            
         });
     
         return finalGrades;
@@ -178,11 +177,15 @@ export default function GameResult() {
     // 사용 예시
     
     const topMembers = getTopMembersByGrade(members);
+    console.log(topMembers);
 
-    const grade1stId = getGradeFirstMemberId(1);
-    const grade2stId = getGradeFirstMemberId(2);
-    const grade3stId = getGradeFirstMemberId(3);
-    const grade4stId = getGradeFirstMemberId(4);
+    const grade1stId = topMembers[0]?.memberId || null;
+    const grade2stId = topMembers[1]?.memberId || null;
+    const grade3stId = topMembers[2]?.memberId || null;
+    const grade4stId = topMembers[3]?.memberId || null;
+    const grade5stId = topMembers[4]?.memberId || null;
+    const grade6stId = topMembers[5]?.memberId || null;
+
 
     // 남자 하이스코어 멤버 선택 (grade1~4st 제외)
     const maleMembers = getHighScoreMember(0).filter(member => !excludedNames.includes(member.memberName));
@@ -213,6 +216,8 @@ export default function GameResult() {
         grade2st: grade2stId,
         grade3st: grade3stId,
         grade4st: grade4stId,
+        grade5st: grade5stId,
+        grade6st: grade6stId,
         highScoreOfMan: highScoreOfManId,
         highScoreOfGirl: highScoreOfGirlId,
         team1stIds: team1stMember
@@ -235,7 +240,7 @@ export default function GameResult() {
     };
     
     const stopGameRequest = () => {
-        scoreboardGameStop(resultSetOfLong, token);
+        scoreboardGameStop(resultSetOfLong, token).then(stopGameResponse);
     }
 
     return (
@@ -317,7 +322,7 @@ export default function GameResult() {
                                 </div>
                             </div>
                         </div>
-                        {roles?.includes("STAFF") && 
+                        {(roles === "STAFF" || roles === "MASTER") && 
                             <button className={styles.gameStopBtn} onClick={stopGameRequest}>게임 종료</button>
                         }
                     </div>

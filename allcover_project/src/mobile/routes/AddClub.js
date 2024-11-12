@@ -7,6 +7,7 @@ import useSignInStore from "../../stores/useSignInStore";
 import { addClubRequest } from "../../apis";
 import { useCookies } from "react-cookie";
 import { ACCESS_TOKEN, MY_CLUB_PATH, ROOT_PATH } from "../../constants";
+import TextEditor from "../components/textEditor/TextEditor";
 
 export default function AddClub() {
     const navigator = useNavigate();
@@ -17,6 +18,10 @@ export default function AddClub() {
     const [place, setPlace] = useState("");
     const [clubName, setClubName] = useState("");
     const [clubDescription, setClubDescription] = useState("");
+
+    const handleEditorChange = (content) => {
+        setClubDescription(content);
+    };
 
     const addClubResponse = (responseBody) => {
 
@@ -44,7 +49,6 @@ export default function AddClub() {
             clubName: clubName,
             clubDescription: clubDescription
         }
-        console.log(dto)
         addClubRequest(dto, token).then(addClubResponse);
     }
 
@@ -67,37 +71,12 @@ export default function AddClub() {
                     <div className={styles.inputBox}>
                         <p>클럽 소개</p>
                     </div>
-                    <div className={styles.inputBox}>
-                        <DescriptionEditor setClubDescription={setClubDescription}></DescriptionEditor>
-                    </div>
+                    <TextEditor handleEditorChange={handleEditorChange}></TextEditor>
                 </div>
                 <div className={styles.clubAddBtnBox}>
                     <button className={styles.clubAddBtn} onClick={addClub}>클럽 만들기</button>
                 </div>
             </div>
-        </>
-    )
-}
-
-function DescriptionEditor({ setClubDescription }) {
-    const modules = {
-        toolbar: {
-            container: [
-                ["image"],
-                [{ header: [1, 2, 3, 4, 5, false] }],
-                ["bold", "underline"],
-            ],
-        },
-    }
-
-    return (
-        <>
-            <ReactQuill
-                style={{ width: "100%", height: "100%" }}
-                modules={modules}
-                onChange={setClubDescription}
-            >
-            </ReactQuill>
         </>
     )
 }
