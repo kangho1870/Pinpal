@@ -86,7 +86,7 @@ function GradeSettingModal({ getScoreboard }) {
                             <div className={styles.gradeBox}>
                                 <div className={styles.grades}>
                                     <div className={styles.gradeTitle}>
-                                        <h4>{selectGrade + "군"}</h4>
+                                        {selectGrade + "군"}
                                     </div>
                                     <div className={styles.gradeMemberList}>
                                         {updatedMembers
@@ -109,22 +109,25 @@ function GradeSettingModal({ getScoreboard }) {
                             <i className="fa-solid fa-right-left"></i>
                         </div>
                         <div className={styles.memberArea}>
-                            <div>
+                            <div className={styles.gradeTitle}>
                                 볼러
                             </div>
                             <div className={styles.memberList}>
                                 {updatedMembers
                                     .filter(member => member.grade == 0)
                                     .map((v, i) => (
-                                        <div 
-                                            key={v.memberId}
-                                            className={styles.memberBox}
-                                            onClick={() => setGradeByMember(v.memberId)}
-                                        >
-                                            <h5>{i + 1}</h5>
-                                            <h5>{v.memberName}</h5>
-                                            <h5>{v.memberAvg}</h5>
-                                        </div>
+                                        <>
+                                            <div 
+                                                key={v.memberId}
+                                                className={styles.memberBox}
+                                                onClick={() => setGradeByMember(v.memberId)}
+                                            >
+                                                <h5>{i + 1}</h5>
+                                                <h5>{v.memberName}</h5>
+                                                <h5>{v.memberAvg}</h5>
+                                            </div>
+
+                                        </>
                                 ))}
                             </div>
                         </div>

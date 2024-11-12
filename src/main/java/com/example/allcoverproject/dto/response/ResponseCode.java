@@ -15,4 +15,5 @@ public interface ResponseCode {
     String SCOREBOARD_JOIN_CANCLE = "SJC";
     String NO_FUND_CEREMONY = "NC";
     String JWT_EXPIRED = "JE";
+    String ROLE_UPDATE_FAIL_WITH_MASTER = "RUF";
 }

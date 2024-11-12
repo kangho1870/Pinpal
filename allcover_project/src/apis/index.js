@@ -59,6 +59,8 @@ const ADD_CLUB_API_URL = `${CLUB_MODULE_URL}`;
 
 const CLUB_MEMBERS_AVG_UPDATE_API_URL = `${CLUB_MODULE_URL}/update-avg`;
 
+const CLUB_MEMBER_ROLE_UPDATE_API_URL = `${CLUB_MODULE_URL}/update-role`
+
 const responseDataHandler = (response) => {
     const { data } = response;
     return data;
@@ -232,6 +234,13 @@ export const clubMemberAvgUpdateRequest = async (data, accessToken) => {
     return responseBody;
 }
 
+
+export const clubMemberRoleUpdateRequest = async (data, accessToken) => {
+    const responseBody = await axios.post(`${CLUB_MEMBER_ROLE_UPDATE_API_URL}`, data, bearerAuthorization(accessToken))
+        .then(responseDataHandler)
+        .catch(responseErrorHandler)
+    return responseBody;
+}
 
 export const clubJoinRequest = async (clubId, memberId, accessToken) => {
     const responseBody = await axios.post(`${JOIN_CLUB_MEMBER_API_URL(clubId, memberId)}`, {}, bearerAuthorization(accessToken))

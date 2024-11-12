@@ -196,5 +196,28 @@ public class ClubServiceImpl implements ClubService {
         return CodeMessageRespDto.success();
     }
 
+    @Override
+    public ResponseEntity<CodeMessageRespDto> updateOfMemberRole(Map<String, Object> map) {
+        Long memberId = Long.valueOf(map.get("memberId").toString());
+        ClubDtl byMemberId = clubDtlRepository.findByMemberId(memberId);
+        if(byMemberId == null) return CodeMessageRespDto.noExistMemberId();
+
+        if(byMemberId.getRole().equals("MASTER") && (map.get("role").toString().equals("STAFF") || map.get("role").toString().equals("MEMBER"))) {
+            return CodeMessageRespDto.noExistMemberId();
+        }
+
+        try {
+
+            byMemberId.setRole(map.get("role").toString());
+            clubDtlRepository.save(byMemberId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+
+        return CodeMessageRespDto.success();
+    }
+
 
 }

@@ -70,7 +70,18 @@ function RankingBoard({ sideRankingModalToggle, scoreInputModalToggle }) {
                                     </div>
                                     <div className={styles.memberCard}>
                                         <span className={styles.infoTitle}>이름</span>
-                                        <p className={styles.info}>{member.memberName}</p>
+                                        <div className={styles.memberProfileBox}>
+                                            <div className={styles.profileImgBox}>
+                                                <img className={styles.memberProfile} src={member.memberProfile}></img>
+                                                {member.memberRole === "MASTER" && 
+                                                    <img className={styles.staffImg} src={require("../../imges/club/master.png")} />
+                                                }
+                                                {member.memberRole === "STAFF" && 
+                                                    <img className={styles.staffImg} src={require("../../imges/club/staff.png")} />
+                                                }
+                                            </div>
+                                            <p className={styles.info}>{member.memberName}</p>
+                                        </div>
                                     </div>
                                     <div className={styles.memberCard}>
                                         <span className={styles.infoTitle}>에버</span>

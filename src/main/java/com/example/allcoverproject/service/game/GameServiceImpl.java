@@ -30,7 +30,7 @@ public class GameServiceImpl implements GameService {
 
         try {
 
-            games = gameRepository.findAllByClubMst_Id(clubId);
+            games = gameRepository.findAllByClubMst_IdOrderByDateAscTimeAsc(clubId);
 
         } catch (Exception e) {
             e.printStackTrace();

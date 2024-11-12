@@ -5,7 +5,7 @@ import { useCookies } from "react-cookie";
 import { ACCESS_TOKEN, CLUB_DETAIL_PATH, ROOT_PATH, SCOREBOARD_PATH } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import { onClickBackBtn } from "../../hooks";
-import { addGameRequest, clubJoinRequest, clubMemberAvgUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
+import { addGameRequest, clubJoinRequest, clubMemberAvgUpdateRequest, clubMemberRoleUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
 import Loading from "../components/loading/Loading";
 import useClubStore from "../../stores/useClubStore";
 
@@ -283,6 +283,14 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
         scoreboardJoinRequest(gameId, memberId, token).then(scoreboardJoinResponse);
     }
 
+    const dateTimeCheck = (date, time) => {
+        const gameDateTime = new Date(`${date}T${time}`);
+        const now = new Date();
+
+        const result = (now > gameDateTime || now == gameDateTime);
+        return result;
+    }
+
     useEffect(() => {
         if(cookies[ACCESS_TOKEN] == null) {
             alert("로그인이 필요한 서비스입니다.");
@@ -306,7 +314,15 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
             <div className={`${styles.clubSchedule} ${styles.commonDiv}`}>
                 {games.length > 0 ? (
                     games
-                        .filter((game) => new Date(game.gameDate) >= new Date()) // 현재 날짜와 같거나 큰 날짜만 필터링
+                        .filter((game) => {
+                            const gameDate = new Date(game.gameDate);
+                            const today = new Date();
+                            // 날짜가 같거나 미래 날짜인 경우
+                            return (
+                                gameDate.toDateString() === today.toDateString() || // 같은 날짜인 경우
+                                gameDate >= today // 미래 날짜인 경우
+                            );
+                        })
                         .map((game, index) => (
                             <>
                                 <div className={styles.scheduleBox}>
@@ -314,10 +330,15 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
                                         <p>{game.gameName}</p>
                                         <div className={styles.scheduleTitle}>
                                             <h5>{formatShortDate(game.gameDate)}</h5>
-                                            {game.members.filter((member) => member.memberId === memberId).length > 0 ? (
-                                                <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
-                                            ) : (
-                                                <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
+                                            {!dateTimeCheck(game.gameDate, game.gameTime) && (
+                                                game.members.some((member) => member.memberId === memberId) ? (
+                                                    <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
+                                                ) : (
+                                                    <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
+                                                )
+                                            )}
+                                            {dateTimeCheck(game.gameDate, game.gameTime) && (
+                                                <button className={styles.scheduleCancleBtn}>참석불가</button>
                                             )}
                                         </div>
                                     </div>
@@ -751,6 +772,45 @@ function ClubSetting({ pageLoad }) {
     const [page, setPage] = useState(0);
     const [updatedMembers, setUpdatedMembers] = useState([]);
     const roles = signInUser?.clubRole ? signInUser.clubRole : null;
+    const clubId = signInUser?.clubId || 0;
+
+
+
+    const clubMemberRoleUpdateResponse = (responseBody) => {
+
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'SJC' ? '취소 처리되었습니다.' : 
+        responseBody.code === 'SU' ? '저장 완료되었습니다..' : '';
+
+        const isSuccessed = responseBody.code === 'SU' || 'SJC';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        
+        alert(message);
+        pageLoad();
+    }
+
+    const handleRoleChange = (e, memberId) => {
+        const selectedRole = e.target.value;
+        const member = members.find((member) => member.memberId === memberId);
+    
+        if (member && member.memberRole === "MASTER" && (selectedRole === "STAFF" || selectedRole === "MEMBER")) {
+            alert("클럽장을 다른 사람에게 넘겨줘야 합니다.");
+            return;  // 변경을 막고 함수 종료
+        }
+
+        const dto = {
+            memberId: memberId,
+            role: selectedRole
+        }
+
+        clubMemberRoleUpdateRequest(dto, token).then(clubMemberRoleUpdateResponse);
+    };
 
     const groupedMembers = members.reduce((acc, member) => {
         const { memberGrade } = member;
@@ -896,6 +956,43 @@ function ClubSetting({ pageLoad }) {
                         })}
                         <div className={styles.avgSaveBtnBox}>
                             <button className={styles.avgSaveBtn} onClick={memberAvgUpdateRequest}>저장하기</button>
+                        </div>
+                    </>
+                )}
+                {page === 1 && (
+                    <>
+                        <div className={styles.memberSettingContainer}>
+                            <div className={styles.memberSettingArea}>
+                                {members
+                                    .sort((a, b) => new Date(a.createTime) - new Date(b.createTime))
+                                    .map((member) => {
+                                        const roleText = 
+                                            member.memberRole === "MASTER" ? "클럽장" :
+                                            member.memberRole === "STAFF" ? "운영진" : "클럽원";
+                                        return (
+                                            <div key={member.memberId} className={styles.memberSettingBox}>
+                                                <div className={styles.settingMemberProfileBox}>
+                                                    <img className={styles.settingBoxMemberProfileImg} src={member.memberProfile} alt="Profile" />
+                                                    <p>{member.memberName}</p>
+                                                </div>
+                                                <div className={styles.settingRoleContainer}>
+                                                    <select
+                                                        value={member.memberRole}
+                                                        onChange={(e) => handleRoleChange(e, member.memberId)}
+                                                        className={styles.roleSelect}
+                                                    >
+                                                        {roles === "MASTER" && (
+                                                            <option value="MASTER">클럽장</option>
+                                                        )}
+                                                        <option value="STAFF">운영진</option>
+                                                        <option value="MEMBER">클럽원</option>
+                                                    </select>
+                                                </div>
+                                                <i className="fa-solid fa-user-slash"></i>
+                                            </div>
+                                        );
+                                    })}
+                            </div>
                         </div>
                     </>
                 )}

@@ -55,4 +55,10 @@ public class MyClubController {
         ResponseEntity<? super GetCeremonyRespDto> responseBody = clubService.getCeremonyList(clubId);
         return responseBody;
     }
+
+    @PostMapping("/update-role")
+    public ResponseEntity<CodeMessageRespDto> updateRole(Map<String, Object> dto) {
+        ResponseEntity<CodeMessageRespDto> responseBody = clubService.updateOfMemberRole(dto);
+        return responseBody;
+    }
 }

@@ -3,8 +3,8 @@
     flex-direction: column;
     width: 90%;
     height: 80%;
-    border-radius: 20px;
-    border: 4px solid #dbdbdb;
+    border-radius: 13px;
+    border: 2px solid black;
     background-color: #fafafa;
     padding: 3px;
 }
@@ -16,9 +16,9 @@
     width: 100%;
     height: 100%;
     padding: 10px 10px 10px 0px;
-    border-radius: 16px;
-    border: 2px solid #dbdbdb;
-    background-color: #dbdbdb;
+    border-radius: 10px;
+    border: 2px solid black;
+    background-color: #fafafa;
 }
 
 .gradeSettingBox {
@@ -52,8 +52,8 @@
 .gradeList {
     display: flex;
     flex-direction: column;
-    border-top: 0.5px solid black;
-    border-bottom: 0.5px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
     align-items: center;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -67,7 +67,8 @@
 }
 
 .selectGrade {
-    background-color: beige;
+    background-color: rgb(197, 89, 89);
+    color: #fafafa;
 }
 
 .gradeArea {
@@ -93,20 +94,28 @@
 }
 
 .gradeTitle {
-    background-color: beige;
+    background-color: #004EA2;
     width: 100%;
     align-items: center;
     text-align: center;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    margin-bottom: 10px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    color: #fafafa;
+    font-weight: 400;
 }
 
 .gradeMemberList {
     display: flex;
     flex-direction: column;
-    width: 95%;
-    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    padding: 3px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border: 1px solid black;
 }
 
 .gradeMember {
@@ -117,6 +126,12 @@
     border-radius: 5px;
     margin-bottom: 5px;
     border: 1px solid black;
+}
+
+.gradeMember h5 {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
 }
 
 .select {
@@ -139,7 +154,11 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
     padding: 3px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border: 1px solid black;
 }
 
 .memberBox {
@@ -152,6 +171,12 @@
     border: 1px solid black;
 }
 
+.memberBox h5 {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+}
+
 .btnBox {
     display: flex;
     margin-top: 30px;
@@ -160,13 +185,16 @@
 .settingBtn {
     width: 100px;
     height: 40px;
-    border: none;
+    border: 1px solid #004EA2;
+    background-color: #fafafa;
+    color: #004EA2;
     border-radius: 10px;
 }
 
 .settingBtn:nth-child(2) {
     margin-left: 10px;
-    background-color: rgb(173, 202, 246);
+    background-color: #004EA2;
+    font-weight: 600;
     color: white;
 }
 

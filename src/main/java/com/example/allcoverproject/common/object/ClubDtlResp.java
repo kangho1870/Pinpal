@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class ClubDtlResp {
     private Integer memberAvg;
     private Integer memberGrade;
     private String clubName;
+    private LocalDateTime createTime;
 
     private ClubDtlResp(ClubDtl clubDtl) {
         this.memberId = clubDtl.getMember().getId();
@@ -32,6 +34,7 @@ public class ClubDtlResp {
         this.memberAvg = clubDtl.getAvg();
         this.clubName = clubDtl.getClubMst().getName();
         this.memberGrade = clubDtl.getGrade();
+        this.createTime = clubDtl.getCreateDate();
     }
 
     public static List<ClubDtlResp> getClubDtlList(List<ClubDtl> clubDtlList) {

@@ -19,4 +19,5 @@ public interface ClubService {
     public ResponseEntity<? super GetClubListRespDto> getClubList(int page);
     public ResponseEntity<CodeMessageRespDto> joinClub(Long clubId, Long memberId);
     public ResponseEntity<CodeMessageRespDto> updateOfMembersAvg(Map<String, List<Object>> map);
+    public ResponseEntity<CodeMessageRespDto> updateOfMemberRole(Map<String, Object> map);
 }

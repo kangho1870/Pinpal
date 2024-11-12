@@ -216,7 +216,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
         if(game == null) return CodeMessageRespDto.noFundGame();
 
         try {
-            game.setScoreCounting(false);
+            game.setScoreCounting(!game.getScoreCounting());
             game.setUpdateDate(LocalDateTime.now());
         } catch (Exception e) {
             e.printStackTrace();

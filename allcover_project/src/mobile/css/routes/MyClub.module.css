@@ -774,3 +774,50 @@
     font-size: 13px;
     font-weight: 400;
 }
+
+.memberSettingContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.memberSettingArea {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.memberSettingBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 10px;
+    margin-top: 5px;
+}
+
+.settingMemberProfileBox {
+    display: flex;
+    align-items: center;
+}
+
+.settingBoxMemberProfileImg {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-left: 7px;
+    margin-right: 7px;
+}
+
+.settingRoleContainer {
+    z-index: 10;
+}
+
+.roleSelect {
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    width: 100px;  /* 원하는 너비로 조정 */
+}

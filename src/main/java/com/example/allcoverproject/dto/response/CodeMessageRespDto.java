@@ -78,4 +78,9 @@ public class CodeMessageRespDto {
         CodeMessageRespDto responseBody = new CodeMessageRespDto(ResponseCode.JWT_EXPIRED, ResponseMessage.JWT_EXPIRED);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
     }
+
+    public static ResponseEntity<CodeMessageRespDto> roleUpdateFailWithMaster() {
+        CodeMessageRespDto responseBody = new CodeMessageRespDto(ResponseCode.ROLE_UPDATE_FAIL_WITH_MASTER, ResponseMessage.ROLE_UPDATE_FAIL_WITH_MASTER);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    }
 }

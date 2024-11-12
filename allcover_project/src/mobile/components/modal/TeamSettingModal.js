@@ -179,7 +179,7 @@ function TeamSettingModal({ getScoreboard }) {
                             <i className="fa-solid fa-right-left"></i>
                         </div>
                         <div className={styles.memberArea}>
-                            <div>볼러</div>
+                            <div className={styles.gradeTitle}>볼러</div>
                             <div className={styles.memberList}>
                                 {updatedMembers
                                     .filter(member => member.teamNumber == 0)

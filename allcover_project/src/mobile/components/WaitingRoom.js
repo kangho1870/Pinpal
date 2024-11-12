@@ -65,9 +65,24 @@ function WaitingRoom({ getScoreboard }) {
         }
     };
 
+    const scoreCountingStopResponse = (resposenBody) => {
+        const message = 
+            !resposenBody ? '서버에 문제가 있습니다.' :
+            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = resposenBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+
+        getScoreboard();
+    };
+
     const scoreCountingStop = () => {
         if(members.some((member) => member.memberId === memberId)) {
-            scoreCountingStopRequest(gameId, token).then(sideJoinResponse);
+            scoreCountingStopRequest(gameId, token).then(scoreCountingStopResponse);
         } else {
             alert("게임에 참석하지 않았습니다.")
         }
@@ -156,7 +171,7 @@ function WaitingRoom({ getScoreboard }) {
                                     <button className={styles.settingBtn2} onClick={toggleGradeModal}><div><h4>군 설정</h4></div></button>
                                     <button className={styles.settingBtn2} onClick={toggleTeamModal}><div><h4>팀 설정</h4></div></button>
                                 </div>
-                                <button className={styles.settingBtn2} onClick={scoreCountingStop}><div><h4>점수집계 종료</h4></div></button>
+                                <button className={styles.settingBtn2} onClick={scoreCountingStop}><div><h4>{members[0]?.scoreCounting ? "점수집계 종료" : "점수집계 재개"}</h4></div></button>
                             </div>
                         </>
                     }
