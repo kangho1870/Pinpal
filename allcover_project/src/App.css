@@ -11,6 +11,10 @@
 
 * ::-webkit-scrollbar {
   display: none;
+  width: 0;  /* Remove scrollbar space */
+  height: 0;
+  background: transparent;  /* Optional: just make scrollbar invisible */
+  -webkit-appearance: none;
 }
 
 h1, h2, h3, h4, p, span {
@@ -49,4 +53,14 @@ html, body, #root, main {
   flex-direction: column;
   width: 100%;
   height: 100vh;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.App::-webkit-scrollbar {
+  display: none;
+  width: 0;  /* Remove scrollbar space */
+  height: 0;
+  background: transparent;  /* Optional: just make scrollbar invisible */
+  -webkit-appearance: none;
 }

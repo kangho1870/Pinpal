@@ -137,6 +137,9 @@ function MyClub() {
         if (members.some((member) => member.memberId === memberId)) {
             alert("이미 가입한 클럽입니다.")
             return;
+        }else if(signInUser == null) {
+            alert("로그인이 필요합니다.")
+            return;
         }
         setLoading(true);
         clubJoinRequest(clubId, memberId, token).then(memberJoinClubResponse);
@@ -180,6 +183,9 @@ function MyClub() {
                     }
                     {page == 1 &&
                         <ClubCeremony setLoading={setLoading}></ClubCeremony>
+                    }
+                    {page == 3 &&
+                        <ClubRanking setLoading={setLoading}></ClubRanking>
                     }
                     {page == 4 &&
                         <ClubSetting setLoading={setLoading} pageLoad={pageLoad}></ClubSetting>
@@ -507,10 +513,9 @@ function ClubCeremony({ setLoading }) {
         const validScores = scores.filter(score => score !== null && score !== undefined);
         const totalScore = validScores.reduce((acc, score) => acc + score, 0);
         
-        if (validScores.length === 0) return 0;
     
-        const avg = totalScore / validScores.length;
-        return Number.isInteger(avg) ? avg : avg.toFixed(0);
+        const avg = totalScore / 4;
+        return Number.isInteger(avg) ? avg : avg.toFixed(1);
     }
 
     function getHighScore(...scores) {
@@ -652,7 +657,7 @@ function ClubCeremony({ setLoading }) {
                                                                 <td>{member.game4}</td>
                                                                 <td>{member.game1 + member.game2 + member.game3 + member.game4}</td>
                                                                 <td>{getAvgScore(member.game1 + member.game2 + member.game3 + member.game4)}</td>
-                                                                <td>{(member.game1 + member.game2 + member.game3 + member.game4 / 4) - member.memberAvg}</td>
+                                                                <td>{((member.game1 + member.game2 + member.game3 + member.game4) / 4) - member.memberAvg}</td>
                                                                 <td>{getHighScore(member.game1 + member.game2 + member.game3 + member.game4)}</td>
                                                             </tr>
                                                         ))}
@@ -772,7 +777,6 @@ function ClubSetting({ pageLoad }) {
     const [page, setPage] = useState(0);
     const [updatedMembers, setUpdatedMembers] = useState([]);
     const roles = signInUser?.clubRole ? signInUser.clubRole : null;
-    const clubId = signInUser?.clubId || 0;
 
 
 
@@ -812,7 +816,7 @@ function ClubSetting({ pageLoad }) {
         clubMemberRoleUpdateRequest(dto, token).then(clubMemberRoleUpdateResponse);
     };
 
-    const groupedMembers = members.reduce((acc, member) => {
+    const groupedMembers = updatedMembers.reduce((acc, member) => {
         const { memberGrade } = member;
         if (!acc[memberGrade]) {
             acc[memberGrade] = [];
@@ -830,7 +834,6 @@ function ClubSetting({ pageLoad }) {
     };
     
     const memberGradeUpdate = (memberId, newGrade) => {
-        console.log(newGrade)
         setUpdatedMembers(prev =>
             prev.map(member =>
                 member.memberId === memberId ? { ...member, memberGrade: newGrade } : member
@@ -873,7 +876,8 @@ function ClubSetting({ pageLoad }) {
 
     useEffect(() => {
         setUpdatedMembers(members);
-    }, [])
+        console.log(updatedMembers)
+    }, [members])
 
     return (
         <div className={styles.container}>
@@ -923,7 +927,7 @@ function ClubSetting({ pageLoad }) {
                                                                 <p>{member.memberName}</p>
                                                             </div>
                                                             <div className={styles.memberAvgBox}>
-                                                                <p>{member.memberAvg}</p>
+                                                                <p>{members.find((findMember) => findMember.memberId === member.memberId).memberAvg}</p>
                                                             </div>
                                                             <div className={styles.memberAvgBox}>
                                                                 <input
@@ -936,14 +940,27 @@ function ClubSetting({ pageLoad }) {
                                                                 />
                                                             </div>
                                                             <div className={styles.memberAvgBox}>
-                                                                <input
+                                                                <select 
+                                                                    value={grade === 0 ? "신입" : member.memberGrade}
+                                                                    className={styles.avgSelect}
+                                                                    onChange={(e) => memberGradeUpdate(member.memberId, e.target.value)}
+                                                                >
+                                                                    <option value={0}>신입</option>
+                                                                    <option value={1}>1군</option>
+                                                                    <option value={2}>2군</option>
+                                                                    <option value={3}>3군</option>
+                                                                    <option value={4}>4군</option>
+                                                                    <option value={5}>5군</option>
+                                                                    <option value={6}>6군</option>
+                                                                </select>
+                                                                {/* <input
                                                                     type="number"
                                                                     placeholder="군"
                                                                     className={styles.avgInput}
                                                                     onChange={(e) =>
                                                                         memberGradeUpdate(member.memberId, e.target.value)
                                                                     }
-                                                                />
+                                                                /> */}
                                                             </div>
                                                         </div>
                                                     ))}
@@ -1109,6 +1126,183 @@ function AddGameModal({ clubId, token, addGameModalBtnClickHandler, pageLoad }) 
     );
 }
 
+function ClubRanking({ setLoading }) {
+    const { members, ceremonys } = useClubStore();
+    const [sortedMembers, setSortedMembers] = useState([]);
+    const [openMore, setOpenMore] = useState([]);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+
+    const moreInfoHandler = (index) => {
+        setOpenMore((prev) => {
+            if(openMore.includes(index)) {
+                
+                return prev.filter(i => i !== index);
+            }else {
+                return [...prev, index]
+            }
+        })
+    }
+
+    const calculateMemberAverages = () => {
+        setLoading(true)
+        // 각 멤버의 ID를 키로 평균 점수를 저장하는 객체 생성
+        const memberScores = {};
+    
+        ceremonys.forEach((ceremony) => {
+            ceremony.scoreboards.forEach((scoreboard) => {
+                const memberId = scoreboard.memberId;
+
+                const gameScores = [scoreboard.game1, scoreboard.game2, scoreboard.game3, scoreboard.game4].filter(score => score !== null);
+                const game1Scores = [scoreboard.game1].filter(score => score !== null);
+                const game2Scores = [scoreboard.game2].filter(score => score !== null);
+                const game3Scores = [scoreboard.game3].filter(score => score !== null);
+                const game4Scores = [scoreboard.game4].filter(score => score !== null);
+
+    
+                // 평균 계산
+                const averageScore = gameScores.reduce((acc, score) => acc + score, 0) / gameScores.length;
+                const average1Score = game1Scores.reduce((acc, score) => acc + score, 0) / game1Scores.length;
+                const average2Score = game2Scores.reduce((acc, score) => acc + score, 0) / game2Scores.length;
+                const average3Score = game3Scores.reduce((acc, score) => acc + score, 0) / game3Scores.length;
+                const average4Score = game4Scores.reduce((acc, score) => acc + score, 0) / game4Scores.length;
+
+    
+                // 점수를 합산하여 저장
+                if (memberScores[memberId]) {
+                    memberScores[memberId].totalScore += averageScore;
+                    memberScores[memberId].count += 1;
+                } else {
+                    memberScores[memberId] = { 
+                        totalScore: averageScore, 
+                        count: 1, 
+                        average1Score: average1Score, 
+                        average2Score: average2Score, 
+                        average3Score: average3Score, 
+                        average4Score: average4Score
+                    };
+                }
+            });
+        });
+    
+        // 각 멤버의 평균 점수 계산
+        const membersWithAverages = members.map((member) => {
+            const { totalScore = 0, count = 1, average1Score = 0, average2Score = 0, average3Score = 0, average4Score = 0 } = memberScores[member.memberId] || {};
+            const avgScore = totalScore / count;
+            return { ...member, avgScore, average1Score, average2Score, average3Score, average4Score };
+        });
+    
+        // 평균 점수 기준으로 멤버 정렬
+        const sorted = membersWithAverages.sort((a, b) => b.avgScore - a.avgScore);
+        setSortedMembers(sorted);
+        setLoading(false)
+    };
+
+    useEffect(() => {
+        const today = new Date();
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(today.getMonth() - 6);
+
+        setStartDate(sixMonthsAgo.toISOString().split("T")[0]);
+        setEndDate(today.toISOString().split("T")[0]);
+        calculateMemberAverages();
+    }, []);
+
+    return (
+        <>
+            <div className={styles.clubRankingContainer}>
+                <div className={styles.filterBox}>
+                    <div className={styles.filterNavBox}>
+                        <div className={styles.filterNav}>
+                            <p className={styles.filterTitle}>검색기간</p>
+                            <div className={styles.searchBox}>
+                                <input 
+                                    className={styles.dateInput}
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                >
+                                </input>
+                                <p>~</p>
+                                <input 
+                                    className={styles.dateInput}
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                >
+                                </input>
+                            </div>
+                        </div>
+                        <div className={styles.filterNav}>
+                            <p className={styles.filterTitle}>게임종류</p>
+                            <div className={styles.filterBtns}>
+                                <button className={styles.filterBtn}>전체</button>
+                                <button className={styles.filterBtn}>정기모임</button>
+                                <button className={styles.filterBtn}>정기번개</button>
+                                <button className={styles.filterBtn}>기타</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table className={`${styles.teamScoreTable} ${styles.rankTable}`}>
+                    <thead>
+                        <tr className={`${styles.teamScoreHeaderTr} ${styles.rankHeaderTr}`}>
+                            <th className={styles.rankScoreTh}>순위</th>
+                            <th className={styles.rankScoreTh}>이름</th>
+                            <th className={styles.rankScoreTh}>1G Avg</th>
+                            <th className={styles.rankScoreTh}>2G Avg</th>
+                            <th className={styles.rankScoreTh}>3G Avg</th>
+                            <th className={styles.rankScoreTh}>4G Avg</th>
+                            <th className={styles.rankScoreTh}>평균</th>
+                            <th className={styles.rankScoreTh}></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {ceremonys.length > 0 && sortedMembers.map((member, i) => (
+                            <>
+                                <tr key={member.memberId} className={`${styles.teamScoreBodyTr} ${styles.rankBodyTr}`}>
+                                    <td className={styles.rankScoreTd}>{(i + 1)}</td>
+                                    <td className={styles.rankScoreTd}>
+                                        <div className={styles.settingMemberProfileBox}>
+                                            <img className={styles.memberProfileImg} src={member.memberProfile}></img>
+                                            <p>{member.memberName}</p>
+                                        </div>
+                                    </td>
+                                    <td className={`${styles.rankScoreTd} ${styles.gameScoreBackground}`}>{member.average1Score}</td>
+                                    <td className={`${styles.rankScoreTd} ${styles.gameScoreBackground}`}>{member.average2Score}</td>
+                                    <td className={`${styles.rankScoreTd} ${styles.gameScoreBackground}`}>{member.average3Score}</td>
+                                    <td className={`${styles.rankScoreTd} ${styles.gameScoreBackground}`}>{member.average4Score}</td>
+                                    <td className={styles.rankScoreTd}>{member.avgScore}</td>
+                                    <td className={styles.rankScoreTd} onClick={() => moreInfoHandler(member.memberId)}>
+                                        {!openMore.includes(member.memberId) ? (
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        ) : (
+                                            <i class="fa-solid fa-chevron-up"></i>
+                                        )}
+                                    </td>
+                                </tr>
+                                {openMore.includes(member.memberId) && 
+                                    <tr>
+                                        <td colSpan={8}>
+                                            <div className={styles.memberMore}>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </>
+                        ))}
+                    </tbody>
+                </table>
+                {!ceremonys.length > 0 &&
+                    <div className={styles.nodataContainer}>
+                        <Nodata text={"기록이 없습니다."}></Nodata>
+                    </div>
+                }
+            </div>
+        </>
+    )
+}
 
 function Nodata({ text }) {
     return (

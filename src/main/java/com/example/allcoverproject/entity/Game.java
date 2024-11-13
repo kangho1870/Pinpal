@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.sql.Time;
 import java.time.LocalDate;
@@ -19,6 +21,8 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "update game set deleted = 1 where game_id = ?")
+@Where(clause = "deleted = 0")
 public class Game {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +45,8 @@ public class Game {
     private LocalTime time;
 
     private String status;
+
+    private int deleted;
 
     private LocalDateTime createDate;
 

@@ -1,6 +1,5 @@
 package com.example.allcoverproject.entity;
 
-import com.example.allcoverproject.dto.response.scoreboard.ScoreboardRespDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

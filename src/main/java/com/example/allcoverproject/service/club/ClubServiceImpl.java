@@ -54,7 +54,7 @@ public class ClubServiceImpl implements ClubService {
 
         List<List<Scoreboard>> allScoreboards = new ArrayList<>();
         List<Ceremony> ceremonys = new ArrayList<>();
-        for (Game game :games) {
+        for (Game game : games) {
             List<Scoreboard> allMembers = scoreboardRepository.findAllMembers(game.getId());
             allScoreboards.add(allMembers);
 

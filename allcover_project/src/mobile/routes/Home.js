@@ -1,4 +1,3 @@
-import BottomCategory from "../components/BottomCategory";
 import HeaderCategory from "../components/HeaderCategory";
 import styles from "../css/routes/Home.module.css";
 import DefaultMain from "./DefaultMain";
@@ -7,8 +6,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, ADD_CLUB_PATH, CLUB_DETAIL_PATH, HOME_PATH, MY_CLUB_PATH, ROOT_PATH } from "../../constants";
 import useSignInStore from "../../stores/useSignInStore";
-import MyClub from "./MyClub";
-import AddClub from "./AddClub";
 import Loading from "../components/loading/Loading";
 
 function Home() {

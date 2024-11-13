@@ -15,6 +15,7 @@
     display: flex;
     flex-direction: column;
     background-color: white;
+    z-index: 100;
 }
 
 .subTitle {
@@ -454,6 +455,14 @@
     font-weight: 600;
 }
 
+.clubCeremonyContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    background-color: #fafafa;
+}
+
 .filterBox {
     display: flex;
     width: 100%;
@@ -462,15 +471,6 @@
     padding: 10px;
     background-color: #dfdfdf;
     height: 90px;
-}
-
-
-.clubCeremonyContainer {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100vh;
-    background-color: #fafafa;
 }
 
 .filterNavBox {
@@ -691,7 +691,8 @@
 
 .gradesAvg {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    width: 50%;
 }
 
 .gradeGroup {
@@ -699,7 +700,7 @@
     flex-direction: column;
     width: 100%;
     align-items: center;
-    padding: 3px;
+    padding: 1px;
 }
 
 .gradeTitle {
@@ -714,7 +715,7 @@
     justify-content: space-between;
     align-items: center;
     border: 1px solid black;
-    padding: 10px;
+    padding: 3px;
 }
 
 .memberAvgBox {
@@ -733,6 +734,18 @@
     border-radius: 10px;
     padding: 5px;
     text-align: center;
+}
+
+.avgSelect {
+    display: flex;
+    width: 55px;
+    height: 35px;
+    border: none;
+    background-color: #ebebeb;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    margin-left: 3px;
 }
 
 .avgSaveBtnBox {
@@ -820,4 +833,81 @@
     background-color: #fff;
     cursor: pointer;
     width: 100px;  /* 원하는 너비로 조정 */
+}
+
+.clubRankingContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.searchBox {
+    display: flex;
+    width: 70%;
+    margin-left: 10px;
+    align-items: center;
+}
+
+.searchBox p {
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 20px;
+    color: #004EA2;
+}
+
+.dateInput {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 30px;
+    border-radius: 30px;
+    border: 1px solid #004EA2;
+    background-color: #fafafa;
+    color: #004EA2;
+    white-space: nowrap;
+}
+
+.rankMemberContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+.rankHeaderTr {
+    height: 30px;
+}
+
+.rankBodyTr {
+    height: 60px;
+}
+
+.rankScoreTh {
+    font-size: 10px;
+    height: 20px;
+    width: 40px;
+    border: none;
+}
+
+.rankScoreTd {
+    font-size: 12px;
+    height: 20px;
+    width: 40px;
+    border: none;
+}
+
+.rankScoreTd:nth-child(2) {
+    background-color: #b8b8b8;
+}
+
+.memberMore {
+    width: 100%;
+    height: 150px;
+    background-color: #dbdbdb;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }

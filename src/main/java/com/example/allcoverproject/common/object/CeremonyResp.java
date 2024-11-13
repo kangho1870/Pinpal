@@ -74,7 +74,6 @@ public class CeremonyResp {
 
     public static List<CeremonyResp> getCeremonyList(List<Ceremony> ceremonys, List<List<Scoreboard>> scoreboards, List<Game> games, MemberRepository memberRepository) {
         List<CeremonyResp> resp = new ArrayList<>();
-        System.out.println("ceremonys = " + ceremonys);
         for(int i = 0; i < ceremonys.size(); i++) {
             CeremonyResp ceremonyResp = new CeremonyResp(ceremonys.get(i), scoreboards.get(i), games.get(i), memberRepository);
             resp.add(ceremonyResp);
