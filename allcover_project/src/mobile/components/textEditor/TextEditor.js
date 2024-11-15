@@ -16,7 +16,7 @@ export default function TextEditor({ handleEditorChange }) {
     return (
         <div style={{ width: '100%', maxWidth: '500px'}}>
             <Editor
-                initialValue="hello react editor world!"
+                initialValue=""
                 previewStyle="vertical"
                 height="250px"
                 initialEditType="wysiwyg"

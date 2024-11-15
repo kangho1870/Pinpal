@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -50,15 +51,21 @@ public class MyClubController {
         return responseBody;
     }
 
-    @GetMapping("/ceremony")
-    public ResponseEntity<?> getCeremony(@RequestParam Long clubId) {
-        ResponseEntity<? super GetCeremonyRespDto> responseBody = clubService.getCeremonyList(clubId);
+    @GetMapping("/recent-ceremony")
+    public ResponseEntity<? super GetCeremonyRespDto> getRecentCeremony(@RequestParam Long clubId) {
+        ResponseEntity<? super GetCeremonyRespDto> responseBody = clubService.getRecentCeremonyList(clubId);
         return responseBody;
     }
 
     @PostMapping("/update-role")
     public ResponseEntity<CodeMessageRespDto> updateRole(Map<String, Object> dto) {
         ResponseEntity<CodeMessageRespDto> responseBody = clubService.updateOfMemberRole(dto);
+        return responseBody;
+    }
+
+    @GetMapping("/ceremony")
+    public ResponseEntity<? super GetCeremonyRespDto> getCeremony(@RequestParam Long clubId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int gameType) {
+        ResponseEntity<? super GetCeremonyRespDto> responseBody = clubService.getCeremonyList(clubId, startDate, endDate, gameType);
         return responseBody;
     }
 }

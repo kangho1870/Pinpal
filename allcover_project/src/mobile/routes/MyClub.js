@@ -5,9 +5,10 @@ import { useCookies } from "react-cookie";
 import { ACCESS_TOKEN, CLUB_DETAIL_PATH, ROOT_PATH, SCOREBOARD_PATH } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import { onClickBackBtn } from "../../hooks";
-import { addGameRequest, clubJoinRequest, clubMemberAvgUpdateRequest, clubMemberRoleUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, scoreboardJoinRequest } from "../../apis";
+import { addGameRequest, clubJoinRequest, clubMemberAvgUpdateRequest, clubMemberRoleUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, getRecentCeremonysListRequest, scoreboardJoinRequest } from "../../apis";
 import Loading from "../components/loading/Loading";
 import useClubStore from "../../stores/useClubStore";
+import { tr } from "framer-motion/client";
 
 function MyClub() {
 
@@ -68,7 +69,7 @@ function MyClub() {
     }
 
     const getCeremonysList = () => {
-        getCeremonysListRequest(clubId, token).then(getCeremonysListResponse);
+        getRecentCeremonysListRequest(clubId, token).then(getCeremonysListResponse);
     }
 
     const getGamesResponse = (responseBody) => {
@@ -554,202 +555,204 @@ function ClubCeremony({ setLoading }) {
                     <div className={styles.ceremonyContainer}>
                         {ceremonys.length > 0 ? ceremonys.map((data, i) => (
                             <>
-                                <div className={`${styles.ceremonyBox} ${expandedIndices.includes(i) ? styles.selectedCeremony : ""}`} key={data.gameId}>
-                                    <div className={styles.simpleInformation}>
-                                        <div className={styles.simpleGameInfo}>
-                                            <div className={styles.simpleGameInfoTitle}>
-                                                <h3>{data.gameName}</h3>
+                                <div className={`${styles.ceremonyBox} ${data.gameType == "정기모임" ? styles.redLine : data.gameType == "기타" ? styles.blackLine : ""}`} key={data.gameId}>
+                                    <div className={styles.ceremonyArea}>
+                                        <div className={styles.simpleInformation}>
+                                            <div className={styles.simpleGameInfo}>
+                                                <div className={styles.simpleGameInfoTitle}>
+                                                    <h3>{data.gameName}</h3>
+                                                </div>
+                                                <div className={styles.simpleGameInfoTitle}>
+                                                    <p>{data.gameDate}</p>
+                                                </div>
                                             </div>
-                                            <div className={styles.simpleGameInfoTitle}>
-                                                <p>{data.gameDate}</p>
+                                            <div className={styles.simpleInformationBox}>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>1등</span>
+                                                    <p>{data.total1stId}</p>
+                                                </div>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>에버 1등</span>
+                                                    <p>{data.avg1stId}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className={styles.simpleInformationBox}>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>1등</span>
-                                                <p>{data.total1stId}</p>
+                                            <div className={styles.simpleInformationBox}>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>1군 1등</span>
+                                                    <p>{data.grade1_1stId == "" ? "-" : data.grade1_1stId}</p>
+                                                </div>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>2군 1등</span>
+                                                    <p>{data.grade2_1stId == "" ? "-" : data.grade2_1stId}</p>
+                                                </div>
                                             </div>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>에버 1등</span>
-                                                <p>{data.avg1stId}</p>
+                                            <div className={styles.simpleInformationBox}>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>3군 1등</span>
+                                                    <p>{data.grade3_1stId == "" ? "-" : data.grade3_1stId}</p>
+                                                </div>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>4군 1등</span>
+                                                    <p>{data.grade4_1stId == "" ? "-" : data.grade4_1stId}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className={styles.simpleInformationBox}>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>1군 1등</span>
-                                                <p>{data.grade1_1stId == "" ? "-" : data.grade1_1stId}</p>
+                                            <div className={styles.simpleInformationBox}>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>남자 하이스코어</span>
+                                                    <p>{data.highScoreOfMan == "" ? "-" : data.highScoreOfMan}</p>
+                                                </div>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>여자 하이스코어</span>
+                                                    <p>{data.highScoreOfGirl == "" ? "-" : data.highScoreOfGirl}</p>
+                                                </div>
                                             </div>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>2군 1등</span>
-                                                <p>{data.grade2_1stId == "" ? "-" : data.grade2_1stId}</p>
-                                            </div>
-                                        </div>
-                                        <div className={styles.simpleInformationBox}>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>3군 1등</span>
-                                                <p>{data.grade3_1stId == "" ? "-" : data.grade3_1stId}</p>
-                                            </div>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>4군 1등</span>
-                                                <p>{data.grade4_1stId == "" ? "-" : data.grade4_1stId}</p>
-                                            </div>
-                                        </div>
-                                        <div className={styles.simpleInformationBox}>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>남자 하이스코어</span>
-                                                <p>{data.highScoreOfMan == "" ? "-" : data.highScoreOfMan}</p>
-                                            </div>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>여자 하이스코어</span>
-                                                <p>{data.highScoreOfGirl == "" ? "-" : data.highScoreOfGirl}</p>
-                                            </div>
-                                        </div>
-                                        <div className={styles.simpleInformationBox}>
-                                            <div className={styles.simpleCeremony}>
-                                                <span className={styles.simpleCeremonyTitle}>팀 1등</span>
-                                                <div className={styles.simpleCeremonyInfoBox}>
-                                                    <p className={styles.simpleCeremonyInfo}>{data.team1stIds}</p>
+                                            <div className={styles.simpleInformationBox}>
+                                                <div className={styles.simpleCeremony}>
+                                                    <span className={styles.simpleCeremonyTitle}>팀 1등</span>
+                                                    <div className={styles.simpleCeremonyInfoBox}>
+                                                        <p className={styles.simpleCeremonyInfo}>{data.team1stIds}</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className={styles.moreInfo} onClick={() => toggleCeremonyInfo(i)}>
-                                        {!expandedIndices.includes(i) ? (
-                                            <i class="fa-solid fa-chevron-down"></i>
-                                        ) : (
-                                            <i class="fa-solid fa-chevron-up"></i>
-                                        )}
-                                    </div>
-                                </div>
-                                {expandedIndices.includes(i) && 
-                                    <div className={styles.ceremonyInfo} key={data.gameId}>
-                                        <div className={styles.ceremonyInfoBtnBox}>
-                                            <button className={`${styles.infoBtn} ${pageStates[i] == 0 ? styles.infoBtnSelectedBtn : ""}`} onClick={() => handlePageChange(i, 0)}>개인점수</button>
-                                            <button className={`${styles.infoBtn} ${pageStates[i] == 1 ? styles.infoBtnSelectedBtn : ""}`} onClick={() => handlePageChange(i, 1)}>팀 점수</button>
+                                        <div className={styles.moreInfo} onClick={() => toggleCeremonyInfo(i)}>
+                                            {!expandedIndices.includes(i) ? (
+                                                <i class="fa-solid fa-chevron-down"></i>
+                                            ) : (
+                                                <i class="fa-solid fa-chevron-up"></i>
+                                            )}
                                         </div>
-                                        <div className={styles.ceremonyContext}>
-                                            {pageStates[i] === 0 &&
-                                                <table>
-                                                    <thead>
-                                                        <tr>
-                                                            <th>순위</th>
-                                                            <th>이름</th>
-                                                            <th>에버</th>
-                                                            <th>1G</th>
-                                                            <th>2G</th>
-                                                            <th>3G</th>
-                                                            <th>4G</th>
-                                                            <th>합계</th>
-                                                            <th>평균</th>
-                                                            <th>에버편차</th>
-                                                            <th>HIGH</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {data.scoreboards.map((member, i) => (
-                                                            <tr>
-                                                                <td>{(i + 1)}</td>
-                                                                <td>{member.memberName}</td>
-                                                                <td>{member.memberAvg}</td>
-                                                                <td>{member.game1}</td>
-                                                                <td>{member.game2}</td>
-                                                                <td>{member.game3}</td>
-                                                                <td>{member.game4}</td>
-                                                                <td>{member.game1 + member.game2 + member.game3 + member.game4}</td>
-                                                                <td>{getAvgScore(member.game1 + member.game2 + member.game3 + member.game4)}</td>
-                                                                <td>{((member.game1 + member.game2 + member.game3 + member.game4) / 4) - member.memberAvg}</td>
-                                                                <td>{getHighScore(member.game1 + member.game2 + member.game3 + member.game4)}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            }
-                                            {pageStates[i] == 1 &&
-                                                Object.entries(
-                                                    data.scoreboards.reduce((teams, member) => {
-                                                        const teamNumber = member.teamNumber;
-                                                        const scoreDifference = ((member.game1 + member.game2 + member.game3 + member.game4)) - (member.memberAvg * 4 );
-
-                                                        if (!teams[teamNumber]) {
-                                                            teams[teamNumber] = {
-                                                                members: [],
-                                                                totalDifference: 0,
-                                                                game1Total: 0,
-                                                                game2Total: 0,
-                                                                game3Total: 0,
-                                                                game4Total: 0
-                                                            };
-                                                        }
-
-                                                        teams[teamNumber].members.push(member);
-                                                        teams[teamNumber].totalDifference += scoreDifference;
-                                                        teams[teamNumber].game1Total += member.game1 - member.memberAvg;
-                                                        teams[teamNumber].game2Total += member.game2 - member.memberAvg;
-                                                        teams[teamNumber].game3Total += member.game3 - member.memberAvg;
-                                                        teams[teamNumber].game4Total += member.game4 - member.memberAvg;
-
-                                                        return teams;
-                                                    }, {})
-                                                )
-                                                // 팀별로 높은 총 차이 점수 순으로 정렬
-                                                .sort(([, teamA], [, teamB]) => teamB.totalDifference - teamA.totalDifference)
-                                                .map(([teamNumber, team], i) => (
-                                                    <table className={styles.teamScoreTable} key={teamNumber}>
+                                    </div>
+                                    {expandedIndices.includes(i) && 
+                                        <div className={styles.ceremonyInfo} key={data.gameId}>
+                                            <div className={styles.ceremonyInfoBtnBox}>
+                                                <button className={`${styles.infoBtn} ${pageStates[i] == 0 ? styles.infoBtnSelectedBtn : ""}`} onClick={() => handlePageChange(i, 0)}>개인점수</button>
+                                                <button className={`${styles.infoBtn} ${pageStates[i] == 1 ? styles.infoBtnSelectedBtn : ""}`} onClick={() => handlePageChange(i, 1)}>팀 점수</button>
+                                            </div>
+                                            <div className={styles.ceremonyContext}>
+                                                {pageStates[i] === 0 &&
+                                                    <table>
                                                         <thead>
-                                                            <tr className={styles.teamScoreHeaderTr}>
-                                                                <th className={styles.teamScoreTh}>{i + 1 + "위"}</th>
-                                                                <th className={styles.teamScoreTh} colSpan={2}></th>
-                                                                <th className={styles.teamScoreTh}>Avg</th>
-                                                                <th className={styles.teamScoreTh}>1G</th>
-                                                                <th className={styles.teamScoreTh}>2G</th>
-                                                                <th className={styles.teamScoreTh}>3G</th>
-                                                                <th className={styles.teamScoreTh}>4G</th>
-                                                                <th className={styles.teamScoreTh}>총점</th>
-                                                                <th className={styles.teamScoreTh}>평균</th>
-                                                                <th className={styles.teamScoreTh}>합계</th>
+                                                            <tr>
+                                                                <th>순위</th>
+                                                                <th>이름</th>
+                                                                <th>에버</th>
+                                                                <th>1G</th>
+                                                                <th>2G</th>
+                                                                <th>3G</th>
+                                                                <th>4G</th>
+                                                                <th>합계</th>
+                                                                <th>평균</th>
+                                                                <th>에버편차</th>
+                                                                <th>HIGH</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {team.members.map((member, index) => (
-                                                                <tr className={styles.teamScoreBodyTr} key={index}>
-                                                                    {index === 0 && (
-                                                                        <td className={styles.teamScoreTd} rowSpan={team.members.length}>Team {teamNumber}</td>
-                                                                    )}
-                                                                    <td className={styles.teamScoreTd}>{index + 1}</td>
-                                                                    <td className={styles.teamScoreTd}>{member.memberName}</td>
-                                                                    <td className={styles.teamScoreTd}>{member.memberAvg}</td>
-                                                                    <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game1}</td>
-                                                                    <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game2}</td>
-                                                                    <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game3}</td>
-                                                                    <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game4}</td>
-                                                                    <td className={styles.teamScoreTd}>
-                                                                        {member.game1 + member.game2 + member.game3 + member.game4}
-                                                                    </td>
-                                                                    <td className={styles.teamScoreTd}>
-                                                                        {((member.game1 + member.game2 + member.game3 + member.game4) / 4).toFixed(1)}
-                                                                    </td>
-                                                                    <td className={styles.teamScoreTd}>
-                                                                        {(((member.game1 + member.game2 + member.game3 + member.game4) / 4) - member.memberAvg)}
-                                                                    </td>
+                                                            {data.scoreboards.map((member, i) => (
+                                                                <tr>
+                                                                    <td>{(i + 1)}</td>
+                                                                    <td>{member.memberName}</td>
+                                                                    <td>{member.memberAvg}</td>
+                                                                    <td>{member.game1}</td>
+                                                                    <td>{member.game2}</td>
+                                                                    <td>{member.game3}</td>
+                                                                    <td>{member.game4}</td>
+                                                                    <td>{member.game1 + member.game2 + member.game3 + member.game4}</td>
+                                                                    <td>{getAvgScore(member.game1 + member.game2 + member.game3 + member.game4)}</td>
+                                                                    <td>{((member.game1 + member.game2 + member.game3 + member.game4) / 4) - member.memberAvg}</td>
+                                                                    <td>{getHighScore(member.game1 + member.game2 + member.game3 + member.game4)}</td>
                                                                 </tr>
                                                             ))}
                                                         </tbody>
-                                                        <tfoot>
-                                                            <tr className={styles.teamScoreHeaderTr}>
-                                                                <td className={styles.teamScoreTh} colSpan={4}>합계</td>
-                                                                <td className={styles.teamScoreTh}>{team.game1Total}</td>
-                                                                <td className={styles.teamScoreTh}>{team.game2Total}</td>
-                                                                <td className={styles.teamScoreTh}>{team.game3Total}</td>
-                                                                <td className={styles.teamScoreTh}>{team.game4Total}</td>
-                                                                <td className={styles.teamScoreTh} colSpan={2}>팀 종합</td>
-                                                                <td className={styles.teamScoreTh}>{team.totalDifference}</td>
-                                                            </tr>
-                                                        </tfoot>
                                                     </table>
-                                                ))}
+                                                }
+                                                {pageStates[i] == 1 &&
+                                                    Object.entries(
+                                                        data.scoreboards.reduce((teams, member) => {
+                                                            const teamNumber = member.teamNumber;
+                                                            const scoreDifference = ((member.game1 + member.game2 + member.game3 + member.game4)) - (member.memberAvg * 4 );
+
+                                                            if (!teams[teamNumber]) {
+                                                                teams[teamNumber] = {
+                                                                    members: [],
+                                                                    totalDifference: 0,
+                                                                    game1Total: 0,
+                                                                    game2Total: 0,
+                                                                    game3Total: 0,
+                                                                    game4Total: 0
+                                                                };
+                                                            }
+
+                                                            teams[teamNumber].members.push(member);
+                                                            teams[teamNumber].totalDifference += scoreDifference;
+                                                            teams[teamNumber].game1Total += member.game1 - member.memberAvg;
+                                                            teams[teamNumber].game2Total += member.game2 - member.memberAvg;
+                                                            teams[teamNumber].game3Total += member.game3 - member.memberAvg;
+                                                            teams[teamNumber].game4Total += member.game4 - member.memberAvg;
+
+                                                            return teams;
+                                                        }, {})
+                                                    )
+                                                    // 팀별로 높은 총 차이 점수 순으로 정렬
+                                                    .sort(([, teamA], [, teamB]) => teamB.totalDifference - teamA.totalDifference)
+                                                    .map(([teamNumber, team], i) => (
+                                                        <table className={styles.teamScoreTable} key={teamNumber}>
+                                                            <thead>
+                                                                <tr className={styles.teamScoreHeaderTr}>
+                                                                    <th className={styles.teamScoreTh}>{i + 1 + "위"}</th>
+                                                                    <th className={styles.teamScoreTh} colSpan={2}></th>
+                                                                    <th className={styles.teamScoreTh}>Avg</th>
+                                                                    <th className={styles.teamScoreTh}>1G</th>
+                                                                    <th className={styles.teamScoreTh}>2G</th>
+                                                                    <th className={styles.teamScoreTh}>3G</th>
+                                                                    <th className={styles.teamScoreTh}>4G</th>
+                                                                    <th className={styles.teamScoreTh}>총점</th>
+                                                                    <th className={styles.teamScoreTh}>평균</th>
+                                                                    <th className={styles.teamScoreTh}>합계</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {team.members.map((member, index) => (
+                                                                    <tr className={styles.teamScoreBodyTr} key={index}>
+                                                                        {index === 0 && (
+                                                                            <td className={styles.teamScoreTd} rowSpan={team.members.length}>Team {teamNumber}</td>
+                                                                        )}
+                                                                        <td className={styles.teamScoreTd}>{index + 1}</td>
+                                                                        <td className={styles.teamScoreTd}>{member.memberName}</td>
+                                                                        <td className={styles.teamScoreTd}>{member.memberAvg}</td>
+                                                                        <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game1}</td>
+                                                                        <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game2}</td>
+                                                                        <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game3}</td>
+                                                                        <td className={`${styles.teamScoreTd} ${styles.gameScoreBackground}`}>{member.game4}</td>
+                                                                        <td className={styles.teamScoreTd}>
+                                                                            {member.game1 + member.game2 + member.game3 + member.game4}
+                                                                        </td>
+                                                                        <td className={styles.teamScoreTd}>
+                                                                            {((member.game1 + member.game2 + member.game3 + member.game4) / 4).toFixed(1)}
+                                                                        </td>
+                                                                        <td className={styles.teamScoreTd}>
+                                                                            {(((member.game1 + member.game2 + member.game3 + member.game4) / 4) - member.memberAvg)}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <tr className={styles.teamScoreHeaderTr}>
+                                                                    <td className={styles.teamScoreTh} colSpan={4}>합계</td>
+                                                                    <td className={styles.teamScoreTh}>{team.game1Total}</td>
+                                                                    <td className={styles.teamScoreTh}>{team.game2Total}</td>
+                                                                    <td className={styles.teamScoreTh}>{team.game3Total}</td>
+                                                                    <td className={styles.teamScoreTh}>{team.game4Total}</td>
+                                                                    <td className={styles.teamScoreTh} colSpan={2}>팀 종합</td>
+                                                                    <td className={styles.teamScoreTh}>{team.totalDifference}</td>
+                                                                </tr>
+                                                            </tfoot>
+                                                        </table>
+                                                    ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                }
+                                    }
+                                </div>
                             </>
                         )) : (
                                 <div className={styles.nodataContainer}>
@@ -828,7 +831,7 @@ function ClubSetting({ pageLoad }) {
     const memberAvgUpdate = (memberId, newAvg) => {
         setUpdatedMembers(prev =>
             prev.map(member =>
-                member.memberId === memberId ? { ...member, memberAvg: newAvg } : member
+                member.memberId === memberId ? { ...member, memberAvg: newAvg == "" || newAvg.length <= 2 ? member.memberAvg : newAvg } : member
             )
         );
     };
@@ -876,7 +879,6 @@ function ClubSetting({ pageLoad }) {
 
     useEffect(() => {
         setUpdatedMembers(members);
-        console.log(updatedMembers)
     }, [members])
 
     return (
@@ -1127,11 +1129,18 @@ function AddGameModal({ clubId, token, addGameModalBtnClickHandler, pageLoad }) 
 }
 
 function ClubRanking({ setLoading }) {
-    const { members, ceremonys } = useClubStore();
+    const { members } = useClubStore();
+    const { signInUser } = useSignInStore();
     const [sortedMembers, setSortedMembers] = useState([]);
     const [openMore, setOpenMore] = useState([]);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [ceremonyList, setCeremonys] = useState([]);
+    const [cookies] = useCookies();
+    const [gameType, setGameType] = useState(0);
+
+    const token = cookies[ACCESS_TOKEN];
+    const clubId = signInUser?.clubId || 0;
 
     const moreInfoHandler = (index) => {
         setOpenMore((prev) => {
@@ -1144,45 +1153,46 @@ function ClubRanking({ setLoading }) {
         })
     }
 
-    const calculateMemberAverages = () => {
-        setLoading(true)
-        // 각 멤버의 ID를 키로 평균 점수를 저장하는 객체 생성
+    const calculateMemberAverages = (ceremonys) => {
+
         const memberScores = {};
     
         ceremonys.forEach((ceremony) => {
-            ceremony.scoreboards.forEach((scoreboard) => {
-                const memberId = scoreboard.memberId;
-
-                const gameScores = [scoreboard.game1, scoreboard.game2, scoreboard.game3, scoreboard.game4].filter(score => score !== null);
-                const game1Scores = [scoreboard.game1].filter(score => score !== null);
-                const game2Scores = [scoreboard.game2].filter(score => score !== null);
-                const game3Scores = [scoreboard.game3].filter(score => score !== null);
-                const game4Scores = [scoreboard.game4].filter(score => score !== null);
-
+            if(ceremony.scoreboards && Array.isArray(ceremony.scoreboards)) {
+                ceremony.scoreboards.forEach((scoreboard) => {
+                    const memberId = scoreboard.memberId;
     
-                // 평균 계산
-                const averageScore = gameScores.reduce((acc, score) => acc + score, 0) / gameScores.length;
-                const average1Score = game1Scores.reduce((acc, score) => acc + score, 0) / game1Scores.length;
-                const average2Score = game2Scores.reduce((acc, score) => acc + score, 0) / game2Scores.length;
-                const average3Score = game3Scores.reduce((acc, score) => acc + score, 0) / game3Scores.length;
-                const average4Score = game4Scores.reduce((acc, score) => acc + score, 0) / game4Scores.length;
-
+                    const gameScores = [scoreboard.game1, scoreboard.game2, scoreboard.game3, scoreboard.game4].filter(score => score !== null);
+                    const game1Scores = [scoreboard.game1].filter(score => score !== null);
+                    const game2Scores = [scoreboard.game2].filter(score => score !== null);
+                    const game3Scores = [scoreboard.game3].filter(score => score !== null);
+                    const game4Scores = [scoreboard.game4].filter(score => score !== null);
     
-                // 점수를 합산하여 저장
-                if (memberScores[memberId]) {
-                    memberScores[memberId].totalScore += averageScore;
-                    memberScores[memberId].count += 1;
-                } else {
-                    memberScores[memberId] = { 
-                        totalScore: averageScore, 
-                        count: 1, 
-                        average1Score: average1Score, 
-                        average2Score: average2Score, 
-                        average3Score: average3Score, 
-                        average4Score: average4Score
-                    };
-                }
-            });
+        
+                    // 평균 계산
+                    const averageScore = gameScores.reduce((acc, score) => acc + score, 0) / gameScores.length;
+                    const average1Score = game1Scores.reduce((acc, score) => acc + score, 0) / game1Scores.length;
+                    const average2Score = game2Scores.reduce((acc, score) => acc + score, 0) / game2Scores.length;
+                    const average3Score = game3Scores.reduce((acc, score) => acc + score, 0) / game3Scores.length;
+                    const average4Score = game4Scores.reduce((acc, score) => acc + score, 0) / game4Scores.length;
+    
+        
+                    // 점수를 합산하여 저장
+                    if (memberScores[memberId]) {
+                        memberScores[memberId].totalScore += averageScore;
+                        memberScores[memberId].count += 1;
+                    } else {
+                        memberScores[memberId] = { 
+                            totalScore: averageScore, 
+                            count: 1, 
+                            average1Score: average1Score, 
+                            average2Score: average2Score, 
+                            average3Score: average3Score, 
+                            average4Score: average4Score
+                        };
+                    }
+                });
+            }
         });
     
         // 각 멤버의 평균 점수 계산
@@ -1195,18 +1205,53 @@ function ClubRanking({ setLoading }) {
         // 평균 점수 기준으로 멤버 정렬
         const sorted = membersWithAverages.sort((a, b) => b.avgScore - a.avgScore);
         setSortedMembers(sorted);
-        setLoading(false)
+        setLoading(false);
     };
+
+    const getCeremonysListResponse = (responseBody) => {
+
+        const message = 
+        !responseBody ? '서버에 문제가 있습니다.' :
+        responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+        responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = responseBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+        const { ceremonys } = responseBody;
+        console.log(responseBody)
+        console.log(ceremonys)
+        setCeremonys(ceremonys);
+        console.log(ceremonyList)
+        calculateMemberAverages(ceremonys);
+    }
+
+    const getCeremonysList = () => {
+        const data = {
+            startDate: startDate,
+            endDate: endDate,
+            gameType: gameType
+        }
+        getCeremonysListRequest(clubId, data, token).then(getCeremonysListResponse);
+    }
 
     useEffect(() => {
         const today = new Date();
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(today.getMonth() - 6);
-
+    
         setStartDate(sixMonthsAgo.toISOString().split("T")[0]);
         setEndDate(today.toISOString().split("T")[0]);
-        calculateMemberAverages();
     }, []);
+    
+    useEffect(() => {
+        if (startDate && endDate) {
+            setLoading(true);
+            getCeremonysList();
+        }
+    }, [startDate, endDate, gameType]);
 
     return (
         <>
@@ -1236,10 +1281,10 @@ function ClubRanking({ setLoading }) {
                         <div className={styles.filterNav}>
                             <p className={styles.filterTitle}>게임종류</p>
                             <div className={styles.filterBtns}>
-                                <button className={styles.filterBtn}>전체</button>
-                                <button className={styles.filterBtn}>정기모임</button>
-                                <button className={styles.filterBtn}>정기번개</button>
-                                <button className={styles.filterBtn}>기타</button>
+                                <button className={`${styles.filterBtn} ${gameType == 0 ? styles.selectedFilterBtn : ""}`} onClick={() => setGameType(0)}>전체</button>
+                                <button className={`${styles.filterBtn} ${gameType == 1 ? styles.selectedFilterBtn : ""}`} onClick={() => setGameType(1)}>정기모임</button>
+                                <button className={`${styles.filterBtn} ${gameType == 2 ? styles.selectedFilterBtn : ""}`} onClick={() => setGameType(2)}>정기번개</button>
+                                <button className={`${styles.filterBtn} ${gameType == 3 ? styles.selectedFilterBtn : ""}`} onClick={() => setGameType(3)}>기타</button>
                             </div>
                         </div>
                     </div>
@@ -1258,7 +1303,7 @@ function ClubRanking({ setLoading }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {ceremonys.length > 0 && sortedMembers.map((member, i) => (
+                        {ceremonyList.length > 0 && sortedMembers.map((member, i) => (
                             <>
                                 <tr key={member.memberId} className={`${styles.teamScoreBodyTr} ${styles.rankBodyTr}`}>
                                     <td className={styles.rankScoreTd}>{(i + 1)}</td>
@@ -1294,7 +1339,7 @@ function ClubRanking({ setLoading }) {
                         ))}
                     </tbody>
                 </table>
-                {!ceremonys.length > 0 &&
+                {!ceremonyList.length > 0 &&
                     <div className={styles.nodataContainer}>
                         <Nodata text={"기록이 없습니다."}></Nodata>
                     </div>

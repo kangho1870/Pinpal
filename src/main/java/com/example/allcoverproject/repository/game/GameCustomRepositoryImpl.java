@@ -4,11 +4,13 @@ package com.example.allcoverproject.repository.game;
 import com.example.allcoverproject.entity.Game;
 import com.example.allcoverproject.entity.QGame;
 import com.example.allcoverproject.entity.QScoreboard;
+import com.example.allcoverproject.type.GameType;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -44,5 +46,33 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                 .groupBy(game.id)  // gameId로 그룹화
                 .orderBy(game.date.asc())
                 .fetch();
+    }
+
+    @Override
+    public List<Game> findAllByClubIdAndEndGame(Long clubId, String status) {
+        QGame game = QGame.game;
+
+        return queryFactory
+                .selectFrom(game)
+                .where(game.clubMst.id.eq(clubId).and(game.status.eq(status)))
+                .orderBy(game.date.desc())
+                .limit(4)
+                .fetch();
+    }
+
+    @Override
+    public List<Game> findGamesByClubIdAndBetweenStartDateAndEndDate(Long clubId, LocalDate startDate, LocalDate endDate, int gameType) {
+        QGame game = QGame.game;
+
+        return queryFactory
+                .selectFrom(game)
+                .where(
+                        game.clubMst.id.eq(clubId)
+                        .and(game.date.between(startDate, endDate))
+                        .and(game.status.eq("END"))
+                        .and(gameType == 0 ? null : game.type.eq(gameType == 1 ? GameType.정기모임 : gameType == 2 ? GameType.정기번개 : GameType.기타)))
+                .orderBy(game.date.desc())
+                .fetch();
+
     }
 }

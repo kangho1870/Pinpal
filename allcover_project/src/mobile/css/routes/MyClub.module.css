@@ -519,26 +519,32 @@
 
 .ceremonyBox {
     display: flex;
+    flex-direction: column;
     background-color: #fafafa;
     width: 100%;
-    justify-content: space-between;
     border-radius: 10px;
-    padding: 10px;
-    align-items: center;
     margin-top: 10px;
     border: 2px solid #004EA2;
 }
 
-.selectedCeremony {
-    border-bottom: none;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+.ceremonyArea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.redLine {
+    border: 2px solid rgb(197, 89, 89);
 }
 
 .simpleInformation {
     display: flex;
     flex-direction: column;
     overflow-x: scroll;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px;
 }
 
 .simpleGameInfo {
@@ -587,12 +593,10 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-top: 10px;
     background-color: #fafafa;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    border-left: 2px solid #004EA2;
-    border-right: 2px solid #004EA2;
-    border-bottom: 2px solid #004EA2;
 }
 
 .ceremonyInfoBtnBox {
@@ -910,4 +914,9 @@
     border-bottom: 1px solid black;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+}
+
+.selectedFilterBtn {
+    background-color: #004EA2;
+    color: white;
 }

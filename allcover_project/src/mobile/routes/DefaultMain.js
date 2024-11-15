@@ -138,6 +138,72 @@ function DefaultMain({ setLoading }) {
                         </span>
                         <span>커뮤니티</span>
                     </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
+                    <li className={styles.categoryBox}>
+                        <span className={styles.categoryImgSpan}>
+                            <img src={require("../../imges/home-img/board.png")} className={styles.categoryImg}></img>
+                        </span>
+                        <span>커뮤니티</span>
+                    </li>
                 </ul>
             </div>
             <div className={styles.line}></div>

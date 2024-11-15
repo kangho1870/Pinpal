@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +50,8 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public ResponseEntity<? super GetCeremonyRespDto> getCeremonyList(Long clubId) {
-        List<Game> games = gameRepository.findAllByClubMst_idAndStatus(clubId, "END");
+    public ResponseEntity<? super GetCeremonyRespDto> getRecentCeremonyList(Long clubId) {
+        List<Game> games = gameRepository.findAllByClubIdAndEndGame(clubId, "END");
 
         List<List<Scoreboard>> allScoreboards = new ArrayList<>();
         List<Ceremony> ceremonys = new ArrayList<>();
@@ -217,6 +218,29 @@ public class ClubServiceImpl implements ClubService {
         }
 
         return CodeMessageRespDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super GetCeremonyRespDto> getCeremonyList(Long clubId, LocalDate startDate, LocalDate endDate, int gameType) {
+        if(clubId == null) return CodeMessageRespDto.noExistMemberId();
+        List<Game> games = gameRepository.findGamesByClubIdAndBetweenStartDateAndEndDate(clubId, startDate, endDate, gameType);
+        List<Ceremony> ceremonies = new ArrayList<>();
+        List<List<Scoreboard>> scoreboards = new ArrayList<>();
+
+        try {
+            for (Game game : games) {
+                List<Scoreboard> allMembers = scoreboardRepository.findAllMembers(game.getId());
+                scoreboards.add(allMembers);
+                Ceremony ceremony = ceremonyRepository.findByGameId(game.getId());
+                ceremonies.add(ceremony);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CodeMessageRespDto.databaseError();
+        }
+
+
+        return GetCeremonyRespDto.success(ceremonies, scoreboards, games, memberRepository);
     }
 
 

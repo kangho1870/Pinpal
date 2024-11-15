@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { HOME_PATH } from "../constants";
+import { data } from "framer-motion/client";
 
 const ROOT_API_DOMAIN = process.env.REACT_APP_ROOT_API_DOMAIN;
 
@@ -51,7 +52,9 @@ const GET_CLUB_INFO_API_URL = (clubId) => `${CLUB_MODULE_URL}/${clubId}`;
 
 const GET_MEMBERS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/home?clubId=${clubId}`;
 
-const GET_CEREMONYS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/ceremony?clubId=${clubId}`;
+const GET_RECENT_CEREMONYS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/recent-ceremony?clubId=${clubId}`;
+
+const GET_CEREMONYS_BY_CLUB_API_URL = (clubId, data) => `${CLUB_MODULE_URL}/ceremony?clubId=${clubId}&startDate=${data.startDate}&endDate=${data.endDate}&gameType=${data.gameType}`;
 
 const JOIN_CLUB_MEMBER_API_URL = (clubId, memberId) => `${CLUB_MODULE_URL}/joinClub?clubId=${clubId}&memberId=${memberId}`;
 
@@ -213,8 +216,15 @@ export const getMemberListRequest = async (clubId, accessToken) => {
     return responseBody;
 }
 
-export const getCeremonysListRequest = async (clubId, accessToken) => {
-    const responseBody = await axios.get(`${GET_CEREMONYS_BY_CLUB_API_URL(clubId)}`, bearerAuthorization(accessToken))
+export const getRecentCeremonysListRequest = async (clubId, accessToken) => {
+    const responseBody = await axios.get(`${GET_RECENT_CEREMONYS_BY_CLUB_API_URL(clubId)}`, bearerAuthorization(accessToken))
+        .then(responseDataHandler)
+        .catch(responseErrorHandler)
+    return responseBody;
+}
+
+export const getCeremonysListRequest = async (clubId, data, accessToken) => {
+    const responseBody = await axios.get(`${GET_CEREMONYS_BY_CLUB_API_URL(clubId, data)}`, bearerAuthorization(accessToken))
         .then(responseDataHandler)
         .catch(responseErrorHandler)
     return responseBody;
