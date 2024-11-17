@@ -13,4 +13,5 @@ public interface ClubDtlRepository extends JpaRepository<ClubDtl, Long>, ClubDtl
 
     List<ClubDtl> findAllByClubMst_Id(Long clubId);
     ClubDtl findByMemberId(Long memberId);
+    ClubDtl findByRoleEquals(String role);
 }

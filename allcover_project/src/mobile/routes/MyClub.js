@@ -5,7 +5,7 @@ import { useCookies } from "react-cookie";
 import { ACCESS_TOKEN, CLUB_DETAIL_PATH, ROOT_PATH, SCOREBOARD_PATH } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import { onClickBackBtn } from "../../hooks";
-import { addGameRequest, clubJoinRequest, clubMemberAvgUpdateRequest, clubMemberRoleUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, getRecentCeremonysListRequest, scoreboardJoinRequest } from "../../apis";
+import { addGameRequest, clubJoinRequest, clubMemberAvgUpdateRequest, clubMemberRoleUpdateRequest, getCeremonysListRequest, getClubInfoRequest, getGameListRequest, getMemberListRequest, getRecentCeremonysListRequest, getSignInRequest, scoreboardJoinRequest } from "../../apis";
 import Loading from "../components/loading/Loading";
 import useClubStore from "../../stores/useClubStore";
 import { tr } from "framer-motion/client";
@@ -13,11 +13,11 @@ import { tr } from "framer-motion/client";
 function MyClub() {
 
     const { members, setMembers, setCeremonys, setGames } = useClubStore();
-    const { signInUser, setSignInUser } = useSignInStore();
+    const { signInUser, setSignInUser, login } = useSignInStore();
     const [loading, setLoading] = useState(false);
     const [addGameModal, setAddGameModal] = useState(false);
     const navigator = useNavigate();
-    const [cookies] = useCookies();
+    const [cookies, removeCookie] = useCookies();
     const [clubInfo, setClubInfo] = useState({});
     const token = cookies[ACCESS_TOKEN];
     const [page, setPage] = useState(0);
@@ -112,6 +112,31 @@ function MyClub() {
         getClubInfoRequest(clubId, token).then(getClubInfoResponse);
     }
 
+    const getSignInResponse = (responseBody) => {
+        const message = 
+            !responseBody ? '로그인 유저 정보를 불러오는데 문제가 발생했습니다.' :
+            responseBody.code === 'NI' ? '로그인 유저 정보가 존재하지 않습니다.' :
+            responseBody.code === 'AF' ? '잘못된 접근입니다.' : 
+            responseBody.code === 'DBE' ? '로그인 유저 정보를 불러오는데 문제가 발생했습니다.' : '';
+    
+        const isSuccessed = responseBody !== null && responseBody.code === 'SU';
+    
+        if (!isSuccessed) {
+            alert(message);
+            removeCookie(ACCESS_TOKEN, { path: ROOT_PATH });
+            login(null);
+            navigator(ROOT_PATH);
+            return;
+        }
+    
+        const { memberId, id, clubId, clubRole } = responseBody;
+        login({ memberId, id, clubId, clubRole });
+    };
+
+    const getSignIn = () => {
+        getSignInRequest(token).then(getSignInResponse);
+    }
+
     const memberJoinClubResponse = (responseBody) => {
 
         const message = 
@@ -130,6 +155,7 @@ function MyClub() {
         
         alert(message);
         getMembersRequest();
+        getSignIn();
         pageLoad();
         setLoading(false);
     }
@@ -189,7 +215,7 @@ function MyClub() {
                         <ClubRanking setLoading={setLoading}></ClubRanking>
                     }
                     {page == 4 &&
-                        <ClubSetting setLoading={setLoading} pageLoad={pageLoad}></ClubSetting>
+                        <ClubSetting setLoading={setLoading} pageLoad={pageLoad} getSignIn={getSignIn}></ClubSetting>
                     }
                 </div>
             </div>
@@ -318,7 +344,7 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
             <div className={styles.subTitle}>
                 <h3>클럽 일정</h3>
             </div>
-            <div className={`${styles.clubSchedule} ${styles.commonDiv}`}>
+            <div className={`${styles.clubSchedule}`}>
                 {games.length > 0 ? (
                     games
                         .filter((game) => {
@@ -332,57 +358,118 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
                         })
                         .map((game, index) => (
                             <>
-                                <div className={styles.scheduleBox}>
-                                    <div className={styles.scheduleTitle}>
-                                        <p>{game.gameName}</p>
-                                        <div className={styles.scheduleTitle}>
-                                            <h5>{formatShortDate(game.gameDate)}</h5>
-                                            {!dateTimeCheck(game.gameDate, game.gameTime) && (
-                                                game.members.some((member) => member.memberId === memberId) ? (
-                                                    <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
-                                                ) : (
-                                                    <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
-                                                )
-                                            )}
-                                            {dateTimeCheck(game.gameDate, game.gameTime) && (
-                                                <button className={styles.scheduleCancleBtn}>참석불가</button>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className={styles.scheduleContnet}>
-                                        <div className={styles.imgBox}>
-                                            <img className={styles.scheduleImg} src={require("../../imges/club/bowlingGame.png")}></img>
-                                        </div>
-                                        <div className={styles.scheduleDescriptionArea}>
-                                            <div className={styles.scheduleDescriptionBox}>
-                                                <span className={styles.descriptionSubTitle}>일시:</span>
-                                                <h5 className={styles.descriptionSubContent}>{formatDateTime(game.gameDate, game.gameTime)}</h5>
+                                {game.gameType === "정기모임" &&
+                                    <>
+                                        {index == 0 && <p>정기모임</p>}
+                                        <div className={styles.scheduleBox}>
+                                            <div className={styles.scheduleTitle}>
+                                                <p>{game.gameName}</p>
+                                                <div className={styles.scheduleTitle}>
+                                                    <h5>{formatShortDate(game.gameDate)}</h5>
+                                                    {!dateTimeCheck(game.gameDate, game.gameTime) && (
+                                                        game.members.some((member) => member.memberId === memberId) ? (
+                                                            <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
+                                                        ) : (
+                                                            <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
+                                                        )
+                                                    )}
+                                                    {dateTimeCheck(game.gameDate, game.gameTime) && (
+                                                        <button className={styles.scheduleCancleBtn}>참석불가</button>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className={styles.scheduleDescriptionBox}>
-                                                <span className={styles.descriptionSubTitle}>장소:</span>
-                                                <h5 className={styles.descriptionSubContent}>서면볼링센터</h5>
+                                            <div className={styles.scheduleContnet}>
+                                                <div className={styles.imgBox}>
+                                                    <img className={styles.scheduleImg} src={require("../../imges/club/bowlingGame.png")}></img>
+                                                </div>
+                                                <div className={styles.scheduleDescriptionArea}>
+                                                    <div className={styles.scheduleDescriptionBox}>
+                                                        <span className={styles.descriptionSubTitle}>일시:</span>
+                                                        <h5 className={styles.descriptionSubContent}>{formatDateTime(game.gameDate, game.gameTime)}</h5>
+                                                    </div>
+                                                    <div className={styles.scheduleDescriptionBox}>
+                                                        <span className={styles.descriptionSubTitle}>장소:</span>
+                                                        <h5 className={styles.descriptionSubContent}>서면볼링센터</h5>
+                                                    </div>
+                                                    <div className={styles.scheduleDescriptionBox}>
+                                                        <span className={styles.descriptionSubTitle}>참석:</span>
+                                                        <h5 className={styles.descriptionSubContent}>{game.members.length + "명"}</h5>
+                                                    </div>
+                                                    <button className={styles.scoreboard} onClick={() => scheduleOnClickHandler(game.gameId)}>점수판</button>
+                                                </div>
                                             </div>
-                                            <div className={styles.scheduleDescriptionBox}>
-                                                <span className={styles.descriptionSubTitle}>참석:</span>
-                                                <h5 className={styles.descriptionSubContent}>{game.members.length + "명"}</h5>
+                                        </div>
+                                        <div className={styles.memberProfileContainer}>
+                                            {game.members.map((member, i) => (
+                                                <div className={styles.memberBox}>
+                                                    <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
+                                                    {member.memberRole == "MASTER" && 
+                                                        <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
+                                                    }
+                                                    {member.memberRole == "STAFF" && 
+                                                        <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
+                                                    }
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                }
+                                {game.gameType === "정기번개" &&
+                                    <>
+                                        {index == 0 && <p>정기번개</p>}
+                                        <div className={styles.scheduleBox}>
+                                            <div className={styles.scheduleTitle}>
+                                                <p>{game.gameName}</p>
+                                                <div className={styles.scheduleTitle}>
+                                                    <h5>{formatShortDate(game.gameDate)}</h5>
+                                                    {!dateTimeCheck(game.gameDate, game.gameTime) && (
+                                                        game.members.some((member) => member.memberId === memberId) ? (
+                                                            <button className={styles.scheduleCancleBtn} onClick={() => scoreboardJoin(game.gameId)}>취소</button>
+                                                        ) : (
+                                                            <button className={styles.scheduleJoinBtn} onClick={() => scoreboardJoin(game.gameId)}>참석</button>
+                                                        )
+                                                    )}
+                                                    {dateTimeCheck(game.gameDate, game.gameTime) && (
+                                                        <button className={styles.scheduleCancleBtn}>참석불가</button>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <button className={styles.scoreboard} onClick={() => scheduleOnClickHandler(game.gameId)}>점수판</button>
+                                            <div className={styles.scheduleContnet}>
+                                                <div className={styles.imgBox}>
+                                                    <img className={styles.scheduleImg} src={require("../../imges/club/bowlingGame.png")}></img>
+                                                </div>
+                                                <div className={styles.scheduleDescriptionArea}>
+                                                    <div className={styles.scheduleDescriptionBox}>
+                                                        <span className={styles.descriptionSubTitle}>일시:</span>
+                                                        <h5 className={styles.descriptionSubContent}>{formatDateTime(game.gameDate, game.gameTime)}</h5>
+                                                    </div>
+                                                    <div className={styles.scheduleDescriptionBox}>
+                                                        <span className={styles.descriptionSubTitle}>장소:</span>
+                                                        <h5 className={styles.descriptionSubContent}>서면볼링센터</h5>
+                                                    </div>
+                                                    <div className={styles.scheduleDescriptionBox}>
+                                                        <span className={styles.descriptionSubTitle}>참석:</span>
+                                                        <h5 className={styles.descriptionSubContent}>{game.members.length + "명"}</h5>
+                                                    </div>
+                                                    <button className={styles.scoreboard} onClick={() => scheduleOnClickHandler(game.gameId)}>점수판</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div className={styles.memberProfileContainer}>
-                                    {game.members.map((member, i) => (
-                                        <div className={styles.memberBox}>
-                                            <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
-                                            {member.memberRole == "MASTER" && 
-                                                <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
-                                            }
-                                            {member.memberRole == "STAFF" && 
-                                                <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
-                                            }
+                                        <div className={styles.memberProfileContainer}>
+                                            {game.members.map((member, i) => (
+                                                <div className={styles.memberBox}>
+                                                    <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
+                                                    {member.memberRole == "MASTER" && 
+                                                        <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
+                                                    }
+                                                    {member.memberRole == "STAFF" && 
+                                                        <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
+                                                    }
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
+                                    </>
+                                }
                             </>
                         ))
                 ) : (
@@ -449,24 +536,39 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
                 <h3>클럽 멤버</h3>
             </div>
             <div className={`${styles.memberContainer} ${styles.commonDiv}`}>
-                {members.map((member, i) => (
-                    <>
-                        <div className={styles.memberBox}>
+                {members
+                    .sort((a, b) => {
+                        // 1. memberId가 현재 사용자(memberId)와 같은 항목을 제일 위로
+                        if (a.memberId === memberId) return -1;
+                        if (b.memberId === memberId) return 1;
+
+                        // 2. MASTER가 STAFF보다 위로, 그 외는 기본 순서
+                        const roleOrder = { MASTER: 1, STAFF: 2, MEMBER: 3 };
+                        return (roleOrder[a.memberRole] || 4) - (roleOrder[b.memberRole] || 4);
+                    })
+                    .map((member, i) => (
+                        <div key={member.memberId} className={styles.memberBox}>
                             <div className={styles.memberProfile}>
-                                <img className={styles.memberImg} src={member.memberProfile}></img>
-                                {member.memberRole === "MASTER" && 
-                                    <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
-                                }
-                                {member.memberRole === "STAFF" && 
-                                    <img className={styles.staffImg} src={require("../../imges/club/staff.png")}></img>
-                                }
+                                <img className={styles.memberImg} src={member.memberProfile} alt="Profile" />
+                                {member.memberRole === "MASTER" && (
+                                    <img
+                                        className={styles.staffImg}
+                                        src={require("../../imges/club/master.png")}
+                                        alt="Master"
+                                    />
+                                )}
+                                {member.memberRole === "STAFF" && (
+                                    <img
+                                        className={styles.staffImg}
+                                        src={require("../../imges/club/staff.png")}
+                                        alt="Staff"
+                                    />
+                                )}
                             </div>
-                            <div className={styles.memberProfileBox}>
-                                {member.memberName}
-                            </div>
+                            <div className={styles.memberProfileBox}>{member.memberName}</div>
                         </div>
-                    </>
-                ))}
+                    ))
+                }
             </div>
         </>
     )
@@ -544,10 +646,10 @@ function ClubCeremony({ setLoading }) {
                             <div className={styles.filterNav}>
                                 <p className={styles.filterTitle}>게임종류</p>
                                 <div className={styles.filterBtns}>
-                                    <button className={styles.filterBtn}>전체</button>
-                                    <button className={styles.filterBtn}>정기모임</button>
-                                    <button className={styles.filterBtn}>정기번개</button>
-                                    <button className={styles.filterBtn}>기타</button>
+                                    <button className={`${styles.filterBtn}`}>전체</button>
+                                    <button className={`${styles.filterBtn}`}>정기모임</button>
+                                    <button className={`${styles.filterBtn} ${styles.gameType2}`}>정기번개</button>
+                                    <button className={`${styles.filterBtn}`}>기타</button>
                                 </div>
                             </div>
                         </div>
@@ -555,7 +657,7 @@ function ClubCeremony({ setLoading }) {
                     <div className={styles.ceremonyContainer}>
                         {ceremonys.length > 0 ? ceremonys.map((data, i) => (
                             <>
-                                <div className={`${styles.ceremonyBox} ${data.gameType == "정기모임" ? styles.redLine : data.gameType == "기타" ? styles.blackLine : ""}`} key={data.gameId}>
+                                <div className={`${styles.ceremonyBox} ${data.gameType == "정기번개" ? styles.redLine : data.gameType == "기타" ? styles.blackLine : ""}`} key={data.gameId}>
                                     <div className={styles.ceremonyArea}>
                                         <div className={styles.simpleInformation}>
                                             <div className={styles.simpleGameInfo}>
@@ -772,13 +874,15 @@ function ClubCeremony({ setLoading }) {
     )
 };
 
-function ClubSetting({ pageLoad }) {
+function ClubSetting({ pageLoad, getSignIn }) {
     const { members } = useClubStore();
     const { signInUser } = useSignInStore();
     const [cookies] = useCookies();
     const token = cookies[ACCESS_TOKEN];
     const [page, setPage] = useState(0);
     const [updatedMembers, setUpdatedMembers] = useState([]);
+    
+    const clubId = signInUser?.clubId;
     const roles = signInUser?.clubRole ? signInUser.clubRole : null;
 
 
@@ -799,6 +903,7 @@ function ClubSetting({ pageLoad }) {
         }
         
         alert(message);
+        getSignIn();
         pageLoad();
     }
 
@@ -878,6 +983,10 @@ function ClubSetting({ pageLoad }) {
     }
 
     useEffect(() => {
+        if(!(roles === "MASTER" || roles === "STAFF")) {
+            alert("접근 권한이 없습니다.")
+            window.location.href = CLUB_DETAIL_PATH(clubId);
+        }
         setUpdatedMembers(members);
     }, [members])
 
@@ -919,9 +1028,11 @@ function ClubSetting({ pageLoad }) {
                                                 <div key={grade} className={styles.gradeGroup}>
                                                     {/* 해당 군이 아직 표시되지 않은 경우에만 제목을 출력 */}
                                                     {!displayedGrades.has(grade) && (
-                                                        <h3 className={styles.gradeTitle}>
-                                                            {grade === "0" ? "신입" : `${grade} 군`}
-                                                        </h3>
+                                                        <div className={styles.gradeTitleBox}>
+                                                            <p className={styles.gradeTitle}>
+                                                                {grade === "0" ? "신입" : `${grade} 군 (${groupedMembers[grade].length})`}
+                                                            </p>
+                                                        </div>
                                                     )}
                                                     {groupedMembers[grade].map((member) => (
                                                         <div key={member.memberId} className={styles.gradeBox}>
@@ -999,6 +1110,7 @@ function ClubSetting({ pageLoad }) {
                                                         value={member.memberRole}
                                                         onChange={(e) => handleRoleChange(e, member.memberId)}
                                                         className={styles.roleSelect}
+                                                        disabled={roles !== "MASTER"}
                                                     >
                                                         {roles === "MASTER" && (
                                                             <option value="MASTER">클럽장</option>
@@ -1135,12 +1247,14 @@ function ClubRanking({ setLoading }) {
     const [openMore, setOpenMore] = useState([]);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    const [ceremonyList, setCeremonys] = useState([]);
+    const [startDay, setStartDay] = useState(""); // YYYY-MM-DD 형식으로 저장
+    const [endDay, setEndDay] = useState("");
     const [cookies] = useCookies();
     const [gameType, setGameType] = useState(0);
 
     const token = cookies[ACCESS_TOKEN];
     const clubId = signInUser?.clubId || 0;
+    const memberId = signInUser?.memberId
 
     const moreInfoHandler = (index) => {
         setOpenMore((prev) => {
@@ -1152,6 +1266,22 @@ function ClubRanking({ setLoading }) {
             }
         })
     }
+
+    const handleDateChange = (setter, value, currentDay) => {
+        setter(value);
+    
+        const newDay = value.split("-")[2];
+        const currentDayValue = currentDay.split("-")[2];
+    
+        if (newDay !== currentDayValue) {
+            if (setter === setStartDate) {
+                setStartDay(value);
+            }
+            if (setter === setEndDate) {
+                setEndDay(value);
+            }
+        }
+    };
 
     const calculateMemberAverages = (ceremonys) => {
 
@@ -1221,10 +1351,6 @@ function ClubRanking({ setLoading }) {
             return;
         }
         const { ceremonys } = responseBody;
-        console.log(responseBody)
-        console.log(ceremonys)
-        setCeremonys(ceremonys);
-        console.log(ceremonyList)
         calculateMemberAverages(ceremonys);
     }
 
@@ -1244,14 +1370,16 @@ function ClubRanking({ setLoading }) {
     
         setStartDate(sixMonthsAgo.toISOString().split("T")[0]);
         setEndDate(today.toISOString().split("T")[0]);
+        setStartDay(sixMonthsAgo.toISOString().split("T")[0]);
+        setEndDay(today.toISOString().split("T")[0]);
     }, []);
     
     useEffect(() => {
-        if (startDate && endDate) {
+        if (startDay && endDay) {
             setLoading(true);
             getCeremonysList();
         }
-    }, [startDate, endDate, gameType]);
+    }, [startDay, endDay, gameType]);
 
     return (
         <>
@@ -1261,21 +1389,19 @@ function ClubRanking({ setLoading }) {
                         <div className={styles.filterNav}>
                             <p className={styles.filterTitle}>검색기간</p>
                             <div className={styles.searchBox}>
-                                <input 
+                                <input
                                     className={styles.dateInput}
                                     type="date"
                                     value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                >
-                                </input>
+                                    onChange={(e) => handleDateChange(setStartDate, e.target.value, startDay)}
+                                />
                                 <p>~</p>
-                                <input 
+                                <input
                                     className={styles.dateInput}
                                     type="date"
                                     value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                >
-                                </input>
+                                    onChange={(e) => handleDateChange(setEndDate, e.target.value, endDay)}
+                                />
                             </div>
                         </div>
                         <div className={styles.filterNav}>
@@ -1303,7 +1429,7 @@ function ClubRanking({ setLoading }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {ceremonyList.length > 0 && sortedMembers.map((member, i) => (
+                        {sortedMembers.length > 0 && sortedMembers.map((member, i) => (
                             <>
                                 <tr key={member.memberId} className={`${styles.teamScoreBodyTr} ${styles.rankBodyTr}`}>
                                     <td className={styles.rankScoreTd}>{(i + 1)}</td>
@@ -1313,11 +1439,11 @@ function ClubRanking({ setLoading }) {
                                             <p>{member.memberName}</p>
                                         </div>
                                     </td>
-                                    <td className={`${styles.rankScoreTd} ${styles.gameScoreBackground}`}>{member.average1Score}</td>
-                                    <td className={`${styles.rankScoreTd} ${styles.gameScoreBackground}`}>{member.average2Score}</td>
-                                    <td className={`${styles.rankScoreTd} ${styles.gameScoreBackground}`}>{member.average3Score}</td>
-                                    <td className={`${styles.rankScoreTd} ${styles.gameScoreBackground}`}>{member.average4Score}</td>
-                                    <td className={styles.rankScoreTd}>{member.avgScore}</td>
+                                    <td className={`${styles.rankScoreTd} `}>{member.average1Score}</td>
+                                    <td className={`${styles.rankScoreTd} `}>{member.average2Score}</td>
+                                    <td className={`${styles.rankScoreTd} `}>{member.average3Score}</td>
+                                    <td className={`${styles.rankScoreTd} `}>{member.average4Score}</td>
+                                    <td className={styles.rankScoreTd}>{member.avgScore == 0 ? "0" : member.avgScore.toFixed(2)}</td>
                                     <td className={styles.rankScoreTd} onClick={() => moreInfoHandler(member.memberId)}>
                                         {!openMore.includes(member.memberId) ? (
                                             <i class="fa-solid fa-chevron-down"></i>
@@ -1339,7 +1465,7 @@ function ClubRanking({ setLoading }) {
                         ))}
                     </tbody>
                 </table>
-                {!ceremonyList.length > 0 &&
+                {!sortedMembers.length > 0 &&
                     <div className={styles.nodataContainer}>
                         <Nodata text={"기록이 없습니다."}></Nodata>
                     </div>

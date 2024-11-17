@@ -56,7 +56,6 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
                 .selectFrom(game)
                 .where(game.clubMst.id.eq(clubId).and(game.status.eq(status)))
                 .orderBy(game.date.desc())
-                .limit(4)
                 .fetch();
     }
 

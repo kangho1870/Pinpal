@@ -58,8 +58,9 @@ public class MyClubController {
     }
 
     @PostMapping("/update-role")
-    public ResponseEntity<CodeMessageRespDto> updateRole(Map<String, Object> dto) {
-        ResponseEntity<CodeMessageRespDto> responseBody = clubService.updateOfMemberRole(dto);
+    public ResponseEntity<CodeMessageRespDto> updateRole(@RequestBody  Map<String, Object> data) {
+        System.out.println("data = " + data);
+        ResponseEntity<CodeMessageRespDto> responseBody = clubService.updateOfMemberRole(data);
         return responseBody;
     }
 

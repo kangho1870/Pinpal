@@ -199,6 +199,7 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ResponseEntity<CodeMessageRespDto> updateOfMemberRole(Map<String, Object> map) {
+        System.out.println("map = " + map);
         Long memberId = Long.valueOf(map.get("memberId").toString());
         ClubDtl byMemberId = clubDtlRepository.findByMemberId(memberId);
         if(byMemberId == null) return CodeMessageRespDto.noExistMemberId();
@@ -209,8 +210,20 @@ public class ClubServiceImpl implements ClubService {
 
         try {
 
-            byMemberId.setRole(map.get("role").toString());
-            clubDtlRepository.save(byMemberId);
+            String role = map.get("role").toString();
+            if(role.equals("MASTER")) {
+                byMemberId.setRole(role);
+
+                ClubDtl master = clubDtlRepository.findByRoleEquals("MASTER");
+                master.setRole("MEMBER");
+
+                clubDtlRepository.save(byMemberId);
+                clubDtlRepository.save(master);
+            }else {
+                byMemberId.setRole(role);
+                clubDtlRepository.save(byMemberId);
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();

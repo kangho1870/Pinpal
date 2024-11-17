@@ -52,7 +52,6 @@ function SnsSuccess() {
       if (accessToken && expiration) {
           const expires = new Date(Date.now() + (Number(expiration) * 1000));
           setCookie(ACCESS_TOKEN, accessToken, { path: ROOT_PATH, expires });
-          console.log(accessToken)
           navigator(HOME_PATH);
       }
       else navigator(ROOT_PATH);
@@ -103,7 +102,7 @@ function App() {
   }, [cookies[ACCESS_TOKEN]]);
 
 
-  const mobile = useMediaQuery({ maxWidth: 600 })
+  const mobile = useMediaQuery({ maxWidth: 1000 })
 
   function setScreenSize() {
     let vh = window.innerHeight * 0.01;

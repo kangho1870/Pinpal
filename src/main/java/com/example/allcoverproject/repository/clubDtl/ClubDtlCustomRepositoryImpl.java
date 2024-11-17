@@ -36,6 +36,7 @@ public class ClubDtlCustomRepositoryImpl implements ClubDtlCustomRepository{
         return queryFactory
                 .selectFrom(clubDtl)
                 .where(clubDtl.clubMst.id.eq(clubId))
+                .orderBy(clubDtl.createDate.asc())
                 .fetch();
     }
 }

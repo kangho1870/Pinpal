@@ -120,8 +120,9 @@
 
 .gradeMember {
     display: flex;
+    width: 100%;
     justify-content: space-between;
-    font-size: 20px;
+    font-size: 17px;
     background-color: #fafafa;
     border-radius: 5px;
     margin-bottom: 5px;
@@ -129,9 +130,8 @@
 }
 
 .gradeMember h5 {
-    flex: 1;
+    display: flex;
     text-align: center;
-    min-width: 0;
 }
 
 .select {
