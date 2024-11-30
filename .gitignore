@@ -36,4 +36,4 @@ src/main/**/*.yml
 
 ### VS Code ###
 .vscode/
-.env
+!**/allcover_project/*.env
