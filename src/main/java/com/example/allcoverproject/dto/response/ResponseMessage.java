@@ -29,4 +29,11 @@ public interface ResponseMessage {
     String JWT_EXPIRED = "JWT expired.";
 
     String ROLE_UPDATE_FAIL_WITH_MASTER = "Master cannot be changed to Staff or Member.";
+
+    String NO_EXIST_CLUB = "No exist club.";
+
+    String EXIST_CLUB = "Exist club.";
+
+    String BAD_DATA = "Bad data.";
+
 }

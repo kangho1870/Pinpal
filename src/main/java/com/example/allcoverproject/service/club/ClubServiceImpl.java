@@ -72,7 +72,7 @@ public class ClubServiceImpl implements ClubService {
         if (member == null) return CodeMessageRespDto.noExistMemberData();
 
         if (member.getClubDtl() != null) {
-            return CodeMessageRespDto.noExistMemberData(); // 이미 클럽에 가입된 경우
+            return CodeMessageRespDto.existClub(); // 이미 클럽에 가입된 경우
         }
         try {
 
@@ -83,10 +83,8 @@ public class ClubServiceImpl implements ClubService {
             clubDtlRepository.save(clubDtl);
 
             member.setClubDtl(clubDtl);
-            System.out.println("member = " + member.getClubDtl().getRole());
             memberRepository.save(member);
-            Member member1 = memberRepository.findMemberByEmail("ho_gang@naver.com");
-            System.out.println("member1.getClubDtl().getRole() = " + member1.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
             return CodeMessageRespDto.databaseError();
@@ -98,17 +96,9 @@ public class ClubServiceImpl implements ClubService {
     @Override
     public ResponseEntity<? super GetClubMstRespDto> getClubData(Long clubId) {
         Optional<ClubMst> clubMstOpt = clubMstRepository.findById(clubId);
-        if(clubMstOpt.isEmpty()) return CodeMessageRespDto.noExistMemberData();
+        if(clubMstOpt.isEmpty()) return CodeMessageRespDto.noExistClub();
 
-        ClubMst clubMst = null;
-        try {
-
-            clubMst = clubMstOpt.get();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return CodeMessageRespDto.databaseError();
-        }
+        ClubMst clubMst = clubMstOpt.get();
 
         return GetClubMstRespDto.success(clubMst);
     }
@@ -148,9 +138,9 @@ public class ClubServiceImpl implements ClubService {
         Member member = memberRepository.findMemberById(memberId);
         if(member == null) return CodeMessageRespDto.noExistMemberData();
         ClubDtl byMemberId = clubDtlRepository.findByMemberId(memberId);
-        if(byMemberId != null) return CodeMessageRespDto.noExistMemberData();
+        if(byMemberId != null) return CodeMessageRespDto.existClub();
         Optional<ClubMst> clubMst = clubMstRepository.findById(clubId);
-        if(clubMst.isEmpty()) return CodeMessageRespDto.noExistMemberData();
+        if(clubMst.isEmpty()) return CodeMessageRespDto.noExistClub();
 
         try {
 
@@ -174,7 +164,7 @@ public class ClubServiceImpl implements ClubService {
         List<Object> ids = map.get("ids");
         List<Object> avg = map.get("avg");
         List<Object> grades = map.get("grades");
-        if(ids == null || avg == null) return CodeMessageRespDto.noExistMemberData();
+        if(ids == null || avg == null) return CodeMessageRespDto.badData();
 
         try {
 
@@ -199,13 +189,12 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ResponseEntity<CodeMessageRespDto> updateOfMemberRole(Map<String, Object> map) {
-        System.out.println("map = " + map);
         Long memberId = Long.valueOf(map.get("memberId").toString());
         ClubDtl byMemberId = clubDtlRepository.findByMemberId(memberId);
         if(byMemberId == null) return CodeMessageRespDto.noExistMemberId();
 
         if(byMemberId.getRole().equals("MASTER") && (map.get("role").toString().equals("STAFF") || map.get("role").toString().equals("MEMBER"))) {
-            return CodeMessageRespDto.noExistMemberId();
+            return CodeMessageRespDto.roleUpdateFailWithMaster();
         }
 
         try {
@@ -235,7 +224,7 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ResponseEntity<? super GetCeremonyRespDto> getCeremonyList(Long clubId, LocalDate startDate, LocalDate endDate, int gameType) {
-        if(clubId == null) return CodeMessageRespDto.noExistMemberId();
+        if(clubId == null) return CodeMessageRespDto.noExistClub();
         List<Game> games = gameRepository.findGamesByClubIdAndBetweenStartDateAndEndDate(clubId, startDate, endDate, gameType);
         List<Ceremony> ceremonies = new ArrayList<>();
         List<List<Scoreboard>> scoreboards = new ArrayList<>();

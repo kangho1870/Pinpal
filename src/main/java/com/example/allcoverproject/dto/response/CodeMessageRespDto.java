@@ -83,4 +83,19 @@ public class CodeMessageRespDto {
         CodeMessageRespDto responseBody = new CodeMessageRespDto(ResponseCode.ROLE_UPDATE_FAIL_WITH_MASTER, ResponseMessage.ROLE_UPDATE_FAIL_WITH_MASTER);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
     }
+
+    public static ResponseEntity<CodeMessageRespDto> existClub() {
+        CodeMessageRespDto responseBody = new CodeMessageRespDto(ResponseCode.EXIST_CLUB, ResponseMessage.EXIST_CLUB);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    }
+
+    public static ResponseEntity<CodeMessageRespDto> noExistClub() {
+        CodeMessageRespDto responseBody = new CodeMessageRespDto(ResponseCode.NO_EXIST_CLUB, ResponseMessage.NO_EXIST_CLUB);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    }
+
+    public static ResponseEntity<CodeMessageRespDto> badData() {
+        CodeMessageRespDto responseBody = new CodeMessageRespDto(ResponseCode.BAD_DATA, ResponseMessage.BAD_DATA);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    }
 }

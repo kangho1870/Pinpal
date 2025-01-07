@@ -54,7 +54,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public ResponseEntity<CodeMessageRespDto> addGame(AddGameReqDto addGameReqDto) {
         Optional<ClubMst> clubOpt = clubMstRepository.findById(addGameReqDto.getClubId());
-        if(clubOpt.isEmpty()) return CodeMessageRespDto.noFundGame();
+        if(clubOpt.isEmpty()) return CodeMessageRespDto.noExistClub();
 
         try {
             Game game = new Game(addGameReqDto);

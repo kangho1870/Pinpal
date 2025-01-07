@@ -16,4 +16,7 @@ public interface ResponseCode {
     String NO_FUND_CEREMONY = "NC";
     String JWT_EXPIRED = "JE";
     String ROLE_UPDATE_FAIL_WITH_MASTER = "RUF";
+    String NO_EXIST_CLUB = "NEC";
+    String EXIST_CLUB = "EC";
+    String BAD_DATA = "BD";
 }

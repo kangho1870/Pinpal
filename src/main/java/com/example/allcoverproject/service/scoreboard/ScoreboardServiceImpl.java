@@ -52,7 +52,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
         Game game = gameRepository.findGameById(gameId);
         if(game == null) return CodeMessageRespDto.noFundGame();
         ClubDtl clubDtl = clubDtlRepository.findByMemberId(memberId);
-        if(clubDtl == null) return CodeMessageRespDto.noExistMemberData();
+        if(clubDtl == null) return CodeMessageRespDto.noExistClub();
 
         Optional<Scoreboard> existingScoreboard = scoreboardRepository.findByGameIdAndMemberId(gameId, memberId);
 
@@ -130,7 +130,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
                 Integer grade = (Integer) member.get("grade");
 
                 Optional<Scoreboard> optionalScoreboard = scoreboardRepository.findByGameIdAndMemberId(gameId, memberId);
-                if(optionalScoreboard.isEmpty()) return CodeMessageRespDto.noExistMemberData();
+                if(optionalScoreboard.isEmpty()) return CodeMessageRespDto.noFundGame();
 
                 Scoreboard scoreboard = optionalScoreboard.get();
                 scoreboard.setGrade(grade);
@@ -166,7 +166,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
                 Integer teamNumber = (Integer) member.get("teamNumber");
 
                 Optional<Scoreboard> optionalScoreboard = scoreboardRepository.findByGameIdAndMemberId(gameId, memberId);
-                if(optionalScoreboard.isEmpty()) return CodeMessageRespDto.noExistMemberData();
+                if(optionalScoreboard.isEmpty()) return CodeMessageRespDto.noFundGame();
 
                 Scoreboard scoreboard = optionalScoreboard.get();
                 scoreboard.setTeam_number(teamNumber);
@@ -235,7 +235,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
         if(game == null) return CodeMessageRespDto.noFundGame();
 
         Optional<ClubMst> clubMst = clubMstRepository.findById(scoreboardStopGameReqDto.getClubId());
-        if(clubMst.isEmpty()) return CodeMessageRespDto.noFundGame();
+        if(clubMst.isEmpty()) return CodeMessageRespDto.noExistClub();
 
         try {
             List<Scoreboard> allMembers = scoreboardRepository.findAllMembers(scoreboardStopGameReqDto.getGameId());
