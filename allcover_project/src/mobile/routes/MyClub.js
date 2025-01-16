@@ -402,7 +402,7 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
                                         <div className={styles.memberProfileContainer}>
                                             {game.members.map((member, i) => (
                                                 <div className={styles.memberBox}>
-                                                    <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
+                                                    <img className={styles.memberProfileImg} src={signInUser.memberProfile} key={i}></img>
                                                     {member.memberRole == "MASTER" && 
                                                         <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
                                                     }
@@ -458,7 +458,7 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
                                         <div className={styles.memberProfileContainer}>
                                             {game.members.map((member, i) => (
                                                 <div className={styles.memberBox}>
-                                                    <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
+                                                    <img className={styles.memberProfileImg} src={signInUser.memberProfile} key={i}></img>
                                                     {member.memberRole == "MASTER" && 
                                                         <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
                                                     }
@@ -1435,7 +1435,7 @@ function ClubRanking({ setLoading }) {
                                     <td className={styles.rankScoreTd}>{(i + 1)}</td>
                                     <td className={styles.rankScoreTd}>
                                         <div className={styles.settingMemberProfileBox}>
-                                            <img className={styles.memberProfileImg} src={member.memberProfile}></img>
+                                            <img className={styles.memberProfileImg} src={signInUser.memberProfile}></img>
                                             <p>{member.memberName}</p>
                                         </div>
                                     </td>

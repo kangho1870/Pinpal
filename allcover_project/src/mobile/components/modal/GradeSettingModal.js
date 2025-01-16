@@ -17,12 +17,15 @@ function GradeSettingModal({ getScoreboard }) {
     const [selectGrade, setSelectGrade] = useState(1);
     const [gradeBtns, setGradeBtns] = useState([1, 2, 3, 4, 5, 6]);
     const [updatedMembers, setUpdatedMembers] = useState([]);
+    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
+
 
     useEffect(() => {
         if (members && members.length > 0) {
             setUpdatedMembers(members);
         }
     }, [members]);
+
     const clickGradeBtn = (i) => {
         setSelectGrade(i);
     }
@@ -44,25 +47,40 @@ function GradeSettingModal({ getScoreboard }) {
         );
     }
 
-    const gradeSettingResponse = (resposenBody) => {
-        const message = 
-            !resposenBody ? '서버에 문제가 있습니다.' :
-            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
-            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
-            resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
+    // const gradeSettingResponse = (resposenBody) => {
+    //     const message = 
+    //         !resposenBody ? '서버에 문제가 있습니다.' :
+    //         resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+    //         resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
+    //         resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
 
-        const isSuccessed = resposenBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
+    //     const isSuccessed = resposenBody.code === 'SU';
+    //     if (!isSuccessed) {
+    //         alert(message);
+    //         return;
+    //     }
+    //     getScoreboard();
+    //     toggleGradeModal();
+    // }
+
+    const changeGradeSocket = () => {
+        const updatedGrade = updatedMembers.map(member => ({
+            memberId: member.memberId,
+            grade: member.grade,
+        }));
+        const updateGrade = {
+            action: "updateGrade",
+            members: updatedGrade,
+            gameId: gameId
         }
-        getScoreboard();
+        
+        socket.send(JSON.stringify(updateGrade));
         toggleGradeModal();
-    }
+    };
 
-    const changeGrade = () => {
-        gradeSettingRequest(gameId, updatedMembers, token).then(gradeSettingResponse)
-    }
+    // const changeGrade = () => {
+    //     gradeSettingRequest(gameId, updatedMembers, token).then(gradeSettingResponse)
+    // }
 
     return (
         <>
@@ -134,7 +152,7 @@ function GradeSettingModal({ getScoreboard }) {
                     </div>
                     <div className={styles.btnBox}>
                         <button className={styles.settingBtn} onClick={toggleGradeModal}>취소</button>
-                        <button className={styles.settingBtn} onClick={changeGrade}>
+                        <button className={styles.settingBtn} onClick={changeGradeSocket}>
                             저장
                         </button>
                     </div>

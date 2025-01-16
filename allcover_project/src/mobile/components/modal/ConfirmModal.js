@@ -23,40 +23,57 @@ export default function ConfirmModal({ getScoreboard }) {
     const [confirmResult, setConfirmResult] = useState(false);
     const [failCount, setFailCount] = useState(0);
     const [validCode, setValidCode] = useState(false);
+    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
+
 
     const codeChangeHandler = (e) => {
         setCode(e.target.value);
     }
 
-    const confirmResultClickHandler = () => {
-        setConfirmResult(!confirmResult);
-    }
+    // const confirmResultClickHandler = () => {
+    //     setConfirmResult(!confirmResult);
+    // }
 
-    const confirmCheckResponse = (resposenBody) => {
-        const message = 
-            !resposenBody ? '서버에 문제가 있습니다.' :
-            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
-            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
-            resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
-
-        const isSuccessed = resposenBody.code === 'SU';
-        if (!isSuccessed) {
-            setValidCode(!validCode);
-            alert(message);
-            return;
-        }
-        alert("참석이 확정되었습니다.")
-        getScoreboard();
-        confirmResultClickHandler();
-    }
-
-    const confirmBtnClickHandler = () => {
+    const confirmCheckSocket = () => {
         if(code == "") {
             setFailCount(failCount + 1);
             return;
         }
-        confirmCheckRequest(gameId, memberId, code, token).then(confirmCheckResponse);
-    }
+        const confirmCheck = {
+            action: "updateConfirm",
+            code: code,
+            gameId: gameId,
+            memberId: memberId
+        }
+        
+        socket.send(JSON.stringify(confirmCheck));
+    };
+
+    // const confirmCheckResponse = (resposenBody) => {
+    //     const message = 
+    //         !resposenBody ? '서버에 문제가 있습니다.' :
+    //         resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+    //         resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
+    //         resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
+
+    //     const isSuccessed = resposenBody.code === 'SU';
+    //     if (!isSuccessed) {
+    //         setValidCode(!validCode);
+    //         alert(message);
+    //         return;
+    //     }
+    //     alert("참석이 확정되었습니다.")
+    //     getScoreboard();
+    //     confirmResultClickHandler();
+    // }
+
+    // const confirmBtnClickHandler = () => {
+    //     if(code == "") {
+    //         setFailCount(failCount + 1);
+    //         return;
+    //     }
+    //     confirmCheckRequest(gameId, memberId, code, token).then(confirmCheckResponse);
+    // }
 
     const findCurrentUser = () => {
         const user = members.find(member => member.memberId == memberId);
@@ -89,7 +106,7 @@ export default function ConfirmModal({ getScoreboard }) {
                         </div>
                         <div className={styles.btnBox}>
                             <button className={styles.btn} onClick={toggleConfirmModal}>취소</button>
-                            <button className={styles.btn} onClick={confirmBtnClickHandler}>확인</button>
+                            <button className={styles.btn} onClick={confirmCheckSocket}>확인</button>
                         </div>
                     </div>
                 }

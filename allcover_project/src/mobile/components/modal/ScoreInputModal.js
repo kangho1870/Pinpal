@@ -15,6 +15,7 @@ export default function ScoreInputModal({ getScoreboard }) {
     const gameId = searchParams.get('gameId');
     const { members, toggleScoreInputModal } = useScoreboard();
     const { signInUser } = useSignInStore();
+    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
     
     const memberId = signInUser?.id || null;
 
@@ -32,34 +33,65 @@ export default function ScoreInputModal({ getScoreboard }) {
         game4Score : game4Score
     }
 
+ 
+    const sendScoreUpdate = () => {
+        const scoreUpdateMessage = {
+            action: "updateScore",
+            score: {
+                memberId: memberId,
+                game1Score: game1Score,
+                game2Score: game2Score,
+                game3Score: game3Score,
+                game4Score: game4Score,
+                gameId: gameId
+            }
+        };
+        socket.send(JSON.stringify(scoreUpdateMessage));
+        toggleScoreInputModal();
+
+        // socket.onmessage = function(event) {
+
+        //     // JSON 형식으로 변환이 필요하다면
+        //     const parsedData = JSON.parse(event.data);
+        //     console.log("Parsed data: ", parsedData);
+
+        //     // for (let memberId in parsedData) {
+        //     //     console.log(`Member ID: ${memberId}`);
+        //     //     const memberData = parsedData[memberId];
+        //     //     console.log(memberData);
+        //     // }
+        //     toggleScoreInputModal();
+        // };
+    };
+
     const handleScoreChange = (e, setScore) => {
         const { value } = e.target;
         setScore(value);
     };
 
-    const saveScoreResponse = (resposenBody) => {
-        const message = 
-            !resposenBody ? '서버에 문제가 있습니다.' :
-            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
-            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
-            resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
+    // const saveScoreResponse = (resposenBody) => {
+    //     const message = 
+    //         !resposenBody ? '서버에 문제가 있습니다.' :
+    //         resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+    //         resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
+    //         resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
 
-        const isSuccessed = resposenBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
-        }
-        getScoreboard();
-        toggleScoreInputModal();
-    }
+    //     const isSuccessed = resposenBody.code === 'SU';
+    //     if (!isSuccessed) {
+    //         alert(message);
+    //         return;
+    //     }
+    //     getScoreboard();
+    //     toggleScoreInputModal();
+    // }
 
-    const saveScoreRequest = () => {
-        if(members.some((member) => member.memberId === memberId)) {
-            scoreInputRequest(gameId, memberId, scores, token).then(saveScoreResponse);
-        } else {
-            alert("게임에 참석하지 않았습니다.")
-        }
-    }
+    // const saveScoreRequest = () => {
+    //     if(members.some((member) => member.memberId === memberId)) {
+    //         scoreInputRequest(gameId, memberId, scores, token).then(saveScoreResponse);
+    //     } else {
+    //         alert("게임에 참석하지 않았습니다.")
+    //     }
+    // }
 
     return (
         <div className={styles.modalContainer}>
@@ -110,7 +142,7 @@ export default function ScoreInputModal({ getScoreboard }) {
                 </div>
                 <div className={styles.btnBox}>
                     <button className={styles.btns} onClick={toggleScoreInputModal}>취소</button>
-                    <button className={styles.btns} onClick={saveScoreRequest}>확인</button>
+                    <button className={styles.btns} onClick={sendScoreUpdate}>확인</button>
                 </div>
             </div>
         </div>

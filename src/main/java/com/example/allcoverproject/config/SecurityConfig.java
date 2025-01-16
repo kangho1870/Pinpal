@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequest) ->
                         authorizeRequest
                                 // 메인, 로그인 화면은 모든 접근 허용 -> permitAll()
-                                .requestMatchers("/api/v1/auth/**", "/oauth2/callback/*","/").permitAll()
+                                .requestMatchers("/api/v1/auth/**", "/oauth2/callback/*","/", "/scoreboard/**").permitAll()
                                 // 나머지 요청은 모두 인증을 거쳐야 함
                                 .anyRequest().authenticated()
                 )

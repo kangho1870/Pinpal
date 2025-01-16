@@ -25,6 +25,7 @@ function WaitingRoom({ getScoreboard }) {
     const memberId = signInUser?.id || null;
     const gameId = searchParams.get("gameId");
     const roles = signInUser?.clubRole ? signInUser.clubRole : null;
+    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
 
     
 
@@ -42,6 +43,17 @@ function WaitingRoom({ getScoreboard }) {
     useEffect(() => {
         findCurrentUser();
     }, [members]);
+
+    const joinSideSocket = (i) => {
+        const updateSide = {
+            action: "updateSide",
+            gameId: gameId,
+            memberId: memberId,
+            sideType: sideJoinBtns[i]
+        }
+        
+        socket.send(JSON.stringify(updateSide));
+    };
 
     const sideJoinResponse = (resposenBody) => {
         const message = 
@@ -132,7 +144,7 @@ function WaitingRoom({ getScoreboard }) {
                                             <h4>{v == "grade1" ? "1군 사이드" : "에버 사이드"}</h4>
                                         </div>
                                         <button className={`${styles.sideJoinBtn} ${v === "grade1" && sideGrade1 ? styles.sideJoinedBtn : ""} ${v === "avg" && sideAvg ? styles.sideJoinedBtn : ""}`}
-                                            onClick={() => sideJoinBtnsClick(i)}>
+                                            onClick={() => joinSideSocket(i)}>
                                             <h4>
                                                 {
                                                     v === "grade1" ? (!sideGrade1 ? "참가" : "취소")
@@ -192,10 +204,10 @@ function WaitingRoom({ getScoreboard }) {
                                             <div className={styles.memberBox}>
                                             <div className={styles.profileContainer}>
                                                 <img className={styles.memberProfile} src={member.memberProfile} />
-                                                {member.memberRole === "MASTER" && 
+                                                {roles === "MASTER" && 
                                                     <img className={styles.staffImg} src={require("../../imges/club/master.png")} />
                                                 }
-                                                {member.memberRole === "STAFF" && 
+                                                {roles === "STAFF" && 
                                                     <img className={styles.staffImg} src={require("../../imges/club/staff.png")} />
                                                 }
                                             </div>
