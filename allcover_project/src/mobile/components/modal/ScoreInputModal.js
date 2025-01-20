@@ -15,7 +15,7 @@ export default function ScoreInputModal({ getScoreboard }) {
     const gameId = searchParams.get('gameId');
     const { members, toggleScoreInputModal } = useScoreboard();
     const { signInUser } = useSignInStore();
-    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
+    const socket = new WebSocket(`ws://52.78.178.156:8000/scoreboard/${gameId}`);
     
     const memberId = signInUser?.id || null;
 

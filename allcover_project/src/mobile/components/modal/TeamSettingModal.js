@@ -17,7 +17,7 @@ function TeamSettingModal({ getScoreboard }) {
     const [teamBtns, setTeamBtns] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
     const [updatedMembers, setUpdatedMembers] = useState([]);
     const [teamSetModal, setTeamSetModal] = useState(false);
-    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
+    const socket = new WebSocket(`ws://52.78.178.156:8000/scoreboard/${gameId}`);
 
     useEffect(() => {
         if (members && members.length > 0) {

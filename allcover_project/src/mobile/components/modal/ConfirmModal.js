@@ -23,7 +23,7 @@ export default function ConfirmModal({ getScoreboard }) {
     const [confirmResult, setConfirmResult] = useState(false);
     const [failCount, setFailCount] = useState(0);
     const [validCode, setValidCode] = useState(false);
-    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
+    const socket = new WebSocket(`ws://52.78.178.156:8000/scoreboard/${gameId}`);
 
 
     const codeChangeHandler = (e) => {
