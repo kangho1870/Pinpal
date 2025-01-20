@@ -41,8 +41,9 @@ function WaitingRoom({ getScoreboard }) {
     };
 
     useEffect(() => {
+        console.log("1")
         findCurrentUser();
-    }, [members]);
+    }, [signInUser]);
 
     const joinSideSocket = (i) => {
         const updateSide = {
@@ -55,27 +56,27 @@ function WaitingRoom({ getScoreboard }) {
         socket.send(JSON.stringify(updateSide));
     };
 
-    const sideJoinResponse = (resposenBody) => {
-        const message = 
-            !resposenBody ? '서버에 문제가 있습니다.' :
-            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
-            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+    // const sideJoinResponse = (resposenBody) => {
+    //     const message = 
+    //         !resposenBody ? '서버에 문제가 있습니다.' :
+    //         resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+    //         resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
 
-        const isSuccessed = resposenBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
-        }
-        getScoreboard();
-    };
+    //     const isSuccessed = resposenBody.code === 'SU';
+    //     if (!isSuccessed) {
+    //         alert(message);
+    //         return;
+    //     }
+    //     getScoreboard();
+    // };
 
-    const sideJoinBtnsClick = (i) => {
-        if(members.some((member) => member.memberId === memberId)) {
-            sideJoinRequest(gameId, memberId, sideJoinBtns[i], token).then(sideJoinResponse);
-        } else {
-            alert("게임에 참석하지 않았습니다.")
-        }
-    };
+    // const sideJoinBtnsClick = (i) => {
+    //     if(members.some((member) => member.memberId === memberId)) {
+    //         sideJoinRequest(gameId, memberId, sideJoinBtns[i], token).then(sideJoinResponse);
+    //     } else {
+    //         alert("게임에 참석하지 않았습니다.")
+    //     }
+    // };
 
     const scoreCountingStopResponse = (resposenBody) => {
         const message = 

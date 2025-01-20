@@ -24,7 +24,7 @@ function GradeSettingModal({ getScoreboard }) {
         if (members && members.length > 0) {
             setUpdatedMembers(members);
         }
-    }, [members]);
+    }, []);
 
     const clickGradeBtn = (i) => {
         setSelectGrade(i);

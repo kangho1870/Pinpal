@@ -63,21 +63,21 @@ function Scoreboard() {
     };
 
 
-    const getScoreboardResponse = (resposenBody) => {
-        const message = 
-            !resposenBody ? '서버에 문제가 있습니다.' :
-            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
-            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+    // const getScoreboardResponse = (resposenBody) => {
+    //     const message = 
+    //         !resposenBody ? '서버에 문제가 있습니다.' :
+    //         resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+    //         resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
 
-        const isSuccessed = resposenBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
-        }
+    //     const isSuccessed = resposenBody.code === 'SU';
+    //     if (!isSuccessed) {
+    //         alert(message);
+    //         return;
+    //     }
 
-        const { members } = resposenBody;
-        setMembers(members)
-    };
+    //     const { members } = resposenBody;
+    //     setMembers(members)
+    // };
 
     const getScoreboard = () => {
         const accessToken = cookies[ACCESS_TOKEN];
