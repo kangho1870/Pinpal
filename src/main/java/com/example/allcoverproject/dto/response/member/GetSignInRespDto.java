@@ -16,6 +16,7 @@ public class GetSignInRespDto extends CodeMessageRespDto {
     private Long id;
     private Long clubId;
     private String clubRole;
+    private String memberProfile;
 
     public GetSignInRespDto(Member member) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
@@ -23,6 +24,7 @@ public class GetSignInRespDto extends CodeMessageRespDto {
         this.id = member.getId();
         this.clubRole = member.getClubDtl() == null ? null : member.getClubDtl().getRole();
         this.clubId = member.getClubDtl() == null ? null : member.getClubDtl().getId();
+        this.memberProfile = member.getProfile();
     }
 
     public static ResponseEntity<GetSignInRespDto> success(Member member) {

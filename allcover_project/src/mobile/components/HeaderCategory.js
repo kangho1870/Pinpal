@@ -11,7 +11,7 @@ function HeaderCategory() {
                     <img src={require("../../imges/headerCategory-img/logo.png")} className={styles.logoBtn}></img>
                 </div>
                 <div>
-                    Bowling
+                    PinPal
                 </div>
                 <div className={styles.categoryBox}>
                     <img src={require("../../imges/headerCategory-img/scoreboard.png")} className={styles.categoryBtn}></img>

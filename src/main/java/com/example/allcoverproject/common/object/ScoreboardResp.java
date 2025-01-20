@@ -46,7 +46,6 @@ public class ScoreboardResp {
         this.scoreCounting = scoreboard.getGame().getScoreCounting();
         this.gender = scoreboard.getMember().getGender();
         this.memberProfile = scoreboard.getMember().getProfile();
-        this.memberRole = scoreboard.getMember().getClubDtl().getRole();
     }
 
     public static List<ScoreboardResp> getScoreboardList(List<Scoreboard> scoreboards) {

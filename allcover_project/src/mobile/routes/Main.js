@@ -22,7 +22,7 @@ function Main() {
     const [snsBtn, setSnsBtn] = useState(["kakao", "guest"])
 
     const authBtnClickHandler = (sns) => {
-        window.location.href = `http://52.78.178.156:8000/ap1/v1/auth/sns-sign-in/${sns}`
+        window.location.href = `http://192.168.35.151:8000/ap1/v1/auth/sns-sign-in/${sns}`
     };
 
     return (
@@ -35,7 +35,7 @@ function Main() {
                             진짜 볼링의 세계로,
                         </h3>
                         <h4>
-                            볼링AtoZ
+                            PinPal
                         </h4>
                     </div>
                 </header>
