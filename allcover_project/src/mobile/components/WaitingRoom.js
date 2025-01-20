@@ -25,7 +25,7 @@ function WaitingRoom({ getScoreboard }) {
     const memberId = signInUser?.id || null;
     const gameId = searchParams.get("gameId");
     const roles = signInUser?.clubRole ? signInUser.clubRole : null;
-    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
+    const socket = new WebSocket(`ws://52.78.178.156:8000/scoreboard/${gameId}`);
 
     
 

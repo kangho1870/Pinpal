@@ -17,7 +17,7 @@ function GradeSettingModal({ getScoreboard }) {
     const [selectGrade, setSelectGrade] = useState(1);
     const [gradeBtns, setGradeBtns] = useState([1, 2, 3, 4, 5, 6]);
     const [updatedMembers, setUpdatedMembers] = useState([]);
-    const socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
+    const socket = new WebSocket(`ws://52.78.178.156:8000/scoreboard/${gameId}`);
 
 
     useEffect(() => {

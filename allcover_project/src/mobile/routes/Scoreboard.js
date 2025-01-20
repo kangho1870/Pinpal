@@ -37,7 +37,7 @@ function Scoreboard() {
 
     const connectWebSocket = () => {
         if (!socket || socket.readyState === WebSocket.CLOSED) {
-            socket = new WebSocket(`ws://192.168.35.151:8000/scoreboard/${gameId}`);
+            socket = new WebSocket(`ws://52.78.178.156:8000/scoreboard/${gameId}`);
             
             socket.onopen = () => {
                 console.log("WebSocket connected");
