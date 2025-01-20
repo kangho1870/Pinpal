@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private static final ConcurrentHashMap<String, Set<WebSocketSession>> CLIENTS = new ConcurrentHashMap<String, Set<WebSocketSession>>();
@@ -139,28 +141,29 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         Long scoreboardId = Long.parseLong((String) session.getAttributes().get("scoreboardId"));
 
-        List<Scoreboard> allMembers = scoreboardRepository.findAllMembers(scoreboardId);
+        List<ScoreboardDto> allMembers = scoreboardRepository.findAllScoreboardsByGameId(scoreboardId);
         if (allMembers == null) return ResponseMessage.NO_FOUND_GAME;
-        for (Scoreboard scoreboard : allMembers) {
+        for (ScoreboardDto scoreboard : allMembers) {
             Map<String, Object> memberData = new HashMap<>();
-            memberData.put("game1", scoreboard.getGame_1());
-            memberData.put("game2", scoreboard.getGame_2());
-            memberData.put("game3", scoreboard.getGame_3());
-            memberData.put("game4", scoreboard.getGame_4());
+            memberData.put("game1", scoreboard.getGame1());
+            memberData.put("game2", scoreboard.getGame2());
+            memberData.put("game3", scoreboard.getGame3());
+            memberData.put("game4", scoreboard.getGame4());
             memberData.put("confirmedJoin", scoreboard.getConfirmedJoin());
             memberData.put("grade", scoreboard.getGrade());
-            memberData.put("sideAvg", scoreboard.getSide_avg());
-            memberData.put("sideGrade1", scoreboard.getSide_grade1());
-            memberData.put("teamNumber", scoreboard.getTeam_number());
-            memberData.put("memberId", scoreboard.getMember().getId());
-            memberData.put("gameName", scoreboard.getGame().getName());
-            memberData.put("memberName", scoreboard.getMember().getName());
-            memberData.put("memberRole", scoreboard.getMember().getClubDtl().getRole());
-            memberData.put("memberProfile", scoreboard.getMember().getProfile());
-            memberData.put("memberAvg", scoreboard.getMember_avg());
+            memberData.put("sideAvg", scoreboard.getSideAvg());
+            memberData.put("sideGrade1", scoreboard.getSideGrade1());
+            memberData.put("teamNumber", scoreboard.getTeamNumber());
+            memberData.put("memberId", scoreboard.getMemberId());
+            memberData.put("gameName", scoreboard.getGameName());
+            memberData.put("memberName", scoreboard.getMemberName());
+            memberData.put("memberRole", scoreboard.getMemberRole());
+            memberData.put("memberProfile", scoreboard.getMemberProfile());
+            memberData.put("memberAvg", scoreboard.getMemberAvg());
 
             data.add(memberData);
         }
+
         ObjectMapper mapper = new ObjectMapper();
 //        mapper.registerModule(new Hibernate5Module());
         String jsonData = mapper.writeValueAsString(data);
