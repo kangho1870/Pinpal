@@ -17,6 +17,7 @@ function TeamSettingModal({ getScoreboard }) {
     const [teamBtns, setTeamBtns] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
     const [updatedMembers, setUpdatedMembers] = useState([]);
     const [teamSetModal, setTeamSetModal] = useState(false);
+    const socket = new WebSocket(`ws://52.78.178.156:8000/scoreboard/${gameId}`);
 
     useEffect(() => {
         if (members && members.length > 0) {
@@ -80,56 +81,84 @@ function TeamSettingModal({ getScoreboard }) {
             newMembers.push(...assignTeams(gradeGroups[grade], totalTeamCount));
         });
     
-        setUpdatedMembers(newMembers); // 상태 업데이트
-        console.log(newMembers); // 변경된 멤버 로그 확인
-        saveRandomChanges(newMembers); // 저장 시 변경된 멤버 목록을 전달
+        setUpdatedMembers(newMembers);
+        changeRandomTeamSocket(newMembers); 
     };
     
     const teamRandomSetModalToggle = () => {
         setTeamSetModal(!teamSetModal);
     };
 
-    const teamSettingResponse = (resposenBody) => {
-        const message = 
-            !resposenBody ? '서버에 문제가 있습니다.' :
-            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
-            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
-            resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
+    // const teamSettingResponse = (resposenBody) => {
+    //     const message = 
+    //         !resposenBody ? '서버에 문제가 있습니다.' :
+    //         resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+    //         resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
+    //         resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
 
-        const isSuccessed = resposenBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
+    //     const isSuccessed = resposenBody.code === 'SU';
+    //     if (!isSuccessed) {
+    //         alert(message);
+    //         return;
+    //     }
+    //     getScoreboard();
+    //     toggleTeamModal();
+    // }
+
+    const changeTeamSocket = () => {
+        const updatedTeamNumber = updatedMembers.map(member => ({
+            memberId: member.memberId,
+            teamNumber: member.teamNumber,
+        }));
+        const updateTeam = {
+            action: "updateTeamNumber",
+            members: updatedTeamNumber,
+            gameId: gameId
         }
-        getScoreboard();
+        
+        socket.send(JSON.stringify(updateTeam));
         toggleTeamModal();
-    }
-
-    const teamRandomSettingResponse = (resposenBody) => {
-        const message = 
-            !resposenBody ? '서버에 문제가 있습니다.' :
-            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
-            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
-            resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
-
-        const isSuccessed = resposenBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
-        }
-        getScoreboard();
-        teamRandomSetModalToggle();
-        toggleTeamModal();
-    }
-
-    const saveTeamChanges = () => {
-        teamSettingRequest(gameId, updatedMembers, token).then(teamSettingResponse);
     };
 
-    const saveRandomChanges = (newMembers) => {
-        const updatedMembers = newMembers;
-        teamRandomSettingRequest(gameId, updatedMembers, token).then(teamRandomSettingResponse)
+    const changeRandomTeamSocket = (newMembers) => {
+        const updatedTeamNumber = newMembers.map(member => ({
+            memberId: member.memberId,
+            teamNumber: member.teamNumber,
+        }));
+        const updateTeam = {
+            action: "updateTeamNumber",
+            members: updatedTeamNumber,
+            gameId: gameId
+        }
+        socket.send(JSON.stringify(updateTeam));
+        toggleTeamModal();
     };
+
+    // const teamRandomSettingResponse = (resposenBody) => {
+    //     const message = 
+    //         !resposenBody ? '서버에 문제가 있습니다.' :
+    //         resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+    //         resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : 
+    //         resposenBody.code === 'ND' ? '잘못된 접근입니다.' :'';
+
+    //     const isSuccessed = resposenBody.code === 'SU';
+    //     if (!isSuccessed) {
+    //         alert(message);
+    //         return;
+    //     }
+    //     getScoreboard();
+    //     teamRandomSetModalToggle();
+    //     toggleTeamModal();
+    // }
+
+    // const saveTeamChanges = () => {
+    //     teamSettingRequest(gameId, updatedMembers, token).then(teamSettingResponse);
+    // };
+
+    // const saveRandomChanges = (newMembers) => {
+    //     const updatedMembers = newMembers;
+    //     teamRandomSettingRequest(gameId, updatedMembers, token).then(teamRandomSettingResponse)
+    // };
 
     return (
         <>
@@ -199,7 +228,7 @@ function TeamSettingModal({ getScoreboard }) {
                     </div>
                     <div className={styles.btnBox}>
                         <button className={styles.settingBtn} onClick={toggleTeamModal}>취소</button>
-                        <button className={styles.settingBtn} onClick={saveTeamChanges}>저장</button>
+                        <button className={styles.settingBtn} onClick={changeTeamSocket}>저장</button>
                     </div>
                 </div>
             </div>

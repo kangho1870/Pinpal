@@ -51,6 +51,7 @@ public class ScoreboardResp {
 //        this.memberRole = scoreboard.getMember().getClubDtl().getRole();
 //    }
 
+
     public ScoreboardResp(Long memberId, Long gameId, String memberName, String gameName, Integer memberAvg, Integer grade, Integer game1, Integer game2, Integer game3, Integer game4, Boolean sideGrade1, Boolean sideAvg, Boolean confirmedJoin, Integer teamNumber, Boolean scoreCounting, String memberProfile, String memberRole, int gender) {
         this.memberId = memberId;
         this.gameId = gameId;

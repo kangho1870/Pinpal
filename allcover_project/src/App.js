@@ -88,8 +88,8 @@ function App() {
         return;
     }
 
-    const { memberId, id, clubId, clubRole } = responseBody;
-    login({ memberId, id, clubId, clubRole });
+    const { memberId, id, clubId, clubRole, memberProfile } = responseBody;
+    login({ memberId, id, clubId, clubRole, memberProfile });
   };
 
   useEffect(() => {

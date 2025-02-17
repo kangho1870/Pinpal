@@ -112,31 +112,6 @@ function MyClub() {
         getClubInfoRequest(clubId, token).then(getClubInfoResponse);
     }
 
-    const getSignInResponse = (responseBody) => {
-        const message = 
-            !responseBody ? '로그인 유저 정보를 불러오는데 문제가 발생했습니다.' :
-            responseBody.code === 'NI' ? '로그인 유저 정보가 존재하지 않습니다.' :
-            responseBody.code === 'AF' ? '잘못된 접근입니다.' : 
-            responseBody.code === 'DBE' ? '로그인 유저 정보를 불러오는데 문제가 발생했습니다.' : '';
-    
-        const isSuccessed = responseBody !== null && responseBody.code === 'SU';
-    
-        if (!isSuccessed) {
-            alert(message);
-            removeCookie(ACCESS_TOKEN, { path: ROOT_PATH });
-            login(null);
-            navigator(ROOT_PATH);
-            return;
-        }
-    
-        const { memberId, id, clubId, clubRole } = responseBody;
-        login({ memberId, id, clubId, clubRole });
-    };
-
-    const getSignIn = () => {
-        getSignInRequest(token).then(getSignInResponse);
-    }
-
     const memberJoinClubResponse = (responseBody) => {
 
         const message = 
@@ -155,7 +130,6 @@ function MyClub() {
         
         alert(message);
         getMembersRequest();
-        getSignIn();
         pageLoad();
         setLoading(false);
     }
@@ -183,7 +157,7 @@ function MyClub() {
         if(cookies[ACCESS_TOKEN] && clubId) {
             pageLoad();
         }
-    },[clubId])
+    },[signInUser])
 
     return (
         <>
@@ -215,7 +189,7 @@ function MyClub() {
                         <ClubRanking setLoading={setLoading}></ClubRanking>
                     }
                     {page == 4 &&
-                        <ClubSetting setLoading={setLoading} pageLoad={pageLoad} getSignIn={getSignIn}></ClubSetting>
+                        <ClubSetting setLoading={setLoading} pageLoad={pageLoad}></ClubSetting>
                     }
                 </div>
             </div>
@@ -402,7 +376,7 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
                                         <div className={styles.memberProfileContainer}>
                                             {game.members.map((member, i) => (
                                                 <div className={styles.memberBox}>
-                                                    <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
+                                                    <img className={styles.memberProfileImg} src={signInUser.memberProfile} key={i}></img>
                                                     {member.memberRole == "MASTER" && 
                                                         <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
                                                     }
@@ -458,7 +432,7 @@ function ClubHome({ clubInfo, setLoading, pageLoad }) {
                                         <div className={styles.memberProfileContainer}>
                                             {game.members.map((member, i) => (
                                                 <div className={styles.memberBox}>
-                                                    <img className={styles.memberProfileImg} src={member.memberProfile} key={i}></img>
+                                                    <img className={styles.memberProfileImg} src={signInUser.memberProfile} key={i}></img>
                                                     {member.memberRole == "MASTER" && 
                                                         <img className={styles.staffImg} src={require("../../imges/club/master.png")}></img>
                                                     }
@@ -874,7 +848,7 @@ function ClubCeremony({ setLoading }) {
     )
 };
 
-function ClubSetting({ pageLoad, getSignIn }) {
+function ClubSetting({ pageLoad }) {
     const { members } = useClubStore();
     const { signInUser } = useSignInStore();
     const [cookies] = useCookies();
@@ -903,7 +877,6 @@ function ClubSetting({ pageLoad, getSignIn }) {
         }
         
         alert(message);
-        getSignIn();
         pageLoad();
     }
 
@@ -1447,7 +1420,7 @@ function ClubRanking({ setLoading }) {
                                     <td className={styles.rankScoreTd}>{(i + 1)}</td>
                                     <td className={styles.rankScoreTd}>
                                         <div className={styles.settingMemberProfileBox}>
-                                            <img className={styles.memberProfileImg} src={member.memberProfile}></img>
+                                            <img className={styles.memberProfileImg} src={signInUser.memberProfile}></img>
                                             <p>{member.memberName}</p>
                                         </div>
                                     </td>

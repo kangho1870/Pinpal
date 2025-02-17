@@ -22,6 +22,7 @@ import { onClickBackBtn } from "../../hooks";
 function Scoreboard() {
     const { signInUser } = useSignInStore();
     const [cookies] = useCookies();
+    let socket;
 
     const { 
         members, gradeModal, teamModal, confirmModal, sideJoinUserModal,
@@ -34,26 +35,54 @@ function Scoreboard() {
     const gameId = searchParams.get('gameId');
     const clubId = signInUser?.clubId || null;
 
-    const getScoreboardResponse = (resposenBody) => {
-        const message = 
-            !resposenBody ? '서버에 문제가 있습니다.' :
-            resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
-            resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+    const connectWebSocket = () => {
+        if (!socket || socket.readyState === WebSocket.CLOSED) {
+            socket = new WebSocket(`ws://52.78.178.156:8000/scoreboard/${gameId}`);
+            
+            socket.onopen = () => {
+                console.log("WebSocket connected");
+            };
+    
+            socket.onclose = () => {
+                console.log("WebSocket connection closed");
+            };
+    
+            socket.onerror = (error) => {
+                console.log("WebSocket error: ", error);
+            };
 
-        const isSuccessed = resposenBody.code === 'SU';
-        if (!isSuccessed) {
-            alert(message);
-            return;
+            socket.onmessage = function(event) {
+
+                // JSON 형식으로 변환이 필요하다면
+                const parsedData = JSON.parse(event.data);
+                console.log("Parsed data: ", parsedData);
+                setMembers(parsedData);
+                
+            };
         }
-
-        const { members } = resposenBody;
-        setMembers(members)
     };
+
+
+    // const getScoreboardResponse = (resposenBody) => {
+    //     const message = 
+    //         !resposenBody ? '서버에 문제가 있습니다.' :
+    //         resposenBody.code === 'AF' ? '잘못된 접근입니다.' :
+    //         resposenBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+    //     const isSuccessed = resposenBody.code === 'SU';
+    //     if (!isSuccessed) {
+    //         alert(message);
+    //         return;
+    //     }
+
+    //     const { members } = resposenBody;
+    //     setMembers(members)
+    // };
 
     const getScoreboard = () => {
         const accessToken = cookies[ACCESS_TOKEN];
         if(!accessToken) return;
-        getScoreboardMembers(gameId, clubId, accessToken).then(getScoreboardResponse);
+        // getScoreboardMembers(gameId, clubId, accessToken).then(getScoreboardResponse);
     }
 
     useEffect(() => {
@@ -61,7 +90,7 @@ function Scoreboard() {
             alert("로그인이 필요한 서비스입니다.")
             navigator(ROOT_PATH);
         }
-        getScoreboard();
+        connectWebSocket();
         return (
             setPage(0)
         )

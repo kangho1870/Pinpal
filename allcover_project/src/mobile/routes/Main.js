@@ -35,7 +35,7 @@ function Main() {
                             진짜 볼링의 세계로,
                         </h3>
                         <h4>
-                            볼링AtoZ
+                            PinPal
                         </h4>
                     </div>
                 </header>

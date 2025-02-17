@@ -55,4 +55,35 @@ public class ScoreboardCustomRepositoryImpl implements ScoreboardCustomRepositor
                 .fetch();
     }
 
+    @Override
+    public List<ScoreboardDto> findAllScoreboardsByGameId(Long gameId) {
+        QScoreboard scoreboard = QScoreboard.scoreboard;
+        QMember member = QMember.member;
+        QGame game = QGame.game;
+
+        return queryFactory
+                .select(new QScoreboardDto(
+                        scoreboard.member.id,                        // memberId
+                        scoreboard.member.name,                      // memberName
+                        scoreboard.member.clubDtl.role,              // memberRole
+                        scoreboard.member.profile,                   // memberProfile
+                        scoreboard.grade,                            // grade
+                        scoreboard.game_1,                           // game1
+                        scoreboard.game_2,                           // game2
+                        scoreboard.game_3,                           // game3
+                        scoreboard.game_4,                           // game4
+                        scoreboard.game.name,                        // gameName
+                        scoreboard.confirmedJoin,                    // confirmedJoin (추가 필드)
+                        scoreboard.side_avg,                          // sideAvg (추가 필드)
+                        scoreboard.side_grade1,                       // sideGrade1 (추가 필드)
+                        scoreboard.team_number,                       // teamNumber (추가 필드)
+                        scoreboard.member_avg                         // memberAvg (추가 필드)
+                ))
+                .from(scoreboard)
+                .leftJoin(scoreboard.member, member)
+                .leftJoin(scoreboard.game, game)
+                .where(scoreboard.game.id.eq(gameId))
+                .fetch();
+    }
+
 }
