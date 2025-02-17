@@ -23,7 +23,6 @@ public class ClubDtlResp {
     private String memberRole;
     private Integer memberAvg;
     private Integer memberGrade;
-    private String clubName;
     private LocalDateTime createTime;
 
     private ClubDtlResp(ClubDtl clubDtl) {
@@ -32,7 +31,6 @@ public class ClubDtlResp {
         this.memberProfile = clubDtl.getMember().getProfile();
         this.memberRole = clubDtl.getRole();
         this.memberAvg = clubDtl.getAvg();
-        this.clubName = clubDtl.getClubMst().getName();
         this.memberGrade = clubDtl.getGrade();
         this.createTime = clubDtl.getCreateDate();
     }

@@ -38,7 +38,7 @@ const bearerAuthorization = (accessToken) => ({ headers: { 'Authorization': `Bea
 
 const GAME_MODULE_URL = `${ROOT_API_DOMAIN}/api/v1/game`;
 
-const GET_GAMES_BY_CLUB_API_URL = (clubId) => `${GAME_MODULE_URL}?clubId=${clubId}`;
+const GET_GAMES_BY_CLUB_API_URL = (clubId) => `${GAME_MODULE_URL}/${clubId}`;
 
 
 
@@ -50,11 +50,11 @@ const GET_CLUB_LIST_API_URL = (page) => `${ROOT_API_DOMAIN}${HOME_PATH}?page=${p
 
 const GET_CLUB_INFO_API_URL = (clubId) => `${CLUB_MODULE_URL}/${clubId}`;
 
-const GET_MEMBERS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/home?clubId=${clubId}`;
+const GET_MEMBERS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/home/${clubId}`;
 
-const GET_RECENT_CEREMONYS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/recent-ceremony?clubId=${clubId}`;
+const GET_RECENT_CEREMONYS_BY_CLUB_API_URL = (clubId) => `${CLUB_MODULE_URL}/recent-ceremony/${clubId}`;
 
-const GET_CEREMONYS_BY_CLUB_API_URL = (clubId, data) => `${CLUB_MODULE_URL}/ceremony?clubId=${clubId}&startDate=${data.startDate}&endDate=${data.endDate}&gameType=${data.gameType}`;
+const GET_CEREMONYS_BY_CLUB_API_URL = (clubId, data) => `${CLUB_MODULE_URL}/ceremony/${clubId}?startDate=${data.startDate}&endDate=${data.endDate}&gameType=${data.gameType}`;
 
 const JOIN_CLUB_MEMBER_API_URL = (clubId, memberId) => `${CLUB_MODULE_URL}/joinClub?clubId=${clubId}&memberId=${memberId}`;
 
@@ -195,7 +195,6 @@ export const addGameRequest = async (game, accessToken) => {
 
 // club관련 함수
 export const getClubList = async (page, accessToken) => {
-    console.log(GET_CLUB_LIST_API_URL(page))
     const responseBody = await axios.get(`${GET_CLUB_LIST_API_URL(page)}`, bearerAuthorization(accessToken))
         .then(responseDataHandler)
         .catch(responseErrorHandler)

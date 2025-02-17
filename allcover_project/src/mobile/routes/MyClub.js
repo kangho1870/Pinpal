@@ -1247,7 +1247,7 @@ function ClubRanking({ setLoading }) {
     const [openMore, setOpenMore] = useState([]);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    const [startDay, setStartDay] = useState(""); // YYYY-MM-DD 형식으로 저장
+    const [startDay, setStartDay] = useState("");
     const [endDay, setEndDay] = useState("");
     const [cookies] = useCookies();
     const [gameType, setGameType] = useState(0);
@@ -1293,10 +1293,10 @@ function ClubRanking({ setLoading }) {
                     const memberId = scoreboard.memberId;
     
                     const gameScores = [scoreboard.game1, scoreboard.game2, scoreboard.game3, scoreboard.game4].filter(score => score !== null);
-                    const game1Scores = [scoreboard.game1].filter(score => score !== null);
-                    const game2Scores = [scoreboard.game2].filter(score => score !== null);
-                    const game3Scores = [scoreboard.game3].filter(score => score !== null);
-                    const game4Scores = [scoreboard.game4].filter(score => score !== null);
+                    const game1Scores = [scoreboard.game1].filter(score => score !== null || 0);
+                    const game2Scores = [scoreboard.game2].filter(score => score !== null || 0);
+                    const game3Scores = [scoreboard.game3].filter(score => score !== null || 0);
+                    const game4Scores = [scoreboard.game4].filter(score => score !== null || 0);
     
         
                     // 평균 계산
@@ -1310,6 +1310,10 @@ function ClubRanking({ setLoading }) {
                     // 점수를 합산하여 저장
                     if (memberScores[memberId]) {
                         memberScores[memberId].totalScore += averageScore;
+                        memberScores[memberId].average1Score += average1Score;
+                        memberScores[memberId].average2Score += average2Score;
+                        memberScores[memberId].average3Score += average3Score;
+                        memberScores[memberId].average4Score += average4Score;
                         memberScores[memberId].count += 1;
                     } else {
                         memberScores[memberId] = { 
@@ -1323,6 +1327,14 @@ function ClubRanking({ setLoading }) {
                     }
                 });
             }
+        });
+
+        Object.keys(memberScores).forEach(memberId => {
+            const member = memberScores[memberId];
+            member.average1Score = member.average1Score / member.count;
+            member.average2Score = member.average2Score / member.count;
+            member.average3Score = member.average3Score / member.count;
+            member.average4Score = member.average4Score / member.count;
         });
     
         // 각 멤버의 평균 점수 계산
@@ -1420,10 +1432,10 @@ function ClubRanking({ setLoading }) {
                         <tr className={`${styles.teamScoreHeaderTr} ${styles.rankHeaderTr}`}>
                             <th className={styles.rankScoreTh}>순위</th>
                             <th className={styles.rankScoreTh}>이름</th>
-                            <th className={styles.rankScoreTh}>1G Avg</th>
-                            <th className={styles.rankScoreTh}>2G Avg</th>
-                            <th className={styles.rankScoreTh}>3G Avg</th>
-                            <th className={styles.rankScoreTh}>4G Avg</th>
+                            <th className={styles.rankScoreTh}>1G</th>
+                            <th className={styles.rankScoreTh}>2G</th>
+                            <th className={styles.rankScoreTh}>3G</th>
+                            <th className={styles.rankScoreTh}>4G</th>
                             <th className={styles.rankScoreTh}>평균</th>
                             <th className={styles.rankScoreTh}></th>
                         </tr>
@@ -1439,11 +1451,11 @@ function ClubRanking({ setLoading }) {
                                             <p>{member.memberName}</p>
                                         </div>
                                     </td>
-                                    <td className={`${styles.rankScoreTd} `}>{member.average1Score}</td>
-                                    <td className={`${styles.rankScoreTd} `}>{member.average2Score}</td>
-                                    <td className={`${styles.rankScoreTd} `}>{member.average3Score}</td>
-                                    <td className={`${styles.rankScoreTd} `}>{member.average4Score}</td>
-                                    <td className={styles.rankScoreTd}>{member.avgScore == 0 ? "0" : member.avgScore.toFixed(2)}</td>
+                                    <td className={`${styles.rankScoreTd} `}>{member.average1Score.toFixed(0)}</td>
+                                    <td className={`${styles.rankScoreTd} `}>{member.average2Score.toFixed(0)}</td>
+                                    <td className={`${styles.rankScoreTd} `}>{member.average3Score.toFixed(0)}</td>
+                                    <td className={`${styles.rankScoreTd} `}>{member.average4Score.toFixed(0)}</td>
+                                    <td className={styles.rankScoreTd}>{member.avgScore == 0 ? "0" : member.avgScore.toFixed(1)}</td>
                                     <td className={styles.rankScoreTd} onClick={() => moreInfoHandler(member.memberId)}>
                                         {!openMore.includes(member.memberId) ? (
                                             <i class="fa-solid fa-chevron-down"></i>
