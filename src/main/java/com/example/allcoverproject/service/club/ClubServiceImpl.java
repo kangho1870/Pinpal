@@ -1,5 +1,8 @@
 package com.example.allcoverproject.service.club;
 
+import com.example.allcoverproject.common.object.CeremonyResp;
+import com.example.allcoverproject.common.object.ClubDtlResp;
+import com.example.allcoverproject.common.object.ScoreboardResp;
 import com.example.allcoverproject.dto.request.club.AddClubReqDto;
 import com.example.allcoverproject.dto.response.CodeMessageRespDto;
 import com.example.allcoverproject.dto.response.clubDtl.GetCeremonyRespDto;
@@ -7,7 +10,7 @@ import com.example.allcoverproject.dto.response.clubDtl.GetClubDtlRespDto;
 import com.example.allcoverproject.dto.response.clubMst.GetClubListRespDto;
 import com.example.allcoverproject.dto.response.clubMst.GetClubMstRespDto;
 import com.example.allcoverproject.entity.*;
-import com.example.allcoverproject.repository.ClubMst.ClubMstRepository;
+import com.example.allcoverproject.repository.clubMst.ClubMstRepository;
 import com.example.allcoverproject.repository.ceremony.CeremonyRepository;
 import com.example.allcoverproject.repository.clubDtl.ClubDtlRepository;
 import com.example.allcoverproject.repository.game.GameRepository;
@@ -37,7 +40,7 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ResponseEntity<? super GetClubDtlRespDto> getMemberList(Long clubId) {
-        List<ClubDtl> members = new ArrayList<>();
+        List<ClubDtlResp> members = new ArrayList<>();
 
         try {
             members = clubDtlRepository.getClubDtlByClubMstId(clubId);
@@ -51,19 +54,19 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ResponseEntity<? super GetCeremonyRespDto> getRecentCeremonyList(Long clubId) {
-        List<Game> games = gameRepository.findAllByClubIdAndEndGame(clubId, "END");
+        List<Game> games = gameRepository.findAllByClubIdAndEndRecentGame(clubId, "END");
 
-        List<List<Scoreboard>> allScoreboards = new ArrayList<>();
-        List<Ceremony> ceremonys = new ArrayList<>();
+        List<List<ScoreboardResp>> allScoreboards = new ArrayList<>();
+        List<CeremonyResp> ceremonys = new ArrayList<>();
         for (Game game : games) {
-            List<Scoreboard> allMembers = scoreboardRepository.findAllMembers(game.getId());
+            List<ScoreboardResp> allMembers = scoreboardRepository.findAllMembers(game.getId());
             allScoreboards.add(allMembers);
 
-            Ceremony ceremony = ceremonyRepository.findByGameId(game.getId());
+            CeremonyResp ceremony = ceremonyRepository.findByGameId(game.getId());
             ceremonys.add(ceremony);
         }
 
-        return GetCeremonyRespDto.success(ceremonys, allScoreboards, games, memberRepository);
+        return GetCeremonyRespDto.success(ceremonys, allScoreboards);
     }
 
     @Override
@@ -225,24 +228,20 @@ public class ClubServiceImpl implements ClubService {
     @Override
     public ResponseEntity<? super GetCeremonyRespDto> getCeremonyList(Long clubId, LocalDate startDate, LocalDate endDate, int gameType) {
         if(clubId == null) return CodeMessageRespDto.noExistClub();
-        List<Game> games = gameRepository.findGamesByClubIdAndBetweenStartDateAndEndDate(clubId, startDate, endDate, gameType);
-        List<Ceremony> ceremonies = new ArrayList<>();
-        List<List<Scoreboard>> scoreboards = new ArrayList<>();
+
+        List<CeremonyResp> ceremonies = new ArrayList<>();
 
         try {
-            for (Game game : games) {
-                List<Scoreboard> allMembers = scoreboardRepository.findAllMembers(game.getId());
-                scoreboards.add(allMembers);
-                Ceremony ceremony = ceremonyRepository.findByGameId(game.getId());
-                ceremonies.add(ceremony);
-            }
+
+            ceremonies = gameRepository.findGameByClubIdBetweenDateAndEndDate(clubId, startDate, endDate, gameType);
+
         } catch (Exception e) {
             e.printStackTrace();
             return CodeMessageRespDto.databaseError();
         }
 
 
-        return GetCeremonyRespDto.success(ceremonies, scoreboards, games, memberRepository);
+        return GetCeremonyRespDto.success(ceremonies);
     }
 
 

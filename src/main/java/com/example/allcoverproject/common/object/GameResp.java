@@ -21,16 +21,16 @@ public class GameResp {
     private List<ScoreboardResp> members = new ArrayList<>();
 
 
-    private GameResp(Game game, List<Scoreboard> scoreboards) {
+    private GameResp(Game game, List<ScoreboardResp> scoreboards) {
         this.gameId = game.getId();
         this.gameName = game.getName();
         this.gameType = game.getType();
         this.gameDate = game.getDate();
         this.gameTime = game.getTime();
-        this.members = ScoreboardResp.getScoreboardList(scoreboards);
+        this.members = scoreboards;
     }
 
-    public static List<GameResp> getClubPageRespList(List<Game> games, List<List<Scoreboard>> scoreboards) {
+    public static List<GameResp> getClubPageRespList(List<Game> games, List<List<ScoreboardResp>> scoreboards) {
         List<GameResp> gameList = new ArrayList<GameResp>();
         for(int i = 0; i < games.size(); i++) {
             gameList.add(new GameResp(games.get(i), scoreboards.get(i)));

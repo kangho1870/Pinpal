@@ -1,6 +1,5 @@
-package com.example.allcoverproject.repository.ClubMst;
+package com.example.allcoverproject.repository.clubMst;
 
-import com.example.allcoverproject.entity.ClubMst;
 import com.example.allcoverproject.entity.QClubDtl;
 import com.example.allcoverproject.entity.QClubMst;
 import com.querydsl.core.Tuple;

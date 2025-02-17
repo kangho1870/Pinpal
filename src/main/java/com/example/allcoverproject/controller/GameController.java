@@ -15,8 +15,8 @@ public class GameController {
 
     private final GameService gameService;
 
-    @GetMapping(value = {"", "/"})
-    public ResponseEntity<? super GetGameListRespDto> getGames(@RequestParam Long clubId) {
+    @GetMapping("/{clubId}")
+    public ResponseEntity<? super GetGameListRespDto> getGames(@PathVariable Long clubId) {
         ResponseEntity<? super GetGameListRespDto> responseBody = gameService.getGames(clubId);
         return responseBody;
     }

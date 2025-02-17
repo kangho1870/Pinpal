@@ -28,6 +28,9 @@ public class ClubMst {
     private String name;
     private String description;
 
+    @OneToOne
+    private BowlingCenter bowlingCenter;
+
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 

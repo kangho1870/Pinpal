@@ -1,6 +1,7 @@
 package com.example.allcoverproject.dto.response.clubDtl;
 
 import com.example.allcoverproject.common.object.CeremonyResp;
+import com.example.allcoverproject.common.object.ScoreboardResp;
 import com.example.allcoverproject.dto.response.CodeMessageRespDto;
 import com.example.allcoverproject.dto.response.ResponseCode;
 import com.example.allcoverproject.dto.response.ResponseMessage;
@@ -18,13 +19,23 @@ import java.util.List;
 public class GetCeremonyRespDto extends CodeMessageRespDto {
     private List<CeremonyResp> ceremonys;
 
-    public GetCeremonyRespDto(List<Ceremony> ceremony, List<List<Scoreboard>> scoreboards, List<Game> games, MemberRepository memberRepository) {
+    public GetCeremonyRespDto(List<CeremonyResp> ceremony, List<List<ScoreboardResp>> scoreboards) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-        this.ceremonys = CeremonyResp.getCeremonyList(ceremony, scoreboards, games, memberRepository);
+        this.ceremonys = CeremonyResp.getCeremonyList(ceremony, scoreboards);
     }
 
-    public static ResponseEntity<GetCeremonyRespDto> success(List<Ceremony> ceremony, List<List<Scoreboard>> scoreboards, List<Game> games, MemberRepository memberRepository) {
-        GetCeremonyRespDto respDto = new GetCeremonyRespDto(ceremony, scoreboards, games, memberRepository);
+    public GetCeremonyRespDto(List<CeremonyResp> ceremony) {
+        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        this.ceremonys = CeremonyResp.getCeremonyList(ceremony);
+    }
+
+    public static ResponseEntity<GetCeremonyRespDto> success(List<CeremonyResp> ceremony, List<List<ScoreboardResp>> scoreboards) {
+        GetCeremonyRespDto respDto = new GetCeremonyRespDto(ceremony, scoreboards);
+        return ResponseEntity.status(HttpStatus.OK).body(respDto);
+    }
+
+    public static ResponseEntity<GetCeremonyRespDto> success(List<CeremonyResp> ceremony) {
+        GetCeremonyRespDto respDto = new GetCeremonyRespDto(ceremony);
         return ResponseEntity.status(HttpStatus.OK).body(respDto);
     }
 }

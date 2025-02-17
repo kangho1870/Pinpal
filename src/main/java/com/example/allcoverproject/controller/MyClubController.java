@@ -39,8 +39,8 @@ public class MyClubController {
         return responseBody;
     }
 
-    @GetMapping("/home")
-    public ResponseEntity<? super GetClubDtlRespDto> getMemberList(@RequestParam Long clubId) {
+    @GetMapping("/home/{clubId}")
+    public ResponseEntity<? super GetClubDtlRespDto> getMemberList(@PathVariable Long clubId) {
         ResponseEntity<? super GetClubDtlRespDto> responseBody = clubService.getMemberList(clubId);
         return responseBody;
     }
@@ -51,8 +51,9 @@ public class MyClubController {
         return responseBody;
     }
 
-    @GetMapping("/recent-ceremony")
-    public ResponseEntity<? super GetCeremonyRespDto> getRecentCeremony(@RequestParam Long clubId) {
+    @GetMapping("/recent-ceremony/{clubId}")
+    public ResponseEntity<? super GetCeremonyRespDto> getRecentCeremony(@PathVariable Long clubId) {
+        System.out.println("clubId = " + clubId);
         ResponseEntity<? super GetCeremonyRespDto> responseBody = clubService.getRecentCeremonyList(clubId);
         return responseBody;
     }
@@ -64,8 +65,8 @@ public class MyClubController {
         return responseBody;
     }
 
-    @GetMapping("/ceremony")
-    public ResponseEntity<? super GetCeremonyRespDto> getCeremony(@RequestParam Long clubId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int gameType) {
+    @GetMapping("/ceremony/{clubId}")
+    public ResponseEntity<? super GetCeremonyRespDto> getCeremony(@PathVariable Long clubId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int gameType) {
         ResponseEntity<? super GetCeremonyRespDto> responseBody = clubService.getCeremonyList(clubId, startDate, endDate, gameType);
         return responseBody;
     }
