@@ -15,12 +15,12 @@ import java.util.List;
 public class GetClubDtlRespDto extends CodeMessageRespDto {
     private List<ClubDtlResp> members;
 
-    public GetClubDtlRespDto(List<ClubDtl> clubDtlList) {
+    public GetClubDtlRespDto(List<ClubDtlResp> clubDtlList) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-        this.members = ClubDtlResp.getClubDtlList(clubDtlList);
+        this.members = clubDtlList;
     }
 
-    public static ResponseEntity<GetClubDtlRespDto> success(List<ClubDtl> clubDtlList) {
+    public static ResponseEntity<GetClubDtlRespDto> success(List<ClubDtlResp> clubDtlList) {
         GetClubDtlRespDto respDto = new GetClubDtlRespDto(clubDtlList);
         return ResponseEntity.status(HttpStatus.OK).body(respDto);
     }

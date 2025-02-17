@@ -37,13 +37,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             memberByEmail.setProfile((String) attributes.get("profileImageUrl"));
             memberRepository.save(memberByEmail);
             String accessToken = (String) attributes.get("accessToken");
-            response.sendRedirect("http://52.78.178.156:3000/sns-success?access_token=" + accessToken + "&expiration=14400");
+            response.sendRedirect("http://192.168.35.151:3000/sns-success?access_token=" + accessToken + "&expiration=14400");
         }
         else {
             String snsId = (String) attributes.get("snsId");
             String joinPath = (String) attributes.get("joinPath");
             String profileImageUrl = (String) attributes.get("profileImageUrl");
-            response.sendRedirect("http://52.78.178.156:3000/auth?snsId=" + snsId + "&joinPath=" + joinPath + "&profileImageUrl=" + profileImageUrl);
+            response.sendRedirect("http://192.168.35.151:3000/auth?snsId=" + snsId + "&joinPath=" + joinPath + "&profileImageUrl=" + profileImageUrl);
         }
     }
 }

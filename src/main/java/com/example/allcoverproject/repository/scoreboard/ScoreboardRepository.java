@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+
 public interface ScoreboardRepository extends JpaRepository<Scoreboard, Long>, ScoreboardCustomRepository {
     Optional<Scoreboard> findByGameIdAndMemberId(Long gameId, Long memberId);
-
+    List<Scoreboard> findByGameId(Long gameId);
 }

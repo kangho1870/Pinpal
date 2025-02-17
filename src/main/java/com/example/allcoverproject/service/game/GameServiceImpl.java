@@ -1,13 +1,13 @@
 package com.example.allcoverproject.service.game;
 
+import com.example.allcoverproject.common.object.ScoreboardResp;
 import com.example.allcoverproject.dto.request.game.AddGameReqDto;
 import com.example.allcoverproject.dto.response.CodeMessageRespDto;
 import com.example.allcoverproject.dto.response.game.GetGameListRespDto;
 import com.example.allcoverproject.entity.*;
-import com.example.allcoverproject.repository.ClubMst.ClubMstRepository;
+import com.example.allcoverproject.repository.clubMst.ClubMstRepository;
 import com.example.allcoverproject.repository.game.GameRepository;
 import com.example.allcoverproject.repository.scoreboard.ScoreboardRepository;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class GameServiceImpl implements GameService {
             e.printStackTrace();
             return CodeMessageRespDto.databaseError();
         }
-        List<List<Scoreboard>> scoreboards = new ArrayList<>();
+        List<List<ScoreboardResp>> scoreboards = new ArrayList<>();
 
         try {
             

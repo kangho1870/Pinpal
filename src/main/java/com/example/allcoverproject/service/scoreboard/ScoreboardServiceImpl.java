@@ -1,11 +1,13 @@
 package com.example.allcoverproject.service.scoreboard;
 
+import com.example.allcoverproject.common.object.CeremonyResp;
+import com.example.allcoverproject.common.object.ScoreboardResp;
 import com.example.allcoverproject.dto.request.scoreboard.ScoreboardReqDto;
 import com.example.allcoverproject.dto.request.scoreboard.ScoreboardStopGameReqDto;
 import com.example.allcoverproject.dto.response.CodeMessageRespDto;
 import com.example.allcoverproject.dto.response.scoreboard.GetScoreboardListRespDto;
 import com.example.allcoverproject.entity.*;
-import com.example.allcoverproject.repository.ClubMst.ClubMstRepository;
+import com.example.allcoverproject.repository.clubMst.ClubMstRepository;
 import com.example.allcoverproject.repository.ceremony.CeremonyRepository;
 import com.example.allcoverproject.repository.clubDtl.ClubDtlRepository;
 import com.example.allcoverproject.repository.game.GameRepository;
@@ -31,11 +33,12 @@ public class ScoreboardServiceImpl implements ScoreboardService{
 
     @Override
     public ResponseEntity<? super GetScoreboardListRespDto> getMembers(Long gameId, Long clubId) {
-        List<Scoreboard> scoreboards = new ArrayList<>();
+        List<ScoreboardResp> scoreboards = new ArrayList<>();
 
         try {
 
             scoreboards = scoreboardRepository.findAllMembers(gameId);
+            System.out.println("scoreboards = " + scoreboards);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -238,7 +241,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
         if(clubMst.isEmpty()) return CodeMessageRespDto.noExistClub();
 
         try {
-            List<Scoreboard> allMembers = scoreboardRepository.findAllMembers(scoreboardStopGameReqDto.getGameId());
+            List<Scoreboard> allMembers = scoreboardRepository.findByGameId(scoreboardStopGameReqDto.getGameId());
             if(allMembers.isEmpty()) return CodeMessageRespDto.noExistMemberData();
             for (Scoreboard scoreboard : allMembers) {
                 scoreboard.setStatus("DELETED");
@@ -246,7 +249,7 @@ public class ScoreboardServiceImpl implements ScoreboardService{
             }
             scoreboardRepository.saveAll(allMembers);
 
-            Ceremony ceremony = ceremonyRepository.findByGameId(scoreboardStopGameReqDto.getGameId());
+            CeremonyResp ceremony = ceremonyRepository.findByGameId(scoreboardStopGameReqDto.getGameId());
             if(ceremony != null) return CodeMessageRespDto.noFundCeremony();
 
             Ceremony newCeremony = new Ceremony(scoreboardStopGameReqDto, clubMst.get(), game);

@@ -36,6 +36,9 @@ public class Game {
     @JoinColumn(name = "club_id")
     private ClubMst clubMst;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BowlingCenter bowlingCenter;
+
     private String confirmedCode;
 
     private Boolean scoreCounting;
